@@ -62,6 +62,7 @@ async function initialize() {
     user_id INTEGER,
     action TEXT,
     ip TEXT,
+    location TEXT,   -- ciudad y país resuelto por geolocalización IP
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
   )`);
 

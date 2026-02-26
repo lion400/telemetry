@@ -167,19 +167,46 @@ export default function UsersView() {
           <div style={{ padding: '12px 16px', borderBottom: '1px solid #1a3050', fontFamily: "'DM Mono',monospace", fontSize: 9, letterSpacing: 1.5, color: '#3d5a80', textTransform: 'uppercase' }}>
             Bitácora de accesos
           </div>
-          <div style={{ maxHeight: 240, overflow: 'auto' }}>
+          <div style={{ maxHeight: 300, overflow: 'auto' }}>
             {log.map(l => (
-              <div key={l.id} style={{ display: 'flex', alignItems: 'center', gap: 16, padding: '8px 16px', borderBottom: '1px solid rgba(26,48,80,0.5)', fontSize: 12 }}>
-                <span style={{ fontFamily: "'DM Mono',monospace", fontSize: 10, color: '#3d5a80', minWidth: 140 }}>
+              <div key={l.id} style={{
+                display: 'grid',
+                gridTemplateColumns: 'minmax(130px,auto) auto auto 1fr',
+                alignItems: 'center', gap: 12,
+                padding: '9px 16px', borderBottom: '1px solid rgba(26,48,80,0.5)', fontSize: 12,
+              }}>
+                {/* Fecha hora */}
+                <span style={{ fontFamily: "'DM Mono',monospace", fontSize: 10, color: '#3d5a80', whiteSpace: 'nowrap' }}>
                   {new Date(l.created_at.endsWith('Z') ? l.created_at : l.created_at + 'Z').toLocaleString('es-EC', { timeZone: 'America/Guayaquil' })}
                 </span>
-                <span style={{ fontWeight: 500 }}>{l.username}</span>
-                <span style={{ color: l.action === 'login' ? '#00e676' : '#6b8ab0', fontFamily: "'DM Mono',monospace", fontSize: 11 }}>
+
+                {/* Usuario */}
+                <span style={{ fontWeight: 600 }}>{l.username}</span>
+
+                {/* Acción */}
+                <span style={{
+                  fontFamily: "'DM Mono',monospace", fontSize: 11, whiteSpace: 'nowrap',
+                  color: l.action === 'login' ? '#00e676' : '#6b8ab0',
+                }}>
                   {l.action === 'login' ? '→ Ingreso' : '← Salida'}
                 </span>
-                <span style={{ fontSize: 10, color: '#3d5a80', marginLeft: 'auto' }}>{l.ip}</span>
+
+                {/* Ubicación + IP */}
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 1 }}>
+                  {l.location && l.location !== l.ip && (
+                    <span style={{ fontSize: 11, color: '#e8f0fe', display: 'flex', alignItems: 'center', gap: 4 }}>
+                      📍 {l.location}
+                    </span>
+                  )}
+                  <span style={{ fontFamily: "'DM Mono',monospace", fontSize: 9, color: '#3d5a80' }}>
+                    {l.ip}
+                  </span>
+                </div>
               </div>
             ))}
+            {log.length === 0 && (
+              <div style={{ padding: 24, textAlign: 'center', color: '#3d5a80', fontSize: 12 }}>Sin registros</div>
+            )}
           </div>
         </div>
       </div>
