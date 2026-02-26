@@ -30,10 +30,18 @@ export default function AppShell() {
   const navigate = useNavigate()
   const loc = useLocation()
   const [clock, setClock] = useState('')
+  const [date, setDate] = useState('')
   const [collapsed, setCollapsed] = useState(false)
   const isMobile = useIsMobile()
-  const [userLocation, setUserLocation] = useState(null) // "Ciudad, País"
+  const [userLocation, setUserLocation] = useState(null)
   const [locLoading, setLocLoading] = useState(false)
+  // Modo de reporte
+  const [reportMode, setReportMode] = useState('normal')
+  const [reportTimeLeft, setReportTimeLeft] = useState(0)
+  const [showModePanel, setShowModePanel] = useState(false)
+  const [customInterval, setCustomInterval] = useState(10)
+  const [customDuration, setCustomDuration] = useState(120)
+  const reportTimerRef = React.useRef(null)
 
   // Pedir ubicación del navegador al cargar
   useEffect(() => {
@@ -75,9 +83,52 @@ export default function AppShell() {
   }, [])
 
   useEffect(() => {
-    const t = setInterval(() => setClock(new Date().toLocaleTimeString('es-EC')), 1000)
+    const update = () => {
+      const now = new Date()
+      setClock(now.toLocaleTimeString('es-EC'))
+      setDate(now.toLocaleDateString('es-EC', { weekday: 'short', day: '2-digit', month: 'short', year: 'numeric' }))
+    }
+    update()
+    const t = setInterval(update, 1000)
     return () => clearInterval(t)
   }, [])
+
+  // Activar modo de reporte
+  function activateMode(mode, intervalSec, durationSec) {
+    if (reportTimerRef.current) clearInterval(reportTimerRef.current)
+    setReportMode(mode)
+    setReportTimeLeft(durationSec)
+    setShowModePanel(false)
+    // Cambiar intervalo del simulador via API
+    fetch('/api/devices/report-mode', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+      body: JSON.stringify({ interval: intervalSec, duration: durationSec, mode })
+    }).catch(() => {})
+    // Countdown
+    let left = durationSec
+    reportTimerRef.current = setInterval(() => {
+      left -= 1
+      setReportTimeLeft(left)
+      if (left <= 0) {
+        clearInterval(reportTimerRef.current)
+        setReportMode('normal')
+        setReportTimeLeft(0)
+        fetch('/api/devices/report-mode', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+          body: JSON.stringify({ interval: 900, duration: 0, mode: 'normal' })
+        }).catch(() => {})
+      }
+    }, 1000)
+  }
+
+  function formatTimeLeft(s) {
+    if (s <= 0) return ''
+    const m = Math.floor(s / 60)
+    const sec = s % 60
+    return m > 0 ? `${m}m ${sec}s` : `${sec}s`
+  }
 
   // En móvil siempre colapsado (usamos barra inferior)
   const sidebarWidth = isMobile ? 0 : (collapsed ? 56 : 220)
@@ -168,10 +219,123 @@ export default function AppShell() {
           </div>
 
           {/* Right side */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? 8 : 16 }}>
-            {/* Reloj — oculto en móvil */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? 8 : 12 }}>
+
+            {/* Reloj + fecha + modo reporte — solo desktop */}
             {!isMobile && (
-              <span style={{ fontFamily: "'DM Mono',monospace", fontSize: 11, color: '#6b8ab0' }}>{clock}</span>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 1 }}>
+                <span style={{ fontFamily: "'DM Mono',monospace", fontSize: 12, color: '#e8f0fe', letterSpacing: 0.5 }}>{clock}</span>
+                <span style={{ fontFamily: "'DM Mono',monospace", fontSize: 9, color: '#3d5a80', letterSpacing: 0.3, textTransform: 'capitalize' }}>{date}</span>
+              </div>
+            )}
+
+            {/* Botón modo reporte — solo gerente */}
+            {user?.role === 'gerente' && !isMobile && (
+              <div style={{ position: 'relative' }}>
+                <button onClick={() => setShowModePanel(p => !p)} style={{
+                  display: 'flex', alignItems: 'center', gap: 6,
+                  background: reportMode === 'normal' ? 'rgba(26,111,255,0.1)' : reportMode === 'intensive' ? 'rgba(255,215,64,0.15)' : 'rgba(0,212,255,0.12)',
+                  border: `1px solid ${reportMode === 'normal' ? 'rgba(26,111,255,0.4)' : reportMode === 'intensive' ? 'rgba(255,215,64,0.5)' : 'rgba(0,212,255,0.4)'}`,
+                  borderRadius: 8, padding: '5px 10px', cursor: 'pointer', color: '#e8f0fe', fontSize: 11,
+                  fontFamily: "'DM Mono',monospace",
+                }}>
+                  <span style={{ fontSize: 10 }}>
+                    {reportMode === 'normal' ? '📶' : reportMode === 'intensive' ? '⚡' : '⚙'}
+                  </span>
+                  {reportMode === 'normal' ? 'Normal · 15min' : reportMode === 'intensive' ? `Intensivo ${formatTimeLeft(reportTimeLeft)}` : `Custom ${formatTimeLeft(reportTimeLeft)}`}
+                  <span style={{ color: '#3d5a80', fontSize: 9 }}>▾</span>
+                </button>
+
+                {/* Panel desplegable */}
+                {showModePanel && (
+                  <div style={{
+                    position: 'absolute', top: 'calc(100% + 8px)', right: 0,
+                    background: '#0c1829', border: '1px solid #1a3050', borderRadius: 12,
+                    padding: 16, minWidth: 280, zIndex: 999,
+                    boxShadow: '0 8px 32px rgba(0,0,0,0.6)',
+                  }}>
+                    <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9, letterSpacing: 1.5, color: '#3d5a80', textTransform: 'uppercase', marginBottom: 12 }}>
+                      Modo de reporte
+                    </div>
+
+                    {/* Normal */}
+                    <button onClick={() => { activateMode('normal', 900, 0); setReportMode('normal'); setShowModePanel(false) }} style={{
+                      width: '100%', display: 'flex', alignItems: 'center', gap: 10,
+                      background: reportMode === 'normal' ? 'rgba(26,111,255,0.15)' : 'transparent',
+                      border: `1px solid ${reportMode === 'normal' ? 'rgba(26,111,255,0.4)' : '#1a3050'}`,
+                      borderRadius: 8, padding: '10px 12px', cursor: 'pointer', color: '#e8f0fe',
+                      marginBottom: 8, textAlign: 'left',
+                    }}>
+                      <span style={{ fontSize: 18 }}>📶</span>
+                      <div>
+                        <div style={{ fontWeight: 600, fontSize: 13 }}>Modo Normal</div>
+                        <div style={{ fontSize: 10, color: '#6b8ab0' }}>1 reporte cada 15 minutos · Plan M2M estándar</div>
+                      </div>
+                    </button>
+
+                    {/* Intensivo */}
+                    <button onClick={() => activateMode('intensive', 10, 120)} style={{
+                      width: '100%', display: 'flex', alignItems: 'center', gap: 10,
+                      background: reportMode === 'intensive' ? 'rgba(255,215,64,0.1)' : 'transparent',
+                      border: `1px solid ${reportMode === 'intensive' ? 'rgba(255,215,64,0.4)' : '#1a3050'}`,
+                      borderRadius: 8, padding: '10px 12px', cursor: 'pointer', color: '#e8f0fe',
+                      marginBottom: 12, textAlign: 'left',
+                    }}>
+                      <span style={{ fontSize: 18 }}>⚡</span>
+                      <div>
+                        <div style={{ fontWeight: 600, fontSize: 13 }}>Modo Intensivo</div>
+                        <div style={{ fontSize: 10, color: '#6b8ab0' }}>1 reporte cada 10 segundos · duración 2 minutos</div>
+                      </div>
+                    </button>
+
+                    {/* Separador */}
+                    <div style={{ borderTop: '1px solid #1a3050', marginBottom: 12 }} />
+
+                    {/* Personalizado */}
+                    <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9, letterSpacing: 1, color: '#3d5a80', textTransform: 'uppercase', marginBottom: 10 }}>
+                      ⚙ Modo personalizado
+                    </div>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 10 }}>
+                      <div>
+                        <div style={{ fontSize: 10, color: '#6b8ab0', marginBottom: 4 }}>Intervalo (segundos)</div>
+                        <input
+                          type="number" min="1" max="3600"
+                          value={customInterval}
+                          onChange={e => setCustomInterval(Math.max(1, parseInt(e.target.value) || 1))}
+                          style={{
+                            width: '100%', background: '#111f35', border: '1px solid #1a3050',
+                            borderRadius: 6, padding: '6px 10px', color: '#e8f0fe',
+                            fontFamily: "'DM Mono',monospace", fontSize: 12,
+                          }}
+                        />
+                      </div>
+                      <div>
+                        <div style={{ fontSize: 10, color: '#6b8ab0', marginBottom: 4 }}>Duración (segundos)</div>
+                        <input
+                          type="number" min="10" max="86400"
+                          value={customDuration}
+                          onChange={e => setCustomDuration(Math.max(10, parseInt(e.target.value) || 10))}
+                          style={{
+                            width: '100%', background: '#111f35', border: '1px solid #1a3050',
+                            borderRadius: 6, padding: '6px 10px', color: '#e8f0fe',
+                            fontFamily: "'DM Mono',monospace", fontSize: 12,
+                          }}
+                        />
+                      </div>
+                    </div>
+                    <div style={{ fontSize: 10, color: '#3d5a80', marginBottom: 10 }}>
+                      Recibirás ~{customDuration > 0 ? Math.floor(customDuration / customInterval) : 0} reportes en total
+                    </div>
+                    <button onClick={() => activateMode('custom', customInterval, customDuration)} style={{
+                      width: '100%', background: 'rgba(0,212,255,0.1)', border: '1px solid rgba(0,212,255,0.4)',
+                      borderRadius: 8, padding: '8px 12px', cursor: 'pointer', color: '#00d4ff',
+                      fontFamily: "'DM Mono',monospace", fontSize: 11, fontWeight: 600,
+                    }}>
+                      Activar modo personalizado
+                    </button>
+                  </div>
+                )}
+              </div>
             )}
 
             {/* EN VIVO */}
