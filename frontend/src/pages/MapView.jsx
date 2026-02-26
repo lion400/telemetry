@@ -38,12 +38,12 @@ export default function MapView() {
       zoomControl: false,
     })
 
-    // Satélite Esri (Maxar) — imágenes reales como Google Maps satélite
-    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-      attribution: '© Esri, Maxar, Earthstar Geographics',
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap',
       maxZoom: 19,
-      maxNativeZoom: 19,
     }).addTo(map)
+
+
 
     // Etiquetas de calles y lugares encima del satélite (CartoDB)
     L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_only_labels/{z}/{x}/{y}{r}.png', {
