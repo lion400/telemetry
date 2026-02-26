@@ -131,7 +131,10 @@ async function tick(io) {
     : 0;
 
   for (const d of devices) {
-    const s = state[d.id];
+    const s = state[d.id]
+
+    // Dispositivo offline (escenario choque) — no enviar más telemetría
+    if (s.offline) continue;
 
     // Verificar si salir de modo intensivo
     if (s.intensiveMode && Date.now() > s.intensiveModeUntil) {
@@ -293,11 +296,72 @@ function simulateTelemetry(io) {
   setTimeout(() => tick(io), 2000);
   setInterval(() => tick(io), intervalMs);
 
-  console.log(`📡 Simulador activo — intervalo: ${intervalMs / 1000}s (producción: 900s)`);
-  console.log(`   Plan M2M: ${GV310.estimatedMB}MB/mes estimado · ${GV310.planMB}MB contratado`);
-  console.log(`   Mensaje: ${GV310.msgBytes} bytes · ${GV310.passiveReports} reportes/mes pasivo`);
-  console.log(`   Batería: LFP ${BAT.capacityAh}Ah/${BAT.energyWh}Wh · Panel: ${PANEL.maxW}W MPPT ${PANEL.mpptEff * 100}%`);
-  console.log(`   ⚠  Reemplazar con webhooks reales al conectar hardware\n`);
+  // ── Escenario: choque en Parada 03 y Parada 05 ───────────────────────────
+  // T+30s  → llega reporte de choque (acelerómetro GV310LAU)
+  // T+45s  → señal se degrada rápidamente
+  // T+60s  → último reporte antes de desconectarse
+  // T+75s  → dispositivos dejan de reportar (offline)
+
+  const crashDevices = ['GV310-EC-4473', 'GV310-EC-4475']
+
+  setTimeout(async () => {
+    console.log('🚨 ESCENARIO: Choque detectado en Parada 03 y Parada 05')
+    for (const devId of crashDevices) {
+      await createEventIfNew(devId, 'shock',
+        'Impacto severo detectado — posible colisión de vehículo contra parada', 'critical')
+      // Simular modo intensivo post-choque
+      if (state[devId]) {
+        state[devId].intensiveMode = true
+        state[devId].intensiveModeUntil = Date.now() + 60000
+      }
+    }
+  }, 30000) // 30 segundos después de arrancar
+
+  setTimeout(async () => {
+    console.log('📉 ESCENARIO: Señal degradándose en Parada 03 y Parada 05...')
+    for (const devId of crashDevices) {
+      if (state[devId]) {
+        // Señal cae drásticamente — antena dañada por el impacto
+        state[devId].rssi = -102
+        state[devId].rsrp = -115
+        state[devId].snr  = 1
+      }
+    }
+  }, 45000) // 45 segundos
+
+  setTimeout(async () => {
+    console.log('📡 ESCENARIO: Último reporte de Parada 03 y Parada 05')
+    for (const devId of crashDevices) {
+      await createEventIfNew(devId, 'weak_signal',
+        'Señal crítica — posible daño físico en antena GV310LAU', 'critical')
+    }
+  }, 60000) // 60 segundos
+
+  setTimeout(async () => {
+    console.log('🔴 ESCENARIO: Parada 03 y Parada 05 OFFLINE — sin señal')
+    for (const devId of crashDevices) {
+      // Marcar como offline en DB — dejar de enviar telemetría
+      state[devId].offline = true
+      await createEventIfNew(devId, 'disconnect_battery',
+        'Dispositivo sin respuesta — sin reportes hace +15 min. Posible daño estructural por colisión', 'critical')
+      // Actualizar last_seen con timestamp viejo para que aparezca offline
+      try {
+        const db = require('../db')
+        await db.run(
+          `UPDATE devices SET last_seen=datetime('now', '-20 minutes') WHERE device_id=?`,
+          [devId]
+        )
+      } catch(e) {}
+      io.emit('telemetry_broadcast', { device_id: devId, status: 'offline', ts: new Date().toISOString() })
+    }
+  }, 75000) // 75 segundos
+
+  console.log(`📡 Simulador activo — intervalo: ${intervalMs / 1000}s (producción: 900s)`)
+  console.log(`   Plan M2M: ${GV310.estimatedMB}MB/mes estimado · ${GV310.planMB}MB contratado`)
+  console.log(`   Mensaje: ${GV310.msgBytes} bytes · ${GV310.passiveReports} reportes/mes pasivo`)
+  console.log(`   Batería: LFP ${BAT.capacityAh}Ah/${BAT.energyWh}Wh · Panel: ${PANEL.maxW}W MPPT ${PANEL.mpptEff * 100}%`)
+  console.log(`   🚨 Escenario demo: Parada 03 y 05 — choque → offline en ~75s`)
+  console.log(`   ⚠  Reemplazar con webhooks reales al conectar hardware\n`)
 }
 
 module.exports = { simulateTelemetry, getDataStats };
