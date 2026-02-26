@@ -38,8 +38,17 @@ export default function MapView() {
       zoomControl: false,
     })
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '© OpenStreetMap',
+    // Esri World Imagery — satélite real, gratis, sin API key
+    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+      attribution: 'Tiles © Esri — Source: Esri, Maxar, Earthstar Geographics',
+      maxZoom: 19,
+    }).addTo(map)
+
+    // Capa de etiquetas encima del satélite (nombres de calles/ciudades)
+    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', {
+      attribution: '',
+      maxZoom: 19,
+      opacity: 0.8,
     }).addTo(map)
 
     L.control.zoom({ position: 'bottomright' }).addTo(map)
