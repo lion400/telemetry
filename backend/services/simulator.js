@@ -291,10 +291,23 @@ function getDataStats() {
 function simulateTelemetry(io) {
   init();
 
-  const intervalMs = (parseInt(process.env.SIM_INTERVAL) || 15) * 1000;
+  let intervalMs = (parseInt(process.env.SIM_INTERVAL) || 15) * 1000;
+  let tickTimer = null;
+
+  function scheduleTick() {
+    if (tickTimer) clearInterval(tickTimer);
+    tickTimer = setInterval(() => tick(io), intervalMs);
+  }
+
+  // Escuchar cambios de modo de reporte desde el endpoint
+  process.on('report-mode-change', ({ intervalMs: newInterval, mode }) => {
+    intervalMs = newInterval;
+    scheduleTick();
+    console.log(`⚙ Simulador: intervalo cambiado a ${newInterval / 1000}s (modo: ${mode})`);
+  });
 
   setTimeout(() => tick(io), 2000);
-  setInterval(() => tick(io), intervalMs);
+  scheduleTick();
 
   // ── Escenario: choque en Parada 03 y Parada 05 ───────────────────────────
   // T+30s  → llega reporte de choque (acelerómetro GV310LAU)
