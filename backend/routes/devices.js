@@ -235,4 +235,36 @@ function haversine(lat1, lng1, lat2, lng2) {
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
 }
 
+// ── Modo de reporte — gerente puede cambiar intervalo del simulador ──────────
+// Estado global del intervalo (compartido con simulator.js)
+let currentReportInterval = parseInt(process.env.SIM_INTERVAL) * 1000 || 15000;
+let reportModeTimer = null;
+
+function getCurrentReportInterval() { return currentReportInterval; }
+
+router.post('/report-mode', verifyToken, requireRole('gerente'), (req, res) => {
+  const { interval, duration, mode } = req.body;
+  if (!interval || interval < 1) return res.status(400).json({ error: 'Intervalo inválido' });
+
+  const intervalMs = interval * 1000;
+  currentReportInterval = intervalMs;
+
+  // Notificar al simulador via evento global
+  process.emit('report-mode-change', { intervalMs, mode });
+
+  if (reportModeTimer) clearTimeout(reportModeTimer);
+
+  // Al terminar la duración → volver a normal automáticamente
+  if (duration > 0) {
+    reportModeTimer = setTimeout(() => {
+      currentReportInterval = parseInt(process.env.SIM_INTERVAL) * 1000 || 15000;
+      process.emit('report-mode-change', { intervalMs: currentReportInterval, mode: 'normal' });
+    }, duration * 1000);
+  }
+
+  console.log(`⚙ Modo reporte: ${mode} · intervalo ${interval}s · duración ${duration}s`);
+  res.json({ ok: true, interval, duration, mode });
+});
+
 module.exports = router;
+module.exports.getCurrentReportInterval = getCurrentReportInterval;
