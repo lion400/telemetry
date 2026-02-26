@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../db');
+const { verifyToken, requireRole } = require('../middleware/auth');
 
 // ── Listar paradas con último telemetría ──────────────────────────────────────
 router.get('/', async (req, res) => {

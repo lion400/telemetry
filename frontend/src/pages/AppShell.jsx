@@ -160,8 +160,7 @@ export default function AppShell() {
         display: 'grid',
         gridTemplateRows: isMobile ? '52px 1fr 60px' : '52px 1fr',
         gridTemplateColumns: isMobile ? '1fr' : `${sidebarWidth}px 1fr`,
-        height: '100vh',
-        height: '100dvh', // dynamic viewport height para móvil (evita barra del browser)
+        height: '100dvh',
         transition: 'grid-template-columns 0.2s ease',
         overflow: 'hidden',
       }}>
