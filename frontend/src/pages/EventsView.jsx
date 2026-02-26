@@ -34,7 +34,7 @@ const ALL_COLUMNS = [
 
 function getColValue(ev, colId) {
   switch (colId) {
-    case 'ts':          return ev.ts ? new Date(ev.ts).toLocaleString('es-EC') : ''
+    case 'ts':          return ev.ts ? new Date(ev.ts.endsWith('Z') ? ev.ts : ev.ts + 'Z').toLocaleString('es-EC', { timeZone: 'America/Guayaquil' }) : ''
     case 'device_name': return ev.device_name || ev.device_id || ''
     case 'type':        return TYPES[ev.type] || ev.type || ''
     case 'severity':    return SEVERITIES[ev.severity]?.label || ev.severity || ''
@@ -263,7 +263,7 @@ export default function EventsView() {
                   onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
                 >
                   <td style={{ padding: '10px 16px', fontFamily: "'DM Mono',monospace", fontSize: 11, color: '#6b8ab0', whiteSpace: 'nowrap' }}>
-                    {ev.ts ? new Date(ev.ts).toLocaleString('es-EC') : '--'}
+                    {ev.ts ? new Date(ev.ts.endsWith('Z') ? ev.ts : ev.ts + 'Z').toLocaleString('es-EC', { timeZone: 'America/Guayaquil' }) : '--'}
                   </td>
                   <td style={{ padding: '10px 16px', fontSize: 12 }}>{ev.device_name || ev.device_id}</td>
                   <td style={{ padding: '10px 16px', fontFamily: "'DM Mono',monospace", fontSize: 11 }}>

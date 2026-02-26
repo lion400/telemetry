@@ -582,7 +582,7 @@ export default function DeviceDetail() {
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
                       <span style={{ fontSize: 12, fontWeight: 600, color: sev[ev.severity] }}>{ev.type?.replace('_', ' ')}</span>
                       <span style={{ fontFamily: "'DM Mono',monospace", fontSize: 10, color: '#3d5a80' }}>
-                        {ev.ts ? new Date(ev.ts).toLocaleString('es-EC') : '--'}
+                        {ev.ts ? new Date(ev.ts.endsWith('Z') ? ev.ts : ev.ts + 'Z').toLocaleString('es-EC', { timeZone: 'America/Guayaquil' }) : '--'}
                       </span>
                     </div>
                     <div style={{ fontSize: 12, color: '#e8f0fe' }}>{ev.message}</div>

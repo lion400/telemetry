@@ -142,7 +142,7 @@ export default function UsersView() {
                       </span>
                     </td>
                     <td style={{ padding: '12px 16px', fontFamily: "'DM Mono',monospace", fontSize: 11, color: '#6b8ab0' }}>
-                      {u.last_login ? new Date(u.last_login).toLocaleString('es-EC') : 'Nunca'}
+                      {u.last_login ? new Date(u.last_login.endsWith('Z') ? u.last_login : u.last_login + 'Z').toLocaleString('es-EC', { timeZone: 'America/Guayaquil' }) : 'Nunca'}
                     </td>
                     <td style={{ padding: '12px 16px' }}>
                       {me?.role === 'gerente' && u.id !== me?.id && (
@@ -171,7 +171,7 @@ export default function UsersView() {
             {log.map(l => (
               <div key={l.id} style={{ display: 'flex', alignItems: 'center', gap: 16, padding: '8px 16px', borderBottom: '1px solid rgba(26,48,80,0.5)', fontSize: 12 }}>
                 <span style={{ fontFamily: "'DM Mono',monospace", fontSize: 10, color: '#3d5a80', minWidth: 140 }}>
-                  {new Date(l.created_at).toLocaleString('es-EC')}
+                  {new Date(l.created_at.endsWith('Z') ? l.created_at : l.created_at + 'Z').toLocaleString('es-EC', { timeZone: 'America/Guayaquil' })}
                 </span>
                 <span style={{ fontWeight: 500 }}>{l.username}</span>
                 <span style={{ color: l.action === 'login' ? '#00e676' : '#6b8ab0', fontFamily: "'DM Mono',monospace", fontSize: 11 }}>
