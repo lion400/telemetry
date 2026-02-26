@@ -38,11 +38,19 @@ export default function MapView() {
       zoomControl: false,
     })
 
-    // CartoDB Voyager — realista, zoom completo hasta nivel 20, gratis sin API key
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-      attribution: '© OpenStreetMap © CARTO',
+    // Satélite Esri (Maxar) — imágenes reales como Google Maps satélite
+    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+      attribution: '© Esri, Maxar, Earthstar Geographics',
+      maxZoom: 19,
+      maxNativeZoom: 19,
+    }).addTo(map)
+
+    // Etiquetas de calles y lugares encima del satélite (CartoDB)
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_only_labels/{z}/{x}/{y}{r}.png', {
+      attribution: '© CARTO',
       subdomains: 'abcd',
-      maxZoom: 20,
+      maxZoom: 19,
+      opacity: 0.9,
     }).addTo(map)
 
     L.control.zoom({ position: 'bottomright' }).addTo(map)
