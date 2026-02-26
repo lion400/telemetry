@@ -38,17 +38,11 @@ export default function MapView() {
       zoomControl: false,
     })
 
-    // Esri World Imagery — satélite real, gratis, sin API key
-    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-      attribution: 'Tiles © Esri — Source: Esri, Maxar, Earthstar Geographics',
-      maxZoom: 19,
-    }).addTo(map)
-
-    // Capa de etiquetas encima del satélite (nombres de calles/ciudades)
-    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', {
-      attribution: '',
-      maxZoom: 19,
-      opacity: 0.8,
+    // CartoDB Voyager — realista, zoom completo hasta nivel 20, gratis sin API key
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+      attribution: '© OpenStreetMap © CARTO',
+      subdomains: 'abcd',
+      maxZoom: 20,
     }).addTo(map)
 
     L.control.zoom({ position: 'bottomright' }).addTo(map)
