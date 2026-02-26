@@ -32,6 +32,39 @@ export default function AppShell() {
   const [clock, setClock] = useState('')
   const [collapsed, setCollapsed] = useState(false)
   const isMobile = useIsMobile()
+  const [userLocation, setUserLocation] = useState(null) // "Ciudad, País"
+  const [locLoading, setLocLoading] = useState(false)
+
+  // Pedir ubicación del navegador al cargar
+  useEffect(() => {
+    if (!navigator.geolocation) return
+    setLocLoading(true)
+    navigator.geolocation.getCurrentPosition(
+      async ({ coords }) => {
+        try {
+          // Geocoding inverso con Nominatim (OpenStreetMap, gratis, sin API key)
+          const res = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?lat=${coords.latitude}&lon=${coords.longitude}&format=json&accept-language=es`,
+            { headers: { 'Accept-Language': 'es' } }
+          )
+          const data = await res.json()
+          const addr = data.address || {}
+          // Construir string de ubicación: ciudad / municipio + país
+          const city = addr.city || addr.town || addr.municipality || addr.county || addr.state || ''
+          const country = addr.country || ''
+          setUserLocation(city && country ? `${city}, ${country}` : data.display_name?.split(',')[0] || 'Ubicación obtenida')
+        } catch {
+          setUserLocation('Ubicación activa')
+        }
+        setLocLoading(false)
+      },
+      () => {
+        // Usuario denegó o error — no mostrar nada
+        setLocLoading(false)
+      },
+      { timeout: 8000, maximumAge: 300000 } // cache 5 min
+    )
+  }, [])
 
   useEffect(() => {
     fetchDevices()
@@ -109,10 +142,28 @@ export default function AppShell() {
               whiteSpace: 'nowrap',
             }}>
               <div style={{ width: 26, height: 26, background: '#1a6fff', borderRadius: 6, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, flexShrink: 0 }}>☀</div>
-              Solar<span style={{ color: '#5a9fff' }}>Track</span>
-              {!isMobile && (
-                <span style={{ color: '#3d5a80', fontSize: 12, fontWeight: 400, marginLeft: 4 }}>· Paradas Seguras</span>
-              )}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                  Solar<span style={{ color: '#5a9fff' }}>Track</span>
+                  {!isMobile && (
+                    <span style={{ color: '#3d5a80', fontSize: 12, fontWeight: 400 }}>· Paradas Seguras</span>
+                  )}
+                </div>
+                {/* Ubicación real del usuario */}
+                {(userLocation || locLoading) && (
+                  <div style={{
+                    fontFamily: "'DM Mono',monospace", fontSize: 9, fontWeight: 400,
+                    color: userLocation ? '#00d4ff' : '#3d5a80',
+                    letterSpacing: 0.3, marginTop: 1,
+                    display: 'flex', alignItems: 'center', gap: 3,
+                  }}>
+                    {locLoading
+                      ? <span style={{ color: '#3d5a80' }}>📍 Obteniendo ubicación...</span>
+                      : <span>📍 {userLocation}</span>
+                    }
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 
