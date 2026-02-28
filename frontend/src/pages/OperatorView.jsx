@@ -94,14 +94,25 @@ export default function OperatorView() {
   const { user, devices, telemetry } = useStore()
   const [events, setEvents] = useState([])
   const [loading, setLoading] = useState(false)
-  const [filter, setFilter] = useState('pending') // pending | attending | all
+  const [filter, setFilter] = useState('assigned') // assigned | pending | attending | all
   const [actionLoading, setActionLoading] = useState({})
+  const [assignedDeviceIds, setAssignedDeviceIds] = useState([])
+
+  // Cargar paradas asignadas al operador
+  useEffect(() => {
+    if (!user?.id) return
+    axios.get(`${API}/users/${user.id}/devices`)
+      .then(r => setAssignedDeviceIds(r.data.map(d => d.device_id)))
+      .catch(() => setAssignedDeviceIds([]))
+  }, [user?.id])
 
   const fetchEvents = useCallback(async () => {
     setLoading(true)
     try {
-      const params = { limit: 50 }
-      if (filter !== 'all') params.status = filter
+      const params = { limit: 200 }
+      // Para "assigned" y otros filtros traemos todos y filtramos en frontend
+      if (filter === 'pending')   params.status = 'pending'
+      if (filter === 'attending') params.status = 'attending'
       const { data } = await axios.get(`${API}/events`, { params })
       setEvents(data.events || [])
     } catch (e) {
@@ -134,9 +145,15 @@ export default function OperatorView() {
     setActionLoading(a => ({ ...a, [id]: null }))
   }
 
-  const pendingCount   = events.filter(e => e.status === 'pending').length
-  const attendingCount = events.filter(e => e.status === 'attending').length
-  const criticalCount  = events.filter(e => e.severity === 'critical' && e.status !== 'resolved').length
+  // Filtrar eventos según tab activo
+  const assignedEvents = events.filter(e => assignedDeviceIds.includes(e.device_id))
+  const visibleEvents = filter === 'assigned'
+    ? assignedEvents.filter(e => e.status !== 'resolved')
+    : events
+
+  const pendingCount   = assignedEvents.filter(e => e.status === 'pending').length
+  const attendingCount = assignedEvents.filter(e => e.status === 'attending').length
+  const criticalCount  = assignedEvents.filter(e => e.severity === 'critical' && e.status !== 'resolved').length
 
   return (
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
@@ -176,6 +193,7 @@ export default function OperatorView() {
       {/* Filtros */}
       <div style={{ padding: '8px 20px', borderBottom: '1px solid #1a3050', display: 'flex', gap: 6, flexShrink: 0 }}>
         {[
+          { id: 'assigned',  label: '📍 Asignadas' },
           { id: 'pending',   label: '🔴 Pendientes' },
           { id: 'attending', label: '🟡 Atendiendo' },
           { id: 'all',       label: '📋 Todos' },
@@ -203,15 +221,21 @@ export default function OperatorView() {
           <div style={{ textAlign: 'center', color: '#3d5a80', padding: 40 }}>Cargando alertas...</div>
         )}
 
-        {!loading && events.length === 0 && (
+        {!loading && visibleEvents.length === 0 && (
           <div style={{ textAlign: 'center', color: '#3d5a80', padding: 60 }}>
             <div style={{ fontSize: 32, marginBottom: 12 }}>✅</div>
-            <div style={{ fontFamily: "'Syne',sans-serif", fontSize: 16, fontWeight: 700 }}>Sin alertas pendientes</div>
-            <div style={{ fontSize: 12, marginTop: 6 }}>Todas las alertas están atendidas</div>
+            <div style={{ fontFamily: "'Syne',sans-serif", fontSize: 16, fontWeight: 700 }}>
+              {filter === 'assigned' ? 'Sin alertas en tus paradas' : 'Sin alertas pendientes'}
+            </div>
+            <div style={{ fontSize: 12, marginTop: 6 }}>
+              {filter === 'assigned'
+                ? `Monitoreando ${assignedDeviceIds.length} paradas asignadas`
+                : 'Todas las alertas están atendidas'}
+            </div>
           </div>
         )}
 
-        {events.map(ev => {
+        {visibleEvents.map(ev => {
           const sev = SEV[ev.severity] || SEV.info
           const st  = STATUS_CFG[ev.status] || STATUS_CFG.pending
           const device = devices.find(d => d.device_id === ev.device_id)

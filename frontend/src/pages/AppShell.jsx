@@ -84,6 +84,13 @@ export default function AppShell() {
     return () => clearInterval(interval)
   }, [])
 
+  // Redirigir al operador a /alerts si llega al dashboard
+  useEffect(() => {
+    if (user?.role === 'operador' && loc.pathname === '/') {
+      navigate('/alerts', { replace: true })
+    }
+  }, [user?.role, loc.pathname])
+
   useEffect(() => {
     const update = () => {
       const now = new Date()
