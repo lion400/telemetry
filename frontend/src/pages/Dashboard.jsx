@@ -44,7 +44,7 @@ function DeviceRow({ device, telemetry, onClick }) {
 
   return (
     <div onClick={onClick} style={{
-      display: 'grid', gridTemplateColumns: '1.8fr 65px 90px 70px 70px 70px 80px',
+      display: 'grid', gridTemplateColumns: '1.6fr 65px 90px 70px 90px 90px 70px 80px',
       alignItems: 'center', padding: '10px 16px',
       borderBottom: '1px solid #1a3050', cursor: 'pointer', transition: 'background 0.15s',
     }}
@@ -77,6 +77,14 @@ function DeviceRow({ device, telemetry, onClick }) {
       </div>
       <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 12, color: '#5a9fff' }}>
         {t.voltage ? `${t.voltage.toFixed(2)}V` : '--'}
+      </div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+        <span style={{ fontFamily: "'DM Mono',monospace", fontSize: 10, color: '#00e676' }}>
+          ↑ {t.power_charge !== undefined ? `${t.power_charge.toFixed(0)}W` : '--'} · {t.current_charge !== undefined ? `${t.current_charge.toFixed(1)}A` : '--'}
+        </span>
+        <span style={{ fontFamily: "'DM Mono',monospace", fontSize: 10, color: '#ff5252' }}>
+          ↓ {t.power_discharge !== undefined ? `${t.power_discharge.toFixed(0)}W` : '--'} · {t.current_discharge !== undefined ? `${t.current_discharge.toFixed(1)}A` : '--'}
+        </span>
       </div>
       <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 12, color: '#ffd740' }}>
         {t.panel_power !== undefined ? `${t.panel_power.toFixed(0)}W` : '--'}
@@ -144,12 +152,14 @@ function DeviceCard({ device, telemetry, onClick }) {
       </div>
 
       {/* Métricas en fila */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 6 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 6 }}>
         {[
-          { l: 'Voltaje', v: t.voltage ? `${t.voltage.toFixed(2)}V` : '--', c: '#5a9fff' },
-          { l: 'Solar',   v: t.panel_power !== undefined ? `${t.panel_power.toFixed(0)}W` : '--', c: '#ffd740' },
-          { l: 'Temp',    v: t.temperature ? `${t.temperature.toFixed(1)}°` : '--', c: '#ff9800' },
-          { l: 'RSSI',    v: `${t.rssi ?? device.rssi ?? '--'} dBm`, c: (t.rssi ?? -200) > -100 ? '#00d4ff' : '#ff5252' },
+          { l: 'Voltaje',    v: t.voltage ? `${t.voltage.toFixed(2)}V` : '--', c: '#5a9fff' },
+          { l: 'P.Carga',    v: t.power_charge !== undefined ? `${t.power_charge.toFixed(0)}W` : '--', c: '#00e676' },
+          { l: 'P.Descarga', v: t.power_discharge !== undefined ? `${t.power_discharge.toFixed(0)}W` : '--', c: '#ff5252' },
+          { l: 'Solar',      v: t.panel_power !== undefined ? `${t.panel_power.toFixed(0)}W` : '--', c: '#ffd740' },
+          { l: 'Temp',       v: t.temperature ? `${t.temperature.toFixed(1)}°` : '--', c: '#ff9800' },
+          { l: 'RSSI',       v: `${t.rssi ?? device.rssi ?? '--'} dBm`, c: (t.rssi ?? -200) > -100 ? '#00d4ff' : '#ff5252' },
         ].map(m => (
           <div key={m.l} style={{ background: '#111f35', borderRadius: 6, padding: '6px 8px', textAlign: 'center' }}>
             <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 8, color: '#3d5a80', marginBottom: 2 }}>{m.l}</div>
@@ -223,8 +233,8 @@ export default function Dashboard() {
           </div>
         ) : (
           <div style={{ background: '#0c1829', border: '1px solid #1a3050', borderRadius: 12, overflow: 'hidden', flex: 1 }}>
-            <div style={{ display: 'grid', gridTemplateColumns: '1.8fr 65px 90px 70px 70px 70px 80px', padding: '10px 16px', borderBottom: '1px solid #1a3050', background: '#0c1829' }}>
-              {['Parada', 'Estado', 'SOC', 'Voltaje', 'Solar', 'Temp.', 'Puertas/RSSI'].map(h => (
+            <div style={{ display: 'grid', gridTemplateColumns: '1.6fr 65px 90px 70px 90px 90px 70px 80px', padding: '10px 16px', borderBottom: '1px solid #1a3050', background: '#0c1829' }}>
+              {['Parada', 'Estado', 'SOC', 'Voltaje', 'Carga / Descarga', 'Solar', 'Temp.', 'Puertas/RSSI'].map(h => (
                 <div key={h} style={{ fontFamily: "'DM Mono',monospace", fontSize: 9, letterSpacing: 1, color: '#3d5a80', textTransform: 'uppercase' }}>{h}</div>
               ))}
             </div>
