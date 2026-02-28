@@ -234,6 +234,22 @@ async function addV2Tables() {
   for (const sql of migrations) {
     try { await run(sql); } catch (e) { /* columna ya existe, ignorar */ }
   }
+
+  // Asignacion de paradas por usuario (TDR item 2)
+  await run(`CREATE TABLE IF NOT EXISTS user_devices (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    device_id TEXT NOT NULL REFERENCES devices(device_id) ON DELETE CASCADE,
+    UNIQUE(user_id, device_id)
+  )`);
+
+  // Tipos de reporte asignados por usuario (TDR item 2)
+  await run(`CREATE TABLE IF NOT EXISTS user_report_types (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    report_type TEXT NOT NULL,
+    UNIQUE(user_id, report_type)
+  )`);
 }
 
 module.exports = { initialize, addV2Tables, run, all, get, getDb };

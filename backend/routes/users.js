@@ -58,4 +58,63 @@ router.get('/access-log', requireRole('gerente'), async (req, res) => {
   res.json(rows);
 });
 
+// Change role (gerente only)
+router.put('/:id/role', requireRole('gerente'), async (req, res) => {
+  const { role } = req.body;
+  if (!['gerente', 'supervisor', 'operador'].includes(role)) {
+    return res.status(400).json({ error: 'Rol inválido' });
+  }
+  await db.run('UPDATE users SET role=? WHERE id=?', [role, req.params.id]);
+  if (req.app.locals.backup) req.app.locals.backup();
+  res.json({ ok: true });
+});
+
+// Get assigned devices for a user
+router.get('/:id/devices', requireRole('gerente'), async (req, res) => {
+  const rows = await db.all(
+    `SELECT ud.device_id, d.name, d.address, d.group_name
+     FROM user_devices ud
+     LEFT JOIN devices d ON ud.device_id = d.device_id
+     WHERE ud.user_id = ?`,
+    [req.params.id]
+  );
+  res.json(rows);
+});
+
+// Set assigned devices for a user (replaces all)
+router.put('/:id/devices', requireRole('gerente'), async (req, res) => {
+  const { device_ids } = req.body; // array of device_id strings
+  const uid = req.params.id;
+  await db.run('DELETE FROM user_devices WHERE user_id=?', [uid]);
+  for (const did of (device_ids || [])) {
+    await db.run('INSERT OR IGNORE INTO user_devices (user_id, device_id) VALUES (?,?)', [uid, did]);
+  }
+  if (req.app.locals.backup) req.app.locals.backup();
+  res.json({ ok: true, assigned: device_ids?.length || 0 });
+});
+
+// Get assigned report types for a user
+router.get('/:id/report-types', requireRole('gerente'), async (req, res) => {
+  const rows = await db.all(
+    'SELECT report_type FROM user_report_types WHERE user_id=?',
+    [req.params.id]
+  );
+  res.json(rows.map(r => r.report_type));
+});
+
+// Set assigned report types for a user (replaces all)
+router.put('/:id/report-types', requireRole('gerente'), async (req, res) => {
+  const VALID = ['telemetria', 'eventos', 'alertas', 'exportaciones'];
+  const { report_types } = req.body;
+  const uid = req.params.id;
+  await db.run('DELETE FROM user_report_types WHERE user_id=?', [uid]);
+  for (const rt of (report_types || [])) {
+    if (VALID.includes(rt)) {
+      await db.run('INSERT OR IGNORE INTO user_report_types (user_id, report_type) VALUES (?,?)', [uid, rt]);
+    }
+  }
+  if (req.app.locals.backup) req.app.locals.backup();
+  res.json({ ok: true });
+});
+
 module.exports = router;
