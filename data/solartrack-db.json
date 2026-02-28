@@ -4,24 +4,40 @@
       "id": 1,
       "username": "admin",
       "email": "admin@emov.gob.ec",
-      "password": "$2a$12$AvMdq5s2RMabQKrovAJYmejyEISAp/FFghh.2Ax4A0YwC8erysW1y",
+      "password": "$2a$12$tdfrBM3P8LNk1CwxbKNGaOIylL7vomOIVYPkmfwCftumktN93FO9m",
       "role": "gerente",
       "active": 1,
-      "created_at": "2026-02-28 18:41:13",
-      "last_login": null
+      "created_at": "2026-02-28 18:56:35",
+      "last_login": "2026-02-28 18:57:13"
     },
     {
       "id": 2,
-      "username": "vasquez_operador",
-      "email": "vasquez_operador@emov.gob.ec",
-      "password": "$2a$12$/tZyvd9DIzq5gBTutlYHiONFw8RyAuSmCb0iESxv5RTULQxEowVby",
+      "username": "vasquez",
+      "email": "vasquez.joperador@emov.gob.ec",
+      "password": "$2a$12$Shlj/J2EW93V1RUbnX00Gu6cbklcw9XoFO9T0TWhTaO/fANm0TsNO",
       "role": "operador",
       "active": 1,
-      "created_at": "2026-02-28 01:46:35",
-      "last_login": "2026-02-28 01:46:43"
+      "created_at": "2026-02-28 18:58:19",
+      "last_login": null
     }
   ],
   "access_log": [
+    {
+      "id": 2,
+      "user_id": 2,
+      "action": "created",
+      "ip": "::ffff:127.0.0.1",
+      "location": null,
+      "created_at": "2026-02-28 18:58:19"
+    },
+    {
+      "id": 1,
+      "user_id": 1,
+      "action": "login",
+      "ip": "::ffff:127.0.0.1",
+      "location": "Red local",
+      "created_at": "2026-02-28 18:57:13"
+    },
     {
       "id": 5,
       "user_id": 1,
@@ -45,28 +61,12 @@
       "ip": "157.100.105.110",
       "location": "Guayaquil, Ecuador",
       "created_at": "2026-02-28 01:46:43"
-    },
-    {
-      "id": 2,
-      "user_id": 2,
-      "action": "created",
-      "ip": "::1",
-      "location": null,
-      "created_at": "2026-02-28 01:46:35"
-    },
-    {
-      "id": 1,
-      "user_id": 1,
-      "action": "login",
-      "ip": "157.100.105.110",
-      "location": "Guayaquil, Ecuador",
-      "created_at": "2026-02-28 01:45:54"
     }
   ],
   "events": [
     {
-      "id": 13,
-      "device_id": "GV310-EC-4471",
+      "id": 14,
+      "device_id": "GV310-EC-4474",
       "type": "shock",
       "message": "Golpe/choque detectado (acelerómetro GV310LAU)",
       "severity": "warning",
@@ -77,7 +77,7 @@
       "attended_by": null,
       "resolved_at": null,
       "resolved_by": null,
-      "ts": "2026-02-28 18:41:17"
+      "ts": "2026-02-28 19:22:58"
     },
     {
       "id": 11,
@@ -86,13 +86,13 @@
       "message": "Dispositivo sin respuesta — sin reportes hace +15 min. Posible daño estructural por colisión",
       "severity": "critical",
       "address": null,
-      "resolved": 1,
-      "status": "resolved",
+      "resolved": 0,
+      "status": "pending",
       "attended_at": null,
       "attended_by": null,
-      "resolved_at": "2026-02-28 17:33:26",
-      "resolved_by": "admin",
-      "ts": "2026-02-28 17:33:15"
+      "resolved_at": null,
+      "resolved_by": null,
+      "ts": "2026-02-28 19:17:59"
     },
     {
       "id": 12,
@@ -107,7 +107,7 @@
       "attended_by": null,
       "resolved_at": null,
       "resolved_by": null,
-      "ts": "2026-02-28 17:33:15"
+      "ts": "2026-02-28 19:17:59"
     },
     {
       "id": 9,
@@ -116,13 +116,13 @@
       "message": "Señal crítica — posible daño físico en antena GV310LAU",
       "severity": "critical",
       "address": null,
-      "resolved": 1,
-      "status": "resolved",
+      "resolved": 0,
+      "status": "pending",
       "attended_at": null,
       "attended_by": null,
-      "resolved_at": "2026-02-28 17:33:23",
-      "resolved_by": "admin",
-      "ts": "2026-02-28 17:33:00"
+      "resolved_at": null,
+      "resolved_by": null,
+      "ts": "2026-02-28 19:17:44"
     },
     {
       "id": 10,
@@ -137,7 +137,7 @@
       "attended_by": null,
       "resolved_at": null,
       "resolved_by": null,
-      "ts": "2026-02-28 17:33:00"
+      "ts": "2026-02-28 19:17:44"
     },
     {
       "id": 7,
@@ -152,7 +152,7 @@
       "attended_by": null,
       "resolved_at": null,
       "resolved_by": null,
-      "ts": "2026-02-28 17:32:30"
+      "ts": "2026-02-28 19:17:14"
     },
     {
       "id": 8,
@@ -167,22 +167,7 @@
       "attended_by": null,
       "resolved_at": null,
       "resolved_by": null,
-      "ts": "2026-02-28 17:32:30"
-    },
-    {
-      "id": 6,
-      "device_id": "GV310-EC-4475",
-      "type": "disconnect_battery",
-      "message": "Dispositivo sin respuesta — sin reportes hace +15 min. Posible daño estructural por colisión",
-      "severity": "critical",
-      "address": null,
-      "resolved": 1,
-      "status": "resolved",
-      "attended_at": null,
-      "attended_by": null,
-      "resolved_at": "2026-02-28 17:32:38",
-      "resolved_by": "admin",
-      "ts": "2026-02-28 01:46:43"
+      "ts": "2026-02-28 19:17:14"
     },
     {
       "id": 5,
@@ -197,7 +182,22 @@
       "attended_by": null,
       "resolved_at": null,
       "resolved_by": null,
-      "ts": "2026-02-28 01:46:42"
+      "ts": "2026-02-28 18:57:50"
+    },
+    {
+      "id": 6,
+      "device_id": "GV310-EC-4475",
+      "type": "disconnect_battery",
+      "message": "Dispositivo sin respuesta — sin reportes hace +15 min. Posible daño estructural por colisión",
+      "severity": "critical",
+      "address": null,
+      "resolved": 0,
+      "status": "pending",
+      "attended_at": null,
+      "attended_by": null,
+      "resolved_at": null,
+      "resolved_by": null,
+      "ts": "2026-02-28 18:57:50"
     },
     {
       "id": 3,
@@ -212,7 +212,7 @@
       "attended_by": null,
       "resolved_at": null,
       "resolved_by": null,
-      "ts": "2026-02-28 01:46:27"
+      "ts": "2026-02-28 18:57:35"
     },
     {
       "id": 4,
@@ -221,13 +221,13 @@
       "message": "Señal crítica — posible daño físico en antena GV310LAU",
       "severity": "critical",
       "address": null,
-      "resolved": 1,
-      "status": "resolved",
+      "resolved": 0,
+      "status": "pending",
       "attended_at": null,
       "attended_by": null,
-      "resolved_at": "2026-02-28 17:32:54",
-      "resolved_by": "admin",
-      "ts": "2026-02-28 01:46:27"
+      "resolved_at": null,
+      "resolved_by": null,
+      "ts": "2026-02-28 18:57:35"
     },
     {
       "id": 1,
@@ -242,7 +242,7 @@
       "attended_by": null,
       "resolved_at": null,
       "resolved_by": null,
-      "ts": "2026-02-28 01:45:57"
+      "ts": "2026-02-28 18:57:05"
     },
     {
       "id": 2,
@@ -257,7 +257,22 @@
       "attended_by": null,
       "resolved_at": null,
       "resolved_by": null,
-      "ts": "2026-02-28 01:45:57"
+      "ts": "2026-02-28 18:57:05"
+    },
+    {
+      "id": 13,
+      "device_id": "GV310-EC-4471",
+      "type": "shock",
+      "message": "Golpe/choque detectado (acelerómetro GV310LAU)",
+      "severity": "warning",
+      "address": null,
+      "resolved": 0,
+      "status": "pending",
+      "attended_at": null,
+      "attended_by": null,
+      "resolved_at": null,
+      "resolved_by": null,
+      "ts": "2026-02-28 18:41:17"
     }
   ],
   "devices": [
@@ -272,8 +287,8 @@
       "lng": -79.3441,
       "photo_url": null,
       "active": 1,
-      "last_seen": "2026-02-28 18:41:30",
-      "created_at": "2026-02-28 18:41:13"
+      "last_seen": "2026-02-28 19:23:13",
+      "created_at": "2026-02-28 18:56:35"
     },
     {
       "id": 2,
@@ -286,8 +301,8 @@
       "lng": -79.3437,
       "photo_url": null,
       "active": 1,
-      "last_seen": "2026-02-28 18:41:30",
-      "created_at": "2026-02-28 18:41:13"
+      "last_seen": "2026-02-28 19:23:13",
+      "created_at": "2026-02-28 18:56:35"
     },
     {
       "id": 3,
@@ -300,8 +315,8 @@
       "lng": -79.3458,
       "photo_url": null,
       "active": 1,
-      "last_seen": "2026-02-28 18:41:30",
-      "created_at": "2026-02-28 18:41:13"
+      "last_seen": "2026-02-28 19:23:13",
+      "created_at": "2026-02-28 18:56:35"
     },
     {
       "id": 4,
@@ -314,8 +329,8 @@
       "lng": -79.3412,
       "photo_url": null,
       "active": 1,
-      "last_seen": "2026-02-28 18:41:30",
-      "created_at": "2026-02-28 18:41:13"
+      "last_seen": "2026-02-28 19:23:13",
+      "created_at": "2026-02-28 18:56:35"
     },
     {
       "id": 5,
@@ -328,8 +343,8 @@
       "lng": -79.3395,
       "photo_url": null,
       "active": 1,
-      "last_seen": "2026-02-28 18:41:30",
-      "created_at": "2026-02-28 18:41:13"
+      "last_seen": "2026-02-28 19:23:13",
+      "created_at": "2026-02-28 18:56:35"
     },
     {
       "id": 6,
@@ -342,8 +357,8 @@
       "lng": -79.347,
       "photo_url": null,
       "active": 1,
-      "last_seen": "2026-02-28 18:41:30",
-      "created_at": "2026-02-28 18:41:13"
+      "last_seen": "2026-02-28 19:23:13",
+      "created_at": "2026-02-28 18:56:35"
     },
     {
       "id": 7,
@@ -356,8 +371,8 @@
       "lng": -79.3428,
       "photo_url": null,
       "active": 1,
-      "last_seen": "2026-02-28 18:41:30",
-      "created_at": "2026-02-28 18:41:13"
+      "last_seen": "2026-02-28 19:23:13",
+      "created_at": "2026-02-28 18:56:35"
     },
     {
       "id": 8,
@@ -370,8 +385,8 @@
       "lng": -79.3388,
       "photo_url": null,
       "active": 1,
-      "last_seen": "2026-02-28 18:41:30",
-      "created_at": "2026-02-28 18:41:13"
+      "last_seen": "2026-02-28 19:23:13",
+      "created_at": "2026-02-28 18:56:35"
     }
   ],
   "geocercas": [
@@ -385,7 +400,7 @@
       "radius": 50,
       "polygon": null,
       "active": 1,
-      "created_at": "2026-02-28 18:41:13"
+      "created_at": "2026-02-28 18:56:35"
     },
     {
       "id": 2,
@@ -397,7 +412,7 @@
       "radius": 50,
       "polygon": null,
       "active": 1,
-      "created_at": "2026-02-28 18:41:13"
+      "created_at": "2026-02-28 18:56:35"
     },
     {
       "id": 3,
@@ -409,7 +424,7 @@
       "radius": 50,
       "polygon": null,
       "active": 1,
-      "created_at": "2026-02-28 18:41:13"
+      "created_at": "2026-02-28 18:56:35"
     },
     {
       "id": 4,
@@ -421,7 +436,7 @@
       "radius": 50,
       "polygon": null,
       "active": 1,
-      "created_at": "2026-02-28 18:41:13"
+      "created_at": "2026-02-28 18:56:35"
     },
     {
       "id": 5,
@@ -433,7 +448,7 @@
       "radius": 50,
       "polygon": null,
       "active": 1,
-      "created_at": "2026-02-28 18:41:13"
+      "created_at": "2026-02-28 18:56:35"
     },
     {
       "id": 6,
@@ -445,7 +460,7 @@
       "radius": 50,
       "polygon": null,
       "active": 1,
-      "created_at": "2026-02-28 18:41:13"
+      "created_at": "2026-02-28 18:56:35"
     },
     {
       "id": 7,
@@ -457,7 +472,7 @@
       "radius": 50,
       "polygon": null,
       "active": 1,
-      "created_at": "2026-02-28 18:41:13"
+      "created_at": "2026-02-28 18:56:35"
     },
     {
       "id": 8,
@@ -469,8 +484,8 @@
       "radius": 50,
       "polygon": null,
       "active": 1,
-      "created_at": "2026-02-28 18:41:13"
+      "created_at": "2026-02-28 18:56:35"
     }
   ],
-  "exported_at": "2026-02-28T18:41:32.794Z"
+  "exported_at": "2026-02-28T19:23:14.398Z"
 }
