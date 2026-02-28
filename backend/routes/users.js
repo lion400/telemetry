@@ -72,9 +72,10 @@ router.put('/:id/role', requireRole('gerente'), async (req, res) => {
 // Get assigned devices for a user
 router.get('/:id/devices', requireRole('gerente'), async (req, res) => {
   const rows = await db.all(
-    `SELECT ud.device_id, d.name, d.address, d.group_name
+    `SELECT ud.device_id, d.name, d.address, g.name as group_name
      FROM user_devices ud
      LEFT JOIN devices d ON ud.device_id = d.device_id
+     LEFT JOIN groups g ON d.group_id = g.id
      WHERE ud.user_id = ?`,
     [req.params.id]
   );
