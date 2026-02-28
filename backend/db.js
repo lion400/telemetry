@@ -221,4 +221,19 @@ async function initialize() {
   }
 }
 
-module.exports = { initialize, run, all, get, getDb };
+// Migraciones V2 — agrega columnas nuevas si no existen (safe to run multiple times)
+async function addV2Tables() {
+  const migrations = [
+    `ALTER TABLE events ADD COLUMN status TEXT DEFAULT 'pending'`,
+    `ALTER TABLE events ADD COLUMN attended_at DATETIME`,
+    `ALTER TABLE events ADD COLUMN attended_by TEXT`,
+    `ALTER TABLE events ADD COLUMN resolved_at DATETIME`,
+    `ALTER TABLE events ADD COLUMN resolved_by TEXT`,
+    `ALTER TABLE access_log ADD COLUMN location TEXT`,
+  ];
+  for (const sql of migrations) {
+    try { await run(sql); } catch (e) { /* columna ya existe, ignorar */ }
+  }
+}
+
+module.exports = { initialize, addV2Tables, run, all, get, getDb };
