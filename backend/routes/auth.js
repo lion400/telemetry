@@ -54,11 +54,13 @@ router.post('/login', async (req, res) => {
     const rawIP = req.headers['x-forwarded-for']?.split(',')[0].trim() || req.ip;
 
     // Geolocalizar en background — no bloquea el login
-    geolocateIP(rawIP).then(location => {
-      db.run(
+    geolocateIP(rawIP).then(async location => {
+      await db.run(
         'INSERT INTO access_log (user_id, action, ip, location) VALUES (?,?,?,?)',
         [user.id, 'login', rawIP, location]
       ).catch(() => {});
+      // Backup a GitHub después del login
+      if (req.app.locals.backup) req.app.locals.backup();
     });
 
     await db.run('UPDATE users SET last_login=CURRENT_TIMESTAMP WHERE id=?', [user.id]);
@@ -83,11 +85,12 @@ router.get('/me', verifyToken, async (req, res) => {
 // ── Logout ────────────────────────────────────────────────────────────────────
 router.post('/logout', verifyToken, async (req, res) => {
   const rawIP = req.headers['x-forwarded-for']?.split(',')[0].trim() || req.ip;
-  geolocateIP(rawIP).then(location => {
-    db.run(
+  geolocateIP(rawIP).then(async location => {
+    await db.run(
       'INSERT INTO access_log (user_id, action, ip, location) VALUES (?,?,?,?)',
       [req.user.id, 'logout', rawIP, location]
     ).catch(() => {});
+    if (req.app.locals.backup) req.app.locals.backup();
   });
   res.json({ ok: true });
 });

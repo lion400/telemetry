@@ -63,6 +63,7 @@ router.put('/:id/attend', verifyToken, async (req, res) => {
       `UPDATE events SET status='attending', attended_at=CURRENT_TIMESTAMP, attended_by=? WHERE id=?`,
       [req.user.username, req.params.id]
     );
+    if (req.app.locals.backup) req.app.locals.backup();
     res.json({ ok: true });
   } catch (e) {
     res.status(500).json({ error: e.message });
@@ -76,6 +77,7 @@ router.put('/:id/resolve', verifyToken, async (req, res) => {
       `UPDATE events SET status='resolved', resolved=1, resolved_at=CURRENT_TIMESTAMP, resolved_by=? WHERE id=?`,
       [req.user.username, req.params.id]
     );
+    if (req.app.locals.backup) req.app.locals.backup();
     res.json({ ok: true });
   } catch (e) {
     res.status(500).json({ error: e.message });

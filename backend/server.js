@@ -52,6 +52,12 @@ app.use('/api/geocercas', verifyToken, geocercaRoutes);
 app.use('/api/users', verifyToken, usersRoutes);
 app.use('/api/alerts', verifyToken, alertsRoutes);
 
+const brandingRoutes = require('./routes/branding');
+const exportRoutes   = require('./routes/export');
+const notifRoutes    = require('./routes/notifications');
+app.use('/api/branding',      brandingRoutes);
+app.use('/api/export', verifyToken, exportRoutes);
+app.use('/api/notify', verifyToken, notifRoutes);
 // Health check
 app.get('/api/health', (req, res) => res.json({ status: 'ok', version: '1.0.0' }));
 
@@ -96,15 +102,29 @@ io.on('connection', (socket) => {
 app.set('io', io);
 
 // Initialize DB then start
-db.initialize().then(() => {
+const { backup, restore, enabled: githubEnabled } = require('./github-persist');
+
+db.initialize().then(async () => {
+  await db.addV2Tables();
+
+  // Restaurar DB desde GitHub si está configurado
+  if (githubEnabled) {
+    console.log('🔄 Restaurando datos desde GitHub...');
+    await restore(db);
+  }
+
   // Start simulator (replace with real Queclink webhook in production)
   simulateTelemetry(io);
-  
+
+  // Exponer backup para los routes
+  app.locals.backup = () => backup(db);
+
   const PORT = process.env.PORT || 3001;
   server.listen(PORT, () => {
     console.log(`\n🚀 SolarTrack backend running on port ${PORT}`);
     console.log(`📡 WebSocket server ready`);
-    console.log(`🗄  Database initialized\n`);
+    console.log(`🗄  Database initialized`);
+    console.log(`💾 GitHub persist: ${githubEnabled ? '✅ activo' : '⚠️  deshabilitado (configura GITHUB_TOKEN)'}\n`);
   });
 }).catch(err => {
   console.error('DB init failed:', err);

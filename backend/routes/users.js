@@ -26,6 +26,7 @@ router.post('/', requireRole('gerente'), async (req, res) => {
     );
     await db.run('INSERT INTO access_log (user_id, action, ip) VALUES (?,?,?)',
       [result.lastID, 'created', req.ip]);
+    if (req.app.locals.backup) req.app.locals.backup();
     res.json({ id: result.lastID });
   } catch (e) {
     res.status(400).json({ error: 'El usuario o email ya existe' });
@@ -41,6 +42,7 @@ router.put('/:id/toggle', requireRole('gerente'), async (req, res) => {
   const user = await db.get('SELECT id, active FROM users WHERE id=?', [req.params.id]);
   await db.run('INSERT INTO access_log (user_id, action, ip) VALUES (?,?,?)',
     [req.params.id, user.active ? 'activated' : 'deactivated', req.ip]);
+  if (req.app.locals.backup) req.app.locals.backup();
   res.json({ ok: true, active: user.active });
 });
 
