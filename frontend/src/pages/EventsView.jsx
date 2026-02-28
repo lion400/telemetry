@@ -16,6 +16,52 @@ const TYPES = {
   weak_signal: 'Señal débil',
 }
 
+// Cronómetro SLA inline para la tabla
+function SLATimerInline({ attendDeadline, resolveDeadline, status }) {
+  const [attendDisplay, setAttendDisplay] = useState('')
+  const [resolveDisplay, setResolveDisplay] = useState('')
+  const [attendOverdue, setAttendOverdue] = useState(false)
+  const [resolveOverdue, setResolveOverdue] = useState(false)
+
+  function fmt(ms) {
+    const abs = Math.abs(ms)
+    const h = Math.floor(abs / 3600000)
+    const m = Math.floor((abs % 3600000) / 60000)
+    if (h > 24) return `${Math.floor(h/24)}d ${h%24}h`
+    return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`
+  }
+
+  useEffect(() => {
+    function update() {
+      const now = Date.now()
+      const da = new Date(attendDeadline).getTime() - now
+      const dr = new Date(resolveDeadline).getTime() - now
+      setAttendOverdue(da < 0)
+      setResolveOverdue(dr < 0)
+      setAttendDisplay(fmt(da))
+      setResolveDisplay(fmt(dr))
+    }
+    update()
+    const t = setInterval(update, 60000)
+    return () => clearInterval(t)
+  }, [attendDeadline, resolveDeadline])
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+      {status === 'pending' && (
+        <div style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 9, fontFamily: "'DM Mono',monospace" }}>
+          <span style={{ color: '#3d5a80' }}>Atención:</span>
+          <span style={{ color: attendOverdue ? '#ff5252' : '#ffd740' }}>{attendOverdue ? '⚠ +' : ''}{attendDisplay}</span>
+        </div>
+      )}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 9, fontFamily: "'DM Mono',monospace" }}>
+        <span style={{ color: '#3d5a80' }}>Resolución:</span>
+        <span style={{ color: resolveOverdue ? '#ff5252' : '#6b8ab0' }}>{resolveOverdue ? '⚠ +' : ''}{resolveDisplay}</span>
+      </div>
+    </div>
+  )
+}
+
 const SEVERITIES = {
   info:     { color: '#5a9fff', label: 'Info' },
   warning:  { color: '#ffd740', label: 'Aviso' },
@@ -242,7 +288,7 @@ export default function EventsView() {
         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead>
             <tr style={{ background: '#0c1829', position: 'sticky', top: 0, zIndex: 10 }}>
-              {['Fecha / Hora', 'Parada', 'Tipo', 'Severidad', 'Mensaje', 'Dirección', 'Acciones'].map(h => (
+              {['Fecha / Hora', 'Parada', 'Tipo', 'Severidad', 'Estado', 'SLA', 'Mensaje', 'Acciones'].map(h => (
                 <th key={h} style={{ padding: '10px 16px', textAlign: 'left', borderBottom: '1px solid #1a3050', fontFamily: "'DM Mono',monospace", fontSize: 9, letterSpacing: 1, color: '#3d5a80', textTransform: 'uppercase', fontWeight: 400 }}>
                   {h}
                 </th>
@@ -251,11 +297,13 @@ export default function EventsView() {
           </thead>
           <tbody>
             {loading ? (
-              <tr><td colSpan={7} style={{ padding: 40, textAlign: 'center', color: '#3d5a80' }}>Cargando...</td></tr>
+              <tr><td colSpan={8} style={{ padding: 40, textAlign: 'center', color: '#3d5a80' }}>Cargando...</td></tr>
             ) : events.length === 0 ? (
-              <tr><td colSpan={7} style={{ padding: 40, textAlign: 'center', color: '#3d5a80' }}>Sin eventos encontrados</td></tr>
+              <tr><td colSpan={8} style={{ padding: 40, textAlign: 'center', color: '#3d5a80' }}>Sin eventos encontrados</td></tr>
             ) : events.map(ev => {
               const sev = SEVERITIES[ev.severity] || SEVERITIES.info
+              const stCfg = { pending: { color: '#ff5252', label: '🔴 Pendiente' }, attending: { color: '#ffd740', label: '🟡 Atendiendo' }, resolved: { color: '#00e676', label: '🟢 Resuelto' } }
+              const st = stCfg[ev.status] || stCfg.pending
               return (
                 <tr key={ev.id}
                   style={{ borderBottom: '1px solid #1a3050', opacity: ev.resolved ? 0.5 : 1 }}
@@ -279,8 +327,23 @@ export default function EventsView() {
                       {sev.label}
                     </span>
                   </td>
-                  <td style={{ padding: '10px 16px', fontSize: 12, maxWidth: 280 }}>{ev.message}</td>
-                  <td style={{ padding: '10px 16px', fontSize: 11, color: '#6b8ab0' }}>{ev.address || '—'}</td>
+                  <td style={{ padding: '10px 16px' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                      <span style={{ fontSize: 11, color: st.color, fontFamily: "'DM Mono',monospace" }}>{st.label}</span>
+                      {ev.attended_by && <span style={{ fontSize: 9, color: '#3d5a80' }}>👤 {ev.attended_by}</span>}
+                      {ev.resolved_by  && <span style={{ fontSize: 9, color: '#00e676' }}>✅ {ev.resolved_by}</span>}
+                    </div>
+                  </td>
+                  <td style={{ padding: '10px 16px' }}>
+                    {ev.status !== 'resolved' && ev.sla_attend_deadline && (
+                      <SLATimerInline
+                        attendDeadline={ev.sla_attend_deadline}
+                        resolveDeadline={ev.sla_resolve_deadline}
+                        status={ev.status}
+                      />
+                    )}
+                  </td>
+                  <td style={{ padding: '10px 16px', fontSize: 12, maxWidth: 240 }}>{ev.message}</td>
                   <td style={{ padding: '10px 16px' }}>
                     {!ev.resolved && (
                       <button onClick={() => resolve(ev.id)} style={{

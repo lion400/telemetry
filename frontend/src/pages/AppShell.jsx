@@ -6,12 +6,14 @@ import MapView from './MapView'
 import EventsView from './EventsView'
 import UsersView from './UsersView'
 import DeviceDetail from './DeviceDetail'
+import OperatorView from './OperatorView'
 
 const NAV = [
-  { id: '/',       label: 'Dashboard', icon: '⬡' },
-  { id: '/map',    label: 'Mapa',      icon: '⌖' },
-  { id: '/events', label: 'Eventos',   icon: '◈', badge: 'unread' },
-  { id: '/users',  label: 'Usuarios',  icon: '◻', roles: ['gerente', 'supervisor'] },
+  { id: '/',         label: 'Dashboard', icon: '⬡', roles: ['gerente', 'supervisor', 'admin'] },
+  { id: '/map',      label: 'Mapa',      icon: '⌖' },
+  { id: '/alerts',   label: 'Alertas',   icon: '🔔', badge: 'unread', roles: ['operador'] },
+  { id: '/events',   label: 'Eventos',   icon: '◈', badge: 'unread', roles: ['gerente', 'supervisor', 'admin'] },
+  { id: '/users',    label: 'Usuarios',  icon: '◻', roles: ['gerente', 'admin'] },
 ]
 
 // Hook para detectar tamaño de pantalla
@@ -440,6 +442,7 @@ export default function AppShell() {
           <Routes>
             <Route path="/"           element={<Dashboard />} />
             <Route path="/map"        element={<MapView />} />
+            <Route path="/alerts"     element={<OperatorView />} />
             <Route path="/events"     element={<EventsView />} />
             <Route path="/users"      element={<UsersView />} />
             <Route path="/device/:id" element={<DeviceDetail />} />

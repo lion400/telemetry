@@ -145,6 +145,12 @@ async function initialize() {
       CHECK(severity IN ('info','warning','critical')),
     address TEXT,
     resolved INTEGER DEFAULT 0,
+    -- Flujo de atención: pending → attending → resolved
+    status TEXT DEFAULT 'pending' CHECK(status IN ('pending','attending','resolved')),
+    attended_at DATETIME,
+    attended_by TEXT,
+    resolved_at DATETIME,
+    resolved_by TEXT,
     ts DATETIME DEFAULT CURRENT_TIMESTAMP
   )`);
 
