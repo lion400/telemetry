@@ -142,10 +142,10 @@ export default function UsersView() {
         )}
       </div>
 
-      <div style={{ flex: 1, overflow: 'auto', padding: '16px 24px', display: 'flex', gap: 16 }}>
+      <div style={{ flex: 1, overflow: 'auto', padding: '16px 24px', display: 'flex', flexDirection: 'column', gap: 16 }}>
 
         {/* Columna izquierda — lista + form */}
-        <div style={{ flex: selectedUser ? '0 0 55%' : '1', display: 'flex', flexDirection: 'column', gap: 14 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
 
           {/* Formulario nuevo usuario */}
           {showForm && (
@@ -322,8 +322,8 @@ export default function UsersView() {
         {/* Columna derecha — panel de asignación */}
         {selectedUser && (
           <div style={{
-            flex: '0 0 42%', background: '#0c1829', border: '1px solid #1a3050',
-            borderRadius: 12, display: 'flex', flexDirection: 'column', overflow: 'hidden',
+            background: '#0c1829', border: '1px solid #1a3050',
+            borderRadius: 12, display: 'flex', flexDirection: 'column', overflow: 'hidden', maxHeight: 520,
           }}>
             {/* Header panel */}
             <div style={{ padding: '14px 18px', borderBottom: '1px solid #1a3050', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
