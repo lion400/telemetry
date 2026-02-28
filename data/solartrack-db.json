@@ -87,12 +87,12 @@
       "message": "Impacto severo detectado — posible colisión de vehículo contra parada",
       "severity": "critical",
       "address": null,
-      "resolved": 0,
-      "status": "pending",
+      "resolved": 1,
+      "status": "resolved",
       "attended_at": null,
       "attended_by": null,
-      "resolved_at": null,
-      "resolved_by": null,
+      "resolved_at": "2026-02-28 21:46:23",
+      "resolved_by": "admin",
       "ts": "2026-02-28 21:46:04"
     },
     {
@@ -668,5 +668,5 @@
       "created_at": "2026-02-28 18:56:35"
     }
   ],
-  "exported_at": "2026-02-28T21:46:21.093Z"
+  "exported_at": "2026-02-28T21:46:23.623Z"
 }
