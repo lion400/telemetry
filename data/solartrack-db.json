@@ -4,11 +4,11 @@
       "id": 1,
       "username": "admin",
       "email": "admin@emov.gob.ec",
-      "password": "$2a$12$A1hlR/Bltrs1IOchGj8ENe5qVqeo99joltRHiiIdOpexREOGm7rXu",
+      "password": "$2a$12$yoPx7ypIw8/RgOB8tRYx8uvaAaHVkdbHfIEZEIvHqWQo.3dhZhp1i",
       "role": "gerente",
       "active": 1,
-      "created_at": "2026-02-28 01:45:26",
-      "last_login": "2026-02-28 01:54:24"
+      "created_at": "2026-02-28 17:31:58",
+      "last_login": null
     },
     {
       "id": 2,
@@ -65,10 +65,10 @@
   ],
   "events": [
     {
-      "id": 6,
-      "device_id": "GV310-EC-4475",
-      "type": "disconnect_battery",
-      "message": "Dispositivo sin respuesta — sin reportes hace +15 min. Posible daño estructural por colisión",
+      "id": 7,
+      "device_id": "GV310-EC-4473",
+      "type": "shock",
+      "message": "Impacto severo detectado — posible colisión de vehículo contra parada",
       "severity": "critical",
       "address": null,
       "resolved": 0,
@@ -77,6 +77,36 @@
       "attended_by": null,
       "resolved_at": null,
       "resolved_by": null,
+      "ts": "2026-02-28 17:32:30"
+    },
+    {
+      "id": 8,
+      "device_id": "GV310-EC-4475",
+      "type": "shock",
+      "message": "Impacto severo detectado — posible colisión de vehículo contra parada",
+      "severity": "critical",
+      "address": null,
+      "resolved": 0,
+      "status": "pending",
+      "attended_at": null,
+      "attended_by": null,
+      "resolved_at": null,
+      "resolved_by": null,
+      "ts": "2026-02-28 17:32:30"
+    },
+    {
+      "id": 6,
+      "device_id": "GV310-EC-4475",
+      "type": "disconnect_battery",
+      "message": "Dispositivo sin respuesta — sin reportes hace +15 min. Posible daño estructural por colisión",
+      "severity": "critical",
+      "address": null,
+      "resolved": 1,
+      "status": "resolved",
+      "attended_at": null,
+      "attended_by": null,
+      "resolved_at": "2026-02-28 17:32:38",
+      "resolved_by": "admin",
       "ts": "2026-02-28 01:46:43"
     },
     {
@@ -167,8 +197,8 @@
       "lng": -79.3441,
       "photo_url": null,
       "active": 1,
-      "last_seen": "2026-02-28 01:54:12",
-      "created_at": "2026-02-28 01:45:26"
+      "last_seen": "2026-02-28 17:32:30",
+      "created_at": "2026-02-28 17:31:58"
     },
     {
       "id": 2,
@@ -181,8 +211,8 @@
       "lng": -79.3437,
       "photo_url": null,
       "active": 1,
-      "last_seen": "2026-02-28 01:54:12",
-      "created_at": "2026-02-28 01:45:26"
+      "last_seen": "2026-02-28 17:32:30",
+      "created_at": "2026-02-28 17:31:58"
     },
     {
       "id": 3,
@@ -195,8 +225,8 @@
       "lng": -79.3458,
       "photo_url": null,
       "active": 1,
-      "last_seen": "2026-02-28 01:26:43",
-      "created_at": "2026-02-28 01:45:26"
+      "last_seen": "2026-02-28 17:32:30",
+      "created_at": "2026-02-28 17:31:58"
     },
     {
       "id": 4,
@@ -209,8 +239,8 @@
       "lng": -79.3412,
       "photo_url": null,
       "active": 1,
-      "last_seen": "2026-02-28 01:54:12",
-      "created_at": "2026-02-28 01:45:26"
+      "last_seen": "2026-02-28 17:32:30",
+      "created_at": "2026-02-28 17:31:58"
     },
     {
       "id": 5,
@@ -223,8 +253,8 @@
       "lng": -79.3395,
       "photo_url": null,
       "active": 1,
-      "last_seen": "2026-02-28 01:26:43",
-      "created_at": "2026-02-28 01:45:27"
+      "last_seen": "2026-02-28 17:32:30",
+      "created_at": "2026-02-28 17:31:58"
     },
     {
       "id": 6,
@@ -237,8 +267,8 @@
       "lng": -79.347,
       "photo_url": null,
       "active": 1,
-      "last_seen": "2026-02-28 01:54:12",
-      "created_at": "2026-02-28 01:45:27"
+      "last_seen": "2026-02-28 17:32:30",
+      "created_at": "2026-02-28 17:31:59"
     },
     {
       "id": 7,
@@ -251,8 +281,8 @@
       "lng": -79.3428,
       "photo_url": null,
       "active": 1,
-      "last_seen": "2026-02-28 01:54:12",
-      "created_at": "2026-02-28 01:45:27"
+      "last_seen": "2026-02-28 17:32:30",
+      "created_at": "2026-02-28 17:31:59"
     },
     {
       "id": 8,
@@ -265,8 +295,8 @@
       "lng": -79.3388,
       "photo_url": null,
       "active": 1,
-      "last_seen": "2026-02-28 01:54:12",
-      "created_at": "2026-02-28 01:45:27"
+      "last_seen": "2026-02-28 17:32:30",
+      "created_at": "2026-02-28 17:31:59"
     }
   ],
   "geocercas": [
@@ -280,7 +310,7 @@
       "radius": 50,
       "polygon": null,
       "active": 1,
-      "created_at": "2026-02-28 01:45:26"
+      "created_at": "2026-02-28 17:31:58"
     },
     {
       "id": 2,
@@ -292,7 +322,7 @@
       "radius": 50,
       "polygon": null,
       "active": 1,
-      "created_at": "2026-02-28 01:45:26"
+      "created_at": "2026-02-28 17:31:58"
     },
     {
       "id": 3,
@@ -304,7 +334,7 @@
       "radius": 50,
       "polygon": null,
       "active": 1,
-      "created_at": "2026-02-28 01:45:26"
+      "created_at": "2026-02-28 17:31:58"
     },
     {
       "id": 4,
@@ -316,7 +346,7 @@
       "radius": 50,
       "polygon": null,
       "active": 1,
-      "created_at": "2026-02-28 01:45:26"
+      "created_at": "2026-02-28 17:31:58"
     },
     {
       "id": 5,
@@ -328,7 +358,7 @@
       "radius": 50,
       "polygon": null,
       "active": 1,
-      "created_at": "2026-02-28 01:45:27"
+      "created_at": "2026-02-28 17:31:58"
     },
     {
       "id": 6,
@@ -340,7 +370,7 @@
       "radius": 50,
       "polygon": null,
       "active": 1,
-      "created_at": "2026-02-28 01:45:27"
+      "created_at": "2026-02-28 17:31:59"
     },
     {
       "id": 7,
@@ -352,7 +382,7 @@
       "radius": 50,
       "polygon": null,
       "active": 1,
-      "created_at": "2026-02-28 01:45:27"
+      "created_at": "2026-02-28 17:31:59"
     },
     {
       "id": 8,
@@ -364,8 +394,8 @@
       "radius": 50,
       "polygon": null,
       "active": 1,
-      "created_at": "2026-02-28 01:45:27"
+      "created_at": "2026-02-28 17:31:59"
     }
   ],
-  "exported_at": "2026-02-28T01:54:25.282Z"
+  "exported_at": "2026-02-28T17:32:38.689Z"
 }
