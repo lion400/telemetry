@@ -1,1 +1,238 @@
-[]
+{
+  "users": [
+    {
+      "id": 1,
+      "username": "admin",
+      "email": "admin@emov.gob.ec",
+      "password": "$2a$12$A1hlR/Bltrs1IOchGj8ENe5qVqeo99joltRHiiIdOpexREOGm7rXu",
+      "role": "gerente",
+      "active": 1,
+      "created_at": "2026-02-28 01:45:26",
+      "last_login": "2026-02-28 01:45:54"
+    }
+  ],
+  "access_log": [
+    {
+      "id": 1,
+      "user_id": 1,
+      "action": "login",
+      "ip": "157.100.105.110",
+      "location": "Guayaquil, Ecuador",
+      "created_at": "2026-02-28 01:45:54"
+    }
+  ],
+  "events": [],
+  "devices": [
+    {
+      "id": 1,
+      "device_id": "GV310-EC-4471",
+      "imei": "863286020377033",
+      "name": "Parada 01 - Terminal Terrestre",
+      "address": "Av. 25 de Agosto y Av. Olmedo",
+      "group_id": 1,
+      "lat": -2.4128,
+      "lng": -79.3441,
+      "photo_url": null,
+      "active": 1,
+      "last_seen": "2026-02-28 01:45:42",
+      "created_at": "2026-02-28 01:45:26"
+    },
+    {
+      "id": 2,
+      "device_id": "GV310-EC-4472",
+      "imei": "863286020377034",
+      "name": "Parada 02 - Parque Central",
+      "address": "Calle 4 de Noviembre y Manuel J. Calle",
+      "group_id": 3,
+      "lat": -2.4204,
+      "lng": -79.3437,
+      "photo_url": null,
+      "active": 1,
+      "last_seen": "2026-02-28 01:45:42",
+      "created_at": "2026-02-28 01:45:26"
+    },
+    {
+      "id": 3,
+      "device_id": "GV310-EC-4473",
+      "imei": "863286020377035",
+      "name": "Parada 03 - Mercado Municipal",
+      "address": "Av. Olmedo y Calle 7",
+      "group_id": 1,
+      "lat": -2.4185,
+      "lng": -79.3458,
+      "photo_url": null,
+      "active": 1,
+      "last_seen": "2026-02-28 01:45:42",
+      "created_at": "2026-02-28 01:45:26"
+    },
+    {
+      "id": 4,
+      "device_id": "GV310-EC-4474",
+      "imei": "863286020377036",
+      "name": "Parada 04 - Hospital La Troncal",
+      "address": "Av. 3 de Noviembre s/n",
+      "group_id": 2,
+      "lat": -2.423,
+      "lng": -79.3412,
+      "photo_url": null,
+      "active": 1,
+      "last_seen": "2026-02-28 01:45:42",
+      "created_at": "2026-02-28 01:45:26"
+    },
+    {
+      "id": 5,
+      "device_id": "GV310-EC-4475",
+      "imei": "863286020377037",
+      "name": "Parada 05 - Colegio Técnico",
+      "address": "Av. Panamericana y Calle 12",
+      "group_id": 2,
+      "lat": -2.4162,
+      "lng": -79.3395,
+      "photo_url": null,
+      "active": 1,
+      "last_seen": "2026-02-28 01:45:42",
+      "created_at": "2026-02-28 01:45:27"
+    },
+    {
+      "id": 6,
+      "device_id": "GV310-EC-4476",
+      "imei": "863286020377038",
+      "name": "Parada 06 - Barrio La Merced",
+      "address": "Calle Sucre y Av. 6 de Enero",
+      "group_id": 3,
+      "lat": -2.4251,
+      "lng": -79.347,
+      "photo_url": null,
+      "active": 1,
+      "last_seen": "2026-02-28 01:45:42",
+      "created_at": "2026-02-28 01:45:27"
+    },
+    {
+      "id": 7,
+      "device_id": "GV310-EC-4477",
+      "imei": "863286020377039",
+      "name": "Parada 07 - Ingreso Norte",
+      "address": "Vía La Troncal - El Triunfo km 1",
+      "group_id": 1,
+      "lat": -2.4095,
+      "lng": -79.3428,
+      "photo_url": null,
+      "active": 1,
+      "last_seen": "2026-02-28 01:45:42",
+      "created_at": "2026-02-28 01:45:27"
+    },
+    {
+      "id": 8,
+      "device_id": "GV310-EC-4478",
+      "imei": "863286020377040",
+      "name": "Parada 08 - Barrio Los Pinos",
+      "address": "Av. Los Pinos y Calle 15",
+      "group_id": 2,
+      "lat": -2.4278,
+      "lng": -79.3388,
+      "photo_url": null,
+      "active": 1,
+      "last_seen": "2026-02-28 01:45:42",
+      "created_at": "2026-02-28 01:45:27"
+    }
+  ],
+  "geocercas": [
+    {
+      "id": 1,
+      "device_id": "GV310-EC-4471",
+      "name": "Zona Parada 01 - Terminal Terrestre",
+      "type": "circle",
+      "center_lat": -2.4128,
+      "center_lng": -79.3441,
+      "radius": 50,
+      "polygon": null,
+      "active": 1,
+      "created_at": "2026-02-28 01:45:26"
+    },
+    {
+      "id": 2,
+      "device_id": "GV310-EC-4472",
+      "name": "Zona Parada 02 - Parque Central",
+      "type": "circle",
+      "center_lat": -2.4204,
+      "center_lng": -79.3437,
+      "radius": 50,
+      "polygon": null,
+      "active": 1,
+      "created_at": "2026-02-28 01:45:26"
+    },
+    {
+      "id": 3,
+      "device_id": "GV310-EC-4473",
+      "name": "Zona Parada 03 - Mercado Municipal",
+      "type": "circle",
+      "center_lat": -2.4185,
+      "center_lng": -79.3458,
+      "radius": 50,
+      "polygon": null,
+      "active": 1,
+      "created_at": "2026-02-28 01:45:26"
+    },
+    {
+      "id": 4,
+      "device_id": "GV310-EC-4474",
+      "name": "Zona Parada 04 - Hospital La Troncal",
+      "type": "circle",
+      "center_lat": -2.423,
+      "center_lng": -79.3412,
+      "radius": 50,
+      "polygon": null,
+      "active": 1,
+      "created_at": "2026-02-28 01:45:26"
+    },
+    {
+      "id": 5,
+      "device_id": "GV310-EC-4475",
+      "name": "Zona Parada 05 - Colegio Técnico",
+      "type": "circle",
+      "center_lat": -2.4162,
+      "center_lng": -79.3395,
+      "radius": 50,
+      "polygon": null,
+      "active": 1,
+      "created_at": "2026-02-28 01:45:27"
+    },
+    {
+      "id": 6,
+      "device_id": "GV310-EC-4476",
+      "name": "Zona Parada 06 - Barrio La Merced",
+      "type": "circle",
+      "center_lat": -2.4251,
+      "center_lng": -79.347,
+      "radius": 50,
+      "polygon": null,
+      "active": 1,
+      "created_at": "2026-02-28 01:45:27"
+    },
+    {
+      "id": 7,
+      "device_id": "GV310-EC-4477",
+      "name": "Zona Parada 07 - Ingreso Norte",
+      "type": "circle",
+      "center_lat": -2.4095,
+      "center_lng": -79.3428,
+      "radius": 50,
+      "polygon": null,
+      "active": 1,
+      "created_at": "2026-02-28 01:45:27"
+    },
+    {
+      "id": 8,
+      "device_id": "GV310-EC-4478",
+      "name": "Zona Parada 08 - Barrio Los Pinos",
+      "type": "circle",
+      "center_lat": -2.4278,
+      "center_lng": -79.3388,
+      "radius": 50,
+      "polygon": null,
+      "active": 1,
+      "created_at": "2026-02-28 01:45:27"
+    }
+  ],
+  "exported_at": "2026-02-28T01:45:54.642Z"
+}
