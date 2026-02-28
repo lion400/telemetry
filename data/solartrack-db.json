@@ -18,10 +18,18 @@
       "role": "operador",
       "active": 1,
       "created_at": "2026-02-28 18:58:19",
-      "last_login": null
+      "last_login": "2026-02-28 19:46:59"
     }
   ],
   "access_log": [
+    {
+      "id": 6,
+      "user_id": 2,
+      "action": "login",
+      "ip": "157.100.105.110",
+      "location": "Guayaquil, Ecuador",
+      "created_at": "2026-02-28 19:46:59"
+    },
     {
       "id": 2,
       "user_id": 2,
@@ -392,7 +400,7 @@
       "lng": -79.3441,
       "photo_url": null,
       "active": 1,
-      "last_seen": "2026-02-28 19:46:24",
+      "last_seen": "2026-02-28 19:46:54",
       "created_at": "2026-02-28 18:56:35"
     },
     {
@@ -406,7 +414,7 @@
       "lng": -79.3437,
       "photo_url": null,
       "active": 1,
-      "last_seen": "2026-02-28 19:46:24",
+      "last_seen": "2026-02-28 19:46:54",
       "created_at": "2026-02-28 18:56:35"
     },
     {
@@ -434,7 +442,7 @@
       "lng": -79.3412,
       "photo_url": null,
       "active": 1,
-      "last_seen": "2026-02-28 19:46:24",
+      "last_seen": "2026-02-28 19:46:54",
       "created_at": "2026-02-28 18:56:35"
     },
     {
@@ -462,7 +470,7 @@
       "lng": -79.347,
       "photo_url": null,
       "active": 1,
-      "last_seen": "2026-02-28 19:46:24",
+      "last_seen": "2026-02-28 19:46:54",
       "created_at": "2026-02-28 18:56:35"
     },
     {
@@ -476,7 +484,7 @@
       "lng": -79.3428,
       "photo_url": null,
       "active": 1,
-      "last_seen": "2026-02-28 19:46:24",
+      "last_seen": "2026-02-28 19:46:54",
       "created_at": "2026-02-28 18:56:35"
     },
     {
@@ -490,7 +498,7 @@
       "lng": -79.3388,
       "photo_url": null,
       "active": 1,
-      "last_seen": "2026-02-28 19:46:24",
+      "last_seen": "2026-02-28 19:46:54",
       "created_at": "2026-02-28 18:56:35"
     }
   ],
@@ -592,5 +600,5 @@
       "created_at": "2026-02-28 18:56:35"
     }
   ],
-  "exported_at": "2026-02-28T19:46:35.166Z"
+  "exported_at": "2026-02-28T19:46:59.504Z"
 }
