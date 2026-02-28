@@ -28,7 +28,7 @@ function useIsMobile() {
 }
 
 export default function AppShell() {
-  const { user, logout, unreadEvents, fetchDevices, fetchEvents, fetchGeocercas } = useStore()
+  const { user, logout, unreadEvents, fetchDevices, fetchEvents, fetchGeocercas, markAlertsSeen } = useStore()
   const navigate = useNavigate()
   const loc = useLocation()
   const [clock, setClock] = useState('')
@@ -90,6 +90,14 @@ export default function AppShell() {
       navigate('/alerts', { replace: true })
     }
   }, [user?.role, loc.pathname])
+
+  // Marcar alertas como vistas cuando el usuario entra a la sección de alertas/eventos
+  useEffect(() => {
+    const alertRoutes = ['/alerts', '/events']
+    if (alertRoutes.some(r => loc.pathname.startsWith(r))) {
+      markAlertsSeen()
+    }
+  }, [loc.pathname])
 
   useEffect(() => {
     const update = () => {

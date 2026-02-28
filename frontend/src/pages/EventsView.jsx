@@ -91,7 +91,7 @@ function getColValue(ev, colId) {
 }
 
 export default function EventsView() {
-  const { devices } = useStore()
+  const { devices, fetchEvents: storeFetchEvents } = useStore()
   const [events, setEvents] = useState([])
   const [total, setTotal] = useState(0)
   const [filters, setFilters] = useState({ device_id: '', severity: '', type: '', from: '', to: '' })
@@ -122,6 +122,7 @@ export default function EventsView() {
   const resolve = async (id) => {
     await axios.put(`${API}/events/${id}/resolve`)
     fetchEvents()
+    storeFetchEvents()  // sincroniza badge del sidebar
   }
 
   const toggleCol = (id) => {

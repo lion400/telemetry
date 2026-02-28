@@ -88,13 +88,34 @@ export const useStore = create((set, get) => ({
   events: [],
   unreadEvents: 0,
 
+  // Devuelve la clave localStorage para el timestamp de "visto" por usuario
+  _seenKey: () => {
+    const uid = get().user?.id ?? 'anon'
+    return `alerts_seen_${uid}`
+  },
+
+  // Marca las alertas como vistas ahora mismo (para este usuario)
+  markAlertsSeen: () => {
+    const key = get()._seenKey()
+    const now = new Date().toISOString()
+    localStorage.setItem(key, now)
+    set({ unreadEvents: 0 })
+  },
+
   fetchEvents: async (params = {}) => {
     try {
       const { data } = await axios.get(`${API}/events`, { params })
-      set({
-        events: data.events,
-        unreadEvents: data.events.filter(e => !e.resolved).length,
-      })
+      // Calcular no-leídos: eventos pendientes/atendiendo creados DESPUÉS
+      // del último "visto" de este usuario
+      const key = get()._seenKey()
+      const seenAt = localStorage.getItem(key)
+      const unread = data.events.filter(e => {
+        if (e.status === 'resolved') return false
+        if (!seenAt) return true
+        const evTs = e.ts ? new Date(e.ts.endsWith('Z') ? e.ts : e.ts + 'Z') : new Date(0)
+        return evTs > new Date(seenAt)
+      }).length
+      set({ events: data.events, unreadEvents: unread })
       return data
     } catch (e) {
       console.error('fetchEvents:', e)

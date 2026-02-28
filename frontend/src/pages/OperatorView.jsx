@@ -91,7 +91,7 @@ function SLATimer({ deadline, label, compact }) {
 
 export default function OperatorView() {
   const navigate = useNavigate()
-  const { user, devices, telemetry } = useStore()
+  const { user, devices, telemetry, fetchEvents: storeFetchEvents } = useStore()
   const [events, setEvents] = useState([])
   const [loading, setLoading] = useState(false)
   const [filter, setFilter] = useState('assigned') // assigned | pending | attending | all
@@ -132,6 +132,7 @@ export default function OperatorView() {
     try {
       await axios.put(`${API}/events/${id}/attend`)
       fetchEvents()
+      storeFetchEvents()  // sincroniza badge del sidebar
     } catch (e) {}
     setActionLoading(a => ({ ...a, [id]: null }))
   }
@@ -141,6 +142,7 @@ export default function OperatorView() {
     try {
       await axios.put(`${API}/events/${id}/resolve`)
       fetchEvents()
+      storeFetchEvents()  // sincroniza badge del sidebar
     } catch (e) {}
     setActionLoading(a => ({ ...a, [id]: null }))
   }
