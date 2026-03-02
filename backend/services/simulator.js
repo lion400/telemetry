@@ -19,17 +19,17 @@
 
 const db = require('../db');
 
-// La Troncal, Cañar, Ecuador
-// HMH3+675 → Parada 01 (norte) · HMG5+29V → Parada 02 (centro)
+// Cuenca, Azuay, Ecuador
+// Paradas distribuidas por la ciudad: Terminal, Centro Histórico, Totoracocha, Baños, U de Cuenca
 const devices = [
-  { id: 'GV310-EC-4471', lat: -2.4128, lng: -79.3441, imei: '863286020377033' }, // Terminal Terrestre
-  { id: 'GV310-EC-4472', lat: -2.4204, lng: -79.3437, imei: '863286020377034' }, // Parque Central
-  { id: 'GV310-EC-4473', lat: -2.4185, lng: -79.3458, imei: '863286020377035' }, // Mercado Municipal
-  { id: 'GV310-EC-4474', lat: -2.4230, lng: -79.3412, imei: '863286020377036' }, // Hospital
-  { id: 'GV310-EC-4475', lat: -2.4162, lng: -79.3395, imei: '863286020377037' }, // Colegio Técnico
-  { id: 'GV310-EC-4476', lat: -2.4251, lng: -79.3470, imei: '863286020377038' }, // Barrio La Merced
-  { id: 'GV310-EC-4477', lat: -2.4095, lng: -79.3428, imei: '863286020377039' }, // Ingreso Norte
-  { id: 'GV310-EC-4478', lat: -2.4278, lng: -79.3388, imei: '863286020377040' }, // Barrio Los Pinos
+  { id: 'GV310-EC-4471', lat: -2.8889, lng: -78.9988, imei: '863286020377033' }, // Terminal Terrestre
+  { id: 'GV310-EC-4472', lat: -2.8970, lng: -79.0045, imei: '863286020377034' }, // Parque Calderón
+  { id: 'GV310-EC-4473', lat: -2.9001, lng: -79.0012, imei: '863286020377035' }, // Mercado 10 de Agosto
+  { id: 'GV310-EC-4474', lat: -2.9058, lng: -79.0089, imei: '863286020377036' }, // Hospital Regional
+  { id: 'GV310-EC-4475', lat: -2.9027, lng: -79.0001, imei: '863286020377037' }, // Universidad de Cuenca
+  { id: 'GV310-EC-4476', lat: -2.8942, lng: -79.0163, imei: '863286020377038' }, // Feria Libre
+  { id: 'GV310-EC-4477', lat: -2.8871, lng: -78.9893, imei: '863286020377039' }, // Sector Totoracocha
+  { id: 'GV310-EC-4478', lat: -2.9212, lng: -79.0328, imei: '863286020377040' }, // Baños
 ];
 
 // ── Constantes reales de hardware ────────────────────────────
@@ -125,7 +125,7 @@ async function tick(io) {
   const hour = now.getHours();
   const min = now.getMinutes();
 
-  // Factor solar real — Quito lat ~0°, max mediodía
+  // Factor solar real — Cuenca lat ~-2.9°, max mediodía
   const solarFactor = (hour >= 6 && hour <= 18)
     ? Math.max(0, Math.sin(((hour + min / 60 - 6) / 12) * Math.PI))
     : 0;

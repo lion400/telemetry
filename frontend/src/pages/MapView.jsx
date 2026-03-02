@@ -38,19 +38,11 @@ export default function MapView() {
       zoomControl: false,
     })
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '© OpenStreetMap',
-      maxZoom: 19,
-    }).addTo(map)
-
-
-
-    // Etiquetas de calles y lugares encima del satélite (CartoDB)
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_only_labels/{z}/{x}/{y}{r}.png', {
-      attribution: '© CARTO',
+    // CartoDB Voyager — mejor opción gratuita, zoom completo nivel 20
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+      attribution: '© OpenStreetMap © CARTO',
       subdomains: 'abcd',
-      maxZoom: 19,
-      opacity: 0.9,
+      maxZoom: 20,
     }).addTo(map)
 
     L.control.zoom({ position: 'bottomright' }).addTo(map)
@@ -82,7 +74,7 @@ export default function MapView() {
 
       const soc = t.soc ?? device.soc ?? 0
       const status = device.status || 'offline'
-      const color = status === 'online' ? (soc > 50 ? '#00e676' : soc > 20 ? '#ffd740' : '#ff5252') : '#6b8ab0'
+      const color = status === 'online' ? (soc > 50 ? 'var(--online, #00e676)' : soc > 20 ? 'var(--warning, #ffd740)' : 'var(--offline, #ff5252)') : 'var(--text-secondary, #6b8ab0)'
       const isSelected = selectedDevices.has(device.device_id)
 
       const html = `
@@ -93,10 +85,10 @@ export default function MapView() {
         ">
           <div style="
             width:100%;height:100%;
-            background:linear-gradient(135deg,#1a6fff,${color});
+            background:linear-gradient(135deg,var(--accent, #1a6fff),${color});
             border-radius:50% 50% 50% 0;
             transform:rotate(-45deg);
-            border:3px solid ${isSelected ? '#ffffff' : '#060d1a'};
+            border:3px solid ${isSelected ? '#ffffff' : 'var(--bg-app, #060d1a)'};
             box-shadow:0 4px 16px rgba(26,111,255,${isSelected ? 0.8 : 0.4});
           "></div>
           <div style="
@@ -107,7 +99,7 @@ export default function MapView() {
           ${status === 'online' ? `<div style="
             position:absolute;top:0;right:0;
             width:10px;height:10px;border-radius:50%;
-            background:${color};border:2px solid #060d1a;
+            background:${color};border:2px solid var(--bg-app, #060d1a);
           "></div>` : ''}
         </div>`
 
@@ -127,18 +119,18 @@ export default function MapView() {
         }).addTo(map)
 
         marker.bindPopup(`
-          <div style="font-family:'DM Sans',sans-serif;color:#e8f0fe;background:#0c1829;min-width:200px;padding:4px">
+          <div style="font-family:'DM Sans',sans-serif;color:var(--text-primary, #e8f0fe);background:var(--bg-card, #0c1829);min-width:200px;padding:4px">
             <div style="font-family:'Syne',sans-serif;font-size:14px;font-weight:700;margin-bottom:8px">${device.name}</div>
-            <div style="font-size:11px;color:#6b8ab0;margin-bottom:12px">${device.address || ''}</div>
+            <div style="font-size:11px;color:var(--text-secondary, #6b8ab0);margin-bottom:12px">${device.address || ''}</div>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:12px;">
-              <div><span style="color:#3d5a80">SOC</span><br><strong style="color:#1a6fff">${soc}%</strong></div>
-              <div><span style="color:#3d5a80">Voltaje</span><br><strong style="color:#00d4ff">${(t.voltage||0).toFixed(1)}V</strong></div>
-              <div><span style="color:#3d5a80">Temp</span><br><strong style="color:#ffd740">${(t.temperature||0).toFixed(1)}°C</strong></div>
-              <div><span style="color:#3d5a80">Señal</span><br><strong style="color:#00e676">${t.rssi||'--'} dBm</strong></div>
+              <div><span style="color:var(--text-muted,#3d5a80)">SOC</span><br><strong style="color:var(--accent,#1a6fff)">${soc}%</strong></div>
+              <div><span style="color:var(--text-muted,#3d5a80)">Voltaje</span><br><strong style="color:var(--accent2,#00d4ff)">${(t.voltage||0).toFixed(1)}V</strong></div>
+              <div><span style="color:var(--text-muted,#3d5a80)">Temp</span><br><strong style="color:var(--warning,#ffd740)">${(t.temperature||0).toFixed(1)}°C</strong></div>
+              <div><span style="color:var(--text-muted,#3d5a80)">Señal</span><br><strong style="color:var(--online,#00e676)">${t.rssi||'--'} dBm</strong></div>
             </div>
             <button onclick="window.__navigateToDevice('${device.device_id}')" style="
               width:100%;margin-top:12px;padding:6px 12px;
-              background:#1a6fff;border:none;border-radius:6px;
+              background:var(--accent, #1a6fff);border:none;border-radius:6px;
               color:#fff;cursor:pointer;font-size:12px;font-family:'Syne',sans-serif;font-weight:600;
             ">Ver detalle →</button>
           </div>
@@ -173,7 +165,7 @@ export default function MapView() {
       if (g.type === 'circle' && g.center_lat) {
         const circle = L.circle([g.center_lat, g.center_lng], {
           radius: g.radius || 50,
-          color: '#1a6fff', fillColor: '#1a6fff',
+          color: 'var(--accent, #1a6fff)', fillColor: 'var(--accent, #1a6fff)',
           fillOpacity: 0.08, weight: 1,
         }).addTo(map)
         geocercaLayersRef.current.push(circle)
@@ -213,19 +205,19 @@ export default function MapView() {
       <div style={{
         width: sidebarOpen ? '22%' : 0,
         maxWidth: 280, minWidth: sidebarOpen ? 200 : 0,
-        borderRight: '1px solid #1a3050',
-        background: 'rgba(12,24,41,0.95)',
+        borderRight: '1px solid var(--border, #1a3050)',
+        background: 'var(--bg-sidebar, rgba(12,24,41,0.95))',
         display: 'flex', flexDirection: 'column',
         transition: 'all 0.2s ease', overflow: 'hidden',
       }}>
-        <div style={{ padding: '12px 12px 8px', borderBottom: '1px solid #1a3050', flexShrink: 0 }}>
+        <div style={{ padding: '12px 12px 8px', borderBottom: '1px solid var(--border, #1a3050)', flexShrink: 0 }}>
           <div style={{ fontFamily: "'Syne',sans-serif", fontSize: 13, fontWeight: 700, marginBottom: 8 }}>Paradas</div>
           <input
             type="text" placeholder="Buscar parada..."
             value={filter} onChange={e => setFilter(e.target.value)}
             style={{
-              width: '100%', background: '#111f35', border: '1px solid #1a3050',
-              borderRadius: 6, padding: '6px 10px', color: '#e8f0fe', fontSize: 12,
+              width: '100%', background: 'var(--bg-input, #111f35)', border: '1px solid var(--border, #1a3050)',
+              borderRadius: 6, padding: '6px 10px', color: 'var(--text-primary, #e8f0fe)', fontSize: 12,
               outline: 'none',
             }}
           />
@@ -238,7 +230,7 @@ export default function MapView() {
                 style={{
                   padding: '6px 12px', cursor: 'pointer',
                   display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                  color: '#6b8ab0', fontSize: 11, fontFamily: "'DM Mono',monospace",
+                  color: 'var(--text-secondary, #6b8ab0)', fontSize: 11, fontFamily: "'DM Mono',monospace",
                   letterSpacing: 0.8, textTransform: 'uppercase',
                 }}
               >
@@ -257,27 +249,27 @@ export default function MapView() {
                     style={{
                       padding: '8px 12px 8px 20px', cursor: 'pointer',
                       borderBottom: '1px solid rgba(26,48,80,0.5)',
-                      background: selectedDevices.has(d.device_id) ? 'rgba(26,111,255,0.1)' : 'transparent',
+                      background: selectedDevices.has(d.device_id) ? 'var(--nav-active-bg, rgba(26,111,255,0.1))' : 'transparent',
                       transition: 'background 0.15s',
                     }}
-                    onMouseEnter={e => e.currentTarget.style.background = 'rgba(26,111,255,0.08)'}
-                    onMouseLeave={e => e.currentTarget.style.background = selectedDevices.has(d.device_id) ? 'rgba(26,111,255,0.1)' : 'transparent'}
+                    onMouseEnter={e => e.currentTarget.style.background = 'var(--nav-active-bg, rgba(26,111,255,0.08))'}
+                    onMouseLeave={e => e.currentTarget.style.background = selectedDevices.has(d.device_id) ? 'var(--nav-active-bg, rgba(26,111,255,0.1))' : 'transparent'}
                   >
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                       <div style={{ flex: 1, minWidth: 0 }}>
                         <div style={{ fontSize: 12, fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                          <span style={{ display: 'inline-block', width: 6, height: 6, borderRadius: '50%', background: isOnline ? '#00e676' : '#ff5252', marginRight: 6 }} />
+                          <span style={{ display: 'inline-block', width: 6, height: 6, borderRadius: '50%', background: isOnline ? 'var(--online, #00e676)' : 'var(--offline, #ff5252)', marginRight: 6 }} />
                           {d.name}
                         </div>
-                        <div style={{ fontSize: 10, color: '#3d5a80', marginTop: 2, fontFamily: "'DM Mono',monospace" }}>SOC: {soc}%</div>
+                        <div style={{ fontSize: 10, color: 'var(--text-muted, #3d5a80)', marginTop: 2, fontFamily: "'DM Mono',monospace" }}>SOC: {soc}%</div>
                       </div>
                       <div style={{ display: 'flex', gap: 4 }}>
                         <button onClick={(e) => { e.stopPropagation(); flyTo(d) }}
-                          style={{ background: 'none', border: '1px solid #1a3050', borderRadius: 4, padding: '2px 6px', color: '#6b8ab0', cursor: 'pointer', fontSize: 11 }}>
+                          style={{ background: 'none', border: '1px solid var(--border, #1a3050)', borderRadius: 4, padding: '2px 6px', color: 'var(--text-secondary, #6b8ab0)', cursor: 'pointer', fontSize: 11 }}>
                           📍
                         </button>
                         <button onClick={(e) => { e.stopPropagation(); navigate(`/device/${d.device_id}`) }}
-                          style={{ background: 'none', border: '1px solid #1a3050', borderRadius: 4, padding: '2px 6px', color: '#6b8ab0', cursor: 'pointer', fontSize: 11 }}>
+                          style={{ background: 'none', border: '1px solid var(--border, #1a3050)', borderRadius: 4, padding: '2px 6px', color: 'var(--text-secondary, #6b8ab0)', cursor: 'pointer', fontSize: 11 }}>
                           →
                         </button>
                       </div>
@@ -294,10 +286,10 @@ export default function MapView() {
       <div style={{ flex: 1, position: 'relative' }}>
         <style>{`
           .dark-popup .leaflet-popup-content-wrapper {
-            background: #0c1829 !important; border: 1px solid #1a3050 !important;
-            border-radius: 10px !important; color: #e8f0fe !important; padding: 0 !important;
+            background: var(--bg-card, #0c1829) !important; border: 1px solid var(--border, #1a3050) !important;
+            border-radius: 10px !important; color: var(--text-primary, #e8f0fe) !important; padding: 0 !important;
           }
-          .dark-popup .leaflet-popup-tip { background: #0c1829 !important; }
+          .dark-popup .leaflet-popup-tip { background: var(--bg-card, #0c1829) !important; }
           .dark-popup .leaflet-popup-content { margin: 12px !important; }
           .leaflet-tile { filter: saturate(0.6) brightness(0.75) hue-rotate(200deg) !important; }
         `}</style>
@@ -311,9 +303,10 @@ export default function MapView() {
           <button
             onClick={() => setSidebarOpen(o => !o)}
             style={{
-              background: 'rgba(6,13,26,0.9)', border: '1px solid #1a3050',
-              borderRadius: 8, padding: '7px 12px', color: '#e8f0fe',
-              cursor: 'pointer', fontSize: 12, backdropFilter: 'blur(8px)',
+              background: 'rgba(15,20,35,0.88)', border: '1px solid rgba(255,255,255,0.15)',
+              borderRadius: 8, padding: '7px 14px', color: '#FFFFFF',
+              cursor: 'pointer', fontSize: 12, fontWeight: 600,
+              backdropFilter: 'blur(10px)', boxShadow: '0 2px 8px rgba(0,0,0,0.4)',
             }}
           >
             {sidebarOpen ? '◀ Lista' : '▶ Lista'}
@@ -321,13 +314,15 @@ export default function MapView() {
           <button
             onClick={() => setShowGeocercas(g => !g)}
             style={{
-              background: 'rgba(6,13,26,0.9)', border: `1px solid ${showGeocercas ? '#1a6fff' : '#1a3050'}`,
-              borderRadius: 8, padding: '7px 12px',
-              color: showGeocercas ? '#5a9fff' : '#6b8ab0',
-              cursor: 'pointer', fontSize: 12, backdropFilter: 'blur(8px)',
+              background: showGeocercas ? 'rgba(221,16,46,0.88)' : 'rgba(15,20,35,0.88)',
+              border: `1px solid ${showGeocercas ? 'rgba(255,255,255,0.3)' : 'rgba(255,255,255,0.15)'}`,
+              borderRadius: 8, padding: '7px 14px',
+              color: '#FFFFFF', fontWeight: 600,
+              cursor: 'pointer', fontSize: 12,
+              backdropFilter: 'blur(10px)', boxShadow: '0 2px 8px rgba(0,0,0,0.4)',
             }}
           >
-            Geocercas
+            🔵 Geocercas
           </button>
         </div>
 
@@ -338,15 +333,22 @@ export default function MapView() {
         }}>
           {devices.slice(0, 4).map(d => {
             const t = telemetry[d.device_id] || {}
+            const soc = t.soc ?? '--'
+            const socNum = typeof soc === 'number' ? soc : null
+            const socColor = socNum === null ? '#AAAAAA' : socNum > 50 ? '#00e676' : socNum > 20 ? '#ffd740' : '#ff5252'
             return (
               <div key={d.device_id} style={{
-                background: 'rgba(6,13,26,0.9)', border: '1px solid #1a3050',
-                borderRadius: 8, padding: '6px 12px', backdropFilter: 'blur(8px)',
+                background: 'rgba(10,16,30,0.92)',
+                border: '1px solid rgba(255,255,255,0.12)',
+                borderLeft: `3px solid ${socColor}`,
+                borderRadius: 8, padding: '6px 12px',
+                backdropFilter: 'blur(12px)',
+                boxShadow: '0 2px 12px rgba(0,0,0,0.5)',
                 fontFamily: "'DM Mono',monospace", fontSize: 10,
-                display: 'flex', gap: 10, alignItems: 'center',
+                display: 'flex', gap: 10, alignItems: 'center', minWidth: 120,
               }}>
-                <span style={{ color: '#3d5a80' }}>{d.name.split(' ')[1]}</span>
-                <span style={{ color: '#1a6fff' }}>{t.soc ?? '--'}%</span>
+                <span style={{ color: '#AAAAAA', fontSize: 9 }}>{d.name.split(' ')[1]}</span>
+                <span style={{ color: socColor, fontWeight: 700 }}>{soc}%</span>
                 <span style={{ color: '#ffd740' }}>{t.panel_power ? `${t.panel_power.toFixed(0)}W` : '--'}</span>
               </div>
             )

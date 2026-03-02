@@ -50,22 +50,22 @@ function SLATimerInline({ attendDeadline, resolveDeadline, status }) {
     <div style={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
       {status === 'pending' && (
         <div style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 9, fontFamily: "'DM Mono',monospace" }}>
-          <span style={{ color: '#3d5a80' }}>Atención:</span>
-          <span style={{ color: attendOverdue ? '#ff5252' : '#ffd740' }}>{attendOverdue ? '⚠ +' : ''}{attendDisplay}</span>
+          <span style={{ color: 'var(--text-muted, var(--text-muted, #3d5a80))' }}>Atención:</span>
+          <span style={{ color: attendOverdue ? 'var(--offline, var(--offline, #ff5252))' : 'var(--warning, var(--warning, #ffd740))' }}>{attendOverdue ? '⚠ +' : ''}{attendDisplay}</span>
         </div>
       )}
       <div style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 9, fontFamily: "'DM Mono',monospace" }}>
-        <span style={{ color: '#3d5a80' }}>Resolución:</span>
-        <span style={{ color: resolveOverdue ? '#ff5252' : '#6b8ab0' }}>{resolveOverdue ? '⚠ +' : ''}{resolveDisplay}</span>
+        <span style={{ color: 'var(--text-muted, var(--text-muted, #3d5a80))' }}>Resolución:</span>
+        <span style={{ color: resolveOverdue ? 'var(--offline, var(--offline, #ff5252))' : 'var(--text-secondary, var(--text-secondary, #6b8ab0))' }}>{resolveOverdue ? '⚠ +' : ''}{resolveDisplay}</span>
       </div>
     </div>
   )
 }
 
 const SEVERITIES = {
-  info:     { color: '#5a9fff', label: 'Info' },
-  warning:  { color: '#ffd740', label: 'Aviso' },
-  critical: { color: '#ff5252', label: 'Crítico' },
+  info:     { color: 'var(--accent, var(--accent, #5a9fff))', label: 'Info' },
+  warning:  { color: 'var(--warning, var(--warning, #ffd740))', label: 'Aviso' },
+  critical: { color: 'var(--offline, var(--offline, #ff5252))', label: 'Crítico' },
 }
 
 // Columnas exportables (especificación: hora/fecha, parada, tipo, mensaje, dirección)
@@ -169,10 +169,10 @@ export default function EventsView() {
       <title>Eventos SolarTrack — EMOV</title>
       <style>
         body{font-family:Arial,sans-serif;font-size:10px;margin:20px}
-        h2{color:#1a3050;margin-bottom:4px}
-        .sub{color:#6b8ab0;font-size:9px;margin-bottom:12px}
+        h2{color:var(--border, #1a3050);margin-bottom:4px}
+        .sub{color:var(--text-secondary, #6b8ab0);font-size:9px;margin-bottom:12px}
         table{width:100%;border-collapse:collapse}
-        th{background:#1a3050;color:#fff;padding:6px 8px;text-align:left;font-size:9px}
+        th{background:var(--border, #1a3050);color:#fff;padding:6px 8px;text-align:left;font-size:9px}
         td{padding:5px 8px;border-bottom:1px solid #e0e0e0;font-size:9px}
         tr:nth-child(even){background:#f5f8ff}
       </style>
@@ -200,8 +200,8 @@ export default function EventsView() {
   const esc = (s) => String(s).replace(/</g, '&lt;').replace(/>/g, '&gt;')
 
   const inp = {
-    background: '#111f35', border: '1px solid #1a3050', borderRadius: 6,
-    padding: '6px 10px', color: '#e8f0fe', fontSize: 12, outline: 'none',
+    background: 'var(--bg-input, var(--bg-input, #111f35))', border: '1px solid #1a3050', borderRadius: 6,
+    padding: '6px 10px', color: 'var(--text-primary, var(--text-primary, #e8f0fe))', fontSize: 12, outline: 'none',
   }
 
   return (
@@ -211,7 +211,7 @@ export default function EventsView() {
       <div style={{ padding: '14px 24px', borderBottom: '1px solid #1a3050', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div>
           <h1 style={{ fontFamily: "'Syne',sans-serif", fontSize: 20, fontWeight: 800 }}>Historial de Eventos</h1>
-          <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 10, color: '#3d5a80', marginTop: 2 }}>
+          <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 10, color: 'var(--text-muted, var(--text-muted, #3d5a80))', marginTop: 2 }}>
             {total} eventos · últimos 12 meses
           </div>
         </div>
@@ -220,24 +220,24 @@ export default function EventsView() {
         <div style={{ position: 'relative' }}>
           <button
             onClick={() => setShowExportMenu(m => !m)}
-            style={{ background: '#1a6fff', border: 'none', borderRadius: 8, padding: '8px 16px', color: '#fff', cursor: 'pointer', fontFamily: "'Syne',sans-serif", fontWeight: 600, fontSize: 12 }}>
+            style={{ background: 'var(--accent, var(--accent, #1a6fff))', border: 'none', borderRadius: 8, padding: '8px 16px', color: '#fff', cursor: 'pointer', fontFamily: "'Syne',sans-serif", fontWeight: 600, fontSize: 12 }}>
             ↓ Exportar ▾
           </button>
 
           {showExportMenu && (
             <div style={{
               position: 'absolute', right: 0, top: 40, zIndex: 500, width: 300,
-              background: '#0c1829', border: '1px solid #1a3050', borderRadius: 12,
+              background: 'var(--bg-card, var(--bg-card, #0c1829))', border: '1px solid #1a3050', borderRadius: 12,
               padding: '14px', boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
             }}>
               {/* Selector de columnas */}
-              <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9, letterSpacing: 1.5, color: '#3d5a80', textTransform: 'uppercase', marginBottom: 10 }}>
+              <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9, letterSpacing: 1.5, color: 'var(--text-muted, var(--text-muted, #3d5a80))', textTransform: 'uppercase', marginBottom: 10 }}>
                 Columnas a exportar
               </div>
               {ALL_COLUMNS.map(c => (
                 <label key={c.id} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '4px 0', cursor: 'pointer', fontSize: 12 }}>
                   <input type="checkbox" checked={selectedCols.has(c.id)} onChange={() => toggleCol(c.id)}
-                    style={{ accentColor: '#1a6fff', width: 14, height: 14 }} />
+                    style={{ accentColor: 'var(--accent, var(--accent, #1a6fff))', width: 14, height: 14 }} />
                   {c.label}
                 </label>
               ))}
@@ -248,8 +248,8 @@ export default function EventsView() {
                   { label: '🖨 Exportar PDF', fn: exportPDF },
                 ].map(({ label, fn }) => (
                   <button key={label} onClick={fn} style={{
-                    background: '#111f35', border: '1px solid #1a3050', borderRadius: 7,
-                    padding: '8px 12px', color: '#e8f0fe', cursor: 'pointer', fontSize: 12, textAlign: 'left',
+                    background: 'var(--bg-input, var(--bg-input, #111f35))', border: '1px solid #1a3050', borderRadius: 7,
+                    padding: '8px 12px', color: 'var(--text-primary, var(--text-primary, #e8f0fe))', cursor: 'pointer', fontSize: 12, textAlign: 'left',
                   }}>
                     {label}
                   </button>
@@ -261,7 +261,7 @@ export default function EventsView() {
       </div>
 
       {/* Filtros */}
-      <div style={{ padding: '10px 24px', borderBottom: '1px solid #1a3050', display: 'flex', gap: 10, flexWrap: 'wrap', background: '#0c1829' }}>
+      <div style={{ padding: '10px 24px', borderBottom: '1px solid #1a3050', display: 'flex', gap: 10, flexWrap: 'wrap', background: 'var(--bg-card, var(--bg-card, #0c1829))' }}>
         <select style={inp} value={filters.device_id} onChange={e => { setFilters(f => ({...f, device_id: e.target.value})); setPage(0) }}>
           <option value="">Todas las paradas</option>
           {devices.map(d => <option key={d.device_id} value={d.device_id}>{d.name}</option>)}
@@ -279,7 +279,7 @@ export default function EventsView() {
         <input type="date" style={inp} value={filters.from} onChange={e => { setFilters(f => ({...f, from: e.target.value})); setPage(0) }} />
         <input type="date" style={inp} value={filters.to}   onChange={e => { setFilters(f => ({...f, to: e.target.value})); setPage(0) }} />
         <button onClick={() => { setFilters({ device_id:'',severity:'',type:'',from:'',to:'' }); setPage(0) }}
-          style={{ ...inp, cursor: 'pointer', color: '#6b8ab0' }}>
+          style={{ ...inp, cursor: 'pointer', color: 'var(--text-secondary, var(--text-secondary, #6b8ab0))' }}>
           Limpiar
         </button>
       </div>
@@ -288,9 +288,9 @@ export default function EventsView() {
       <div style={{ flex: 1, overflow: 'auto' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead>
-            <tr style={{ background: '#0c1829', position: 'sticky', top: 0, zIndex: 10 }}>
+            <tr style={{ background: 'var(--bg-card, var(--bg-card, #0c1829))', position: 'sticky', top: 0, zIndex: 10 }}>
               {['Fecha / Hora', 'Parada', 'Tipo', 'Severidad', 'Estado', 'SLA', 'Mensaje', 'Acciones'].map(h => (
-                <th key={h} style={{ padding: '10px 16px', textAlign: 'left', borderBottom: '1px solid #1a3050', fontFamily: "'DM Mono',monospace", fontSize: 9, letterSpacing: 1, color: '#3d5a80', textTransform: 'uppercase', fontWeight: 400 }}>
+                <th key={h} style={{ padding: '10px 16px', textAlign: 'left', borderBottom: '1px solid #1a3050', fontFamily: "'DM Mono',monospace", fontSize: 9, letterSpacing: 1, color: 'var(--text-muted, var(--text-muted, #3d5a80))', textTransform: 'uppercase', fontWeight: 400 }}>
                   {h}
                 </th>
               ))}
@@ -298,20 +298,20 @@ export default function EventsView() {
           </thead>
           <tbody>
             {loading ? (
-              <tr><td colSpan={8} style={{ padding: 40, textAlign: 'center', color: '#3d5a80' }}>Cargando...</td></tr>
+              <tr><td colSpan={8} style={{ padding: 40, textAlign: 'center', color: 'var(--text-muted, var(--text-muted, #3d5a80))' }}>Cargando...</td></tr>
             ) : events.length === 0 ? (
-              <tr><td colSpan={8} style={{ padding: 40, textAlign: 'center', color: '#3d5a80' }}>Sin eventos encontrados</td></tr>
+              <tr><td colSpan={8} style={{ padding: 40, textAlign: 'center', color: 'var(--text-muted, var(--text-muted, #3d5a80))' }}>Sin eventos encontrados</td></tr>
             ) : events.map(ev => {
               const sev = SEVERITIES[ev.severity] || SEVERITIES.info
-              const stCfg = { pending: { color: '#ff5252', label: '🔴 Pendiente' }, attending: { color: '#ffd740', label: '🟡 Atendiendo' }, resolved: { color: '#00e676', label: '🟢 Resuelto' } }
+              const stCfg = { pending: { color: 'var(--offline, var(--offline, #ff5252))', label: '🔴 Pendiente' }, attending: { color: 'var(--warning, var(--warning, #ffd740))', label: '🟡 Atendiendo' }, resolved: { color: 'var(--online, var(--online, #00e676))', label: '🟢 Resuelto' } }
               const st = stCfg[ev.status] || stCfg.pending
               return (
                 <tr key={ev.id}
                   style={{ borderBottom: '1px solid #1a3050', opacity: ev.resolved ? 0.5 : 1 }}
-                  onMouseEnter={e => e.currentTarget.style.background = '#111f35'}
+                  onMouseEnter={e => e.currentTarget.style.background = 'var(--bg-input, var(--bg-input, #111f35))'}
                   onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
                 >
-                  <td style={{ padding: '10px 16px', fontFamily: "'DM Mono',monospace", fontSize: 11, color: '#6b8ab0', whiteSpace: 'nowrap' }}>
+                  <td style={{ padding: '10px 16px', fontFamily: "'DM Mono',monospace", fontSize: 11, color: 'var(--text-secondary, var(--text-secondary, #6b8ab0))', whiteSpace: 'nowrap' }}>
                     {ev.ts ? new Date(ev.ts.endsWith('Z') ? ev.ts : ev.ts + 'Z').toLocaleString('es-EC', { timeZone: 'America/Guayaquil' }) : '--'}
                   </td>
                   <td style={{ padding: '10px 16px', fontSize: 12 }}>{ev.device_name || ev.device_id}</td>
@@ -331,8 +331,8 @@ export default function EventsView() {
                   <td style={{ padding: '10px 16px' }}>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                       <span style={{ fontSize: 11, color: st.color, fontFamily: "'DM Mono',monospace" }}>{st.label}</span>
-                      {ev.attended_by && <span style={{ fontSize: 9, color: '#3d5a80' }}>👤 {ev.attended_by}</span>}
-                      {ev.resolved_by  && <span style={{ fontSize: 9, color: '#00e676' }}>✅ {ev.resolved_by}</span>}
+                      {ev.attended_by && <span style={{ fontSize: 9, color: 'var(--text-muted, var(--text-muted, #3d5a80))' }}>👤 {ev.attended_by}</span>}
+                      {ev.resolved_by  && <span style={{ fontSize: 9, color: 'var(--online, var(--online, #00e676))' }}>✅ {ev.resolved_by}</span>}
                     </div>
                   </td>
                   <td style={{ padding: '10px 16px' }}>
@@ -349,10 +349,10 @@ export default function EventsView() {
                     {!ev.resolved && (
                       <button onClick={() => resolve(ev.id)} style={{
                         background: 'none', border: '1px solid #1a3050', borderRadius: 6,
-                        padding: '3px 8px', color: '#00e676', cursor: 'pointer', fontSize: 10,
+                        padding: '3px 8px', color: 'var(--online, var(--online, #00e676))', cursor: 'pointer', fontSize: 10,
                       }}>✓ Resolver</button>
                     )}
-                    {ev.resolved && <span style={{ fontSize: 10, color: '#3d5a80' }}>✓ Resuelto</span>}
+                    {ev.resolved && <span style={{ fontSize: 10, color: 'var(--text-muted, var(--text-muted, #3d5a80))' }}>✓ Resuelto</span>}
                   </td>
                 </tr>
               )
@@ -363,15 +363,15 @@ export default function EventsView() {
 
       {/* Paginación */}
       <div style={{ padding: '10px 24px', borderTop: '1px solid #1a3050', display: 'flex', alignItems: 'center', gap: 10, justifyContent: 'flex-end' }}>
-        <span style={{ fontSize: 11, color: '#6b8ab0' }}>
+        <span style={{ fontSize: 11, color: 'var(--text-secondary, var(--text-secondary, #6b8ab0))' }}>
           {total === 0 ? '0' : `${page * LIMIT + 1}–${Math.min((page + 1) * LIMIT, total)}`} de {total}
         </span>
         <button disabled={page === 0} onClick={() => setPage(p => p - 1)}
-          style={{ background: '#111f35', border: '1px solid #1a3050', borderRadius: 6, padding: '4px 12px', color: page === 0 ? '#3d5a80' : '#e8f0fe', cursor: 'pointer' }}>
+          style={{ background: 'var(--bg-input, var(--bg-input, #111f35))', border: '1px solid #1a3050', borderRadius: 6, padding: '4px 12px', color: page === 0 ? 'var(--text-muted, var(--text-muted, #3d5a80))' : 'var(--text-primary, var(--text-primary, #e8f0fe))', cursor: 'pointer' }}>
           ←
         </button>
         <button disabled={(page + 1) * LIMIT >= total} onClick={() => setPage(p => p + 1)}
-          style={{ background: '#111f35', border: '1px solid #1a3050', borderRadius: 6, padding: '4px 12px', color: (page + 1) * LIMIT >= total ? '#3d5a80' : '#e8f0fe', cursor: 'pointer' }}>
+          style={{ background: 'var(--bg-input, var(--bg-input, #111f35))', border: '1px solid #1a3050', borderRadius: 6, padding: '4px 12px', color: (page + 1) * LIMIT >= total ? 'var(--text-muted, var(--text-muted, #3d5a80))' : 'var(--text-primary, var(--text-primary, #e8f0fe))', cursor: 'pointer' }}>
           →
         </button>
       </div>

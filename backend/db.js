@@ -193,16 +193,16 @@ async function initialize() {
     await run("INSERT INTO groups (name,color) VALUES ('Centro','#00e676')");
 
     // Paradas — La Troncal, Cañar, Ecuador
-    // HMH3+675 → Parada 01 (norte), HMG5+29V → Parada 02 (centro)
+    // Paradas distribuidas por Cuenca: Terminal, Centro Histórico, Totoracocha, Baños, U de Cuenca
     const stops = [
-      ['GV310-EC-4471','863286020377033','Parada 01 - Terminal Terrestre', 'Av. 25 de Agosto y Av. Olmedo',           1, -2.4128, -79.3441],
-      ['GV310-EC-4472','863286020377034','Parada 02 - Parque Central',     'Calle 4 de Noviembre y Manuel J. Calle',  3, -2.4204, -79.3437],
-      ['GV310-EC-4473','863286020377035','Parada 03 - Mercado Municipal',  'Av. Olmedo y Calle 7',                    1, -2.4185, -79.3458],
-      ['GV310-EC-4474','863286020377036','Parada 04 - Hospital La Troncal','Av. 3 de Noviembre s/n',                  2, -2.4230, -79.3412],
-      ['GV310-EC-4475','863286020377037','Parada 05 - Colegio Técnico',    'Av. Panamericana y Calle 12',             2, -2.4162, -79.3395],
-      ['GV310-EC-4476','863286020377038','Parada 06 - Barrio La Merced',   'Calle Sucre y Av. 6 de Enero',            3, -2.4251, -79.3470],
-      ['GV310-EC-4477','863286020377039','Parada 07 - Ingreso Norte',      'Vía La Troncal - El Triunfo km 1',        1, -2.4095, -79.3428],
-      ['GV310-EC-4478','863286020377040','Parada 08 - Barrio Los Pinos',   'Av. Los Pinos y Calle 15',                2, -2.4278, -79.3388],
+      ['GV310-EC-4471','863286020377033','Parada 01 - Terminal Terrestre',   'Av. España y Av. Gil Ramírez Dávalos',       1, -2.8889, -78.9988],
+      ['GV310-EC-4472','863286020377034','Parada 02 - Parque Calderón',      'Benigno Malo y Sucre, Centro Histórico',     3, -2.8970, -79.0045],
+      ['GV310-EC-4473','863286020377035','Parada 03 - Mercado 10 de Agosto', 'Av. Huayna Cápac y Calle Larga',             1, -2.9001, -79.0012],
+      ['GV310-EC-4474','863286020377036','Parada 04 - Hospital Regional',    'Av. Los Arupos y Av. 12 de Abril',           2, -2.9058, -79.0089],
+      ['GV310-EC-4475','863286020377037','Parada 05 - Universidad de Cuenca','Av. 12 de Abril s/n, El Paraíso',            2, -2.9027, -79.0001],
+      ['GV310-EC-4476','863286020377038','Parada 06 - Feria Libre',          'Av. Américas y Av. de las Américas',         3, -2.8942, -79.0163],
+      ['GV310-EC-4477','863286020377039','Parada 07 - Sector Totoracocha',   'Av. González Suárez y Calle de los Cerezos', 1, -2.8871, -78.9893],
+      ['GV310-EC-4478','863286020377040','Parada 08 - Baños',                'Av. Ricardo Durán, Baños',                   2, -2.9212, -79.0328],
     ];
 
     for (const s of stops) {

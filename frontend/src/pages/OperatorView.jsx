@@ -18,15 +18,15 @@ const TYPES = {
 }
 
 const SEV = {
-  critical: { color: '#ff5252', bg: 'rgba(255,82,82,0.1)',  border: 'rgba(255,82,82,0.3)',  label: 'CRÍTICO' },
-  warning:  { color: '#ffd740', bg: 'rgba(255,215,64,0.1)', border: 'rgba(255,215,64,0.3)', label: 'AVISO'   },
-  info:     { color: '#5a9fff', bg: 'rgba(90,159,255,0.1)', border: 'rgba(90,159,255,0.3)', label: 'INFO'    },
+  critical: { color: 'var(--offline, var(--offline, #ff5252))', bg: 'rgba(255,82,82,0.1)',  border: 'rgba(255,82,82,0.3)',  label: 'CRÍTICO' },
+  warning:  { color: 'var(--warning, var(--warning, #ffd740))', bg: 'rgba(255,215,64,0.1)', border: 'rgba(255,215,64,0.3)', label: 'AVISO'   },
+  info:     { color: 'var(--accent, var(--accent, #5a9fff))', bg: 'rgba(90,159,255,0.1)', border: 'rgba(90,159,255,0.3)', label: 'INFO'    },
 }
 
 const STATUS_CFG = {
-  pending:   { color: '#ff5252', label: 'Pendiente',   icon: '🔴' },
-  attending: { color: '#ffd740', label: 'Atendiendo',  icon: '🟡' },
-  resolved:  { color: '#00e676', label: 'Resuelto',    icon: '🟢' },
+  pending:   { color: 'var(--offline, var(--offline, #ff5252))', label: 'Pendiente',   icon: '🔴' },
+  attending: { color: 'var(--warning, var(--warning, #ffd740))', label: 'Atendiendo',  icon: '🟡' },
+  resolved:  { color: 'var(--online, var(--online, #00e676))', label: 'Resuelto',    icon: '🟢' },
 }
 
 // Cronómetro SLA — muestra tiempo restante o tiempo excedido
@@ -58,7 +58,7 @@ function SLATimer({ deadline, label, compact }) {
     return (
       <span style={{
         fontFamily: "'DM Mono',monospace", fontSize: 10,
-        color: overdue ? '#ff5252' : '#ffd740',
+        color: overdue ? 'var(--offline, var(--offline, #ff5252))' : 'var(--warning, var(--warning, #ffd740))',
         background: overdue ? 'rgba(255,82,82,0.1)' : 'rgba(255,215,64,0.08)',
         border: `1px solid ${overdue ? 'rgba(255,82,82,0.3)' : 'rgba(255,215,64,0.2)'}`,
         borderRadius: 4, padding: '2px 6px',
@@ -72,19 +72,19 @@ function SLATimer({ deadline, label, compact }) {
     <div style={{
       display: 'flex', flexDirection: 'column', gap: 2, alignItems: 'center',
       background: overdue ? 'rgba(255,82,82,0.08)' : 'rgba(26,111,255,0.05)',
-      border: `1px solid ${overdue ? 'rgba(255,82,82,0.25)' : 'rgba(26,48,80,0.6)'}`,
+      border: `1px solid ${overdue ? 'rgba(255,82,82,0.25)' : 'var(--bg-hover, rgba(26,48,80,0.6))'}`,
       borderRadius: 8, padding: '6px 10px', minWidth: 80,
     }}>
-      <span style={{ fontFamily: "'DM Mono',monospace", fontSize: 9, color: '#3d5a80', textTransform: 'uppercase', letterSpacing: 0.5 }}>
+      <span style={{ fontFamily: "'DM Mono',monospace", fontSize: 9, color: 'var(--text-muted, var(--text-muted, #3d5a80))', textTransform: 'uppercase', letterSpacing: 0.5 }}>
         {label}
       </span>
       <span style={{
         fontFamily: "'DM Mono',monospace", fontSize: 14, fontWeight: 700,
-        color: overdue ? '#ff5252' : '#e8f0fe',
+        color: overdue ? 'var(--offline, var(--offline, #ff5252))' : 'var(--text-primary, var(--text-primary, #e8f0fe))',
       }}>
         {overdue ? '⚠ ' : ''}{display}
       </span>
-      {overdue && <span style={{ fontSize: 8, color: '#ff5252' }}>EXCEDIDO</span>}
+      {overdue && <span style={{ fontSize: 8, color: 'var(--offline, var(--offline, #ff5252))' }}>EXCEDIDO</span>}
     </div>
   )
 }
@@ -169,7 +169,7 @@ export default function OperatorView() {
           <h1 style={{ fontFamily: "'Syne',sans-serif", fontSize: 18, fontWeight: 800 }}>
             Panel Operador
           </h1>
-          <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9, color: '#3d5a80', letterSpacing: 1, textTransform: 'uppercase', marginTop: 2 }}>
+          <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9, color: 'var(--text-muted, var(--text-muted, #3d5a80))', letterSpacing: 1, textTransform: 'uppercase', marginTop: 2 }}>
             {user?.username} · Gestión de alertas en tiempo real
           </div>
         </div>
@@ -177,16 +177,16 @@ export default function OperatorView() {
         {/* KPIs rápidos */}
         <div style={{ display: 'flex', gap: 10 }}>
           {[
-            { label: 'Pendientes', value: pendingCount,   color: '#ff5252' },
-            { label: 'Atendiendo', value: attendingCount, color: '#ffd740' },
-            { label: 'Críticos',   value: criticalCount,  color: '#ff5252' },
+            { label: 'Pendientes', value: pendingCount,   color: 'var(--offline, var(--offline, #ff5252))' },
+            { label: 'Atendiendo', value: attendingCount, color: 'var(--warning, var(--warning, #ffd740))' },
+            { label: 'Críticos',   value: criticalCount,  color: 'var(--offline, var(--offline, #ff5252))' },
           ].map(k => (
             <div key={k.label} style={{
-              background: '#0c1829', border: '1px solid #1a3050', borderRadius: 8,
+              background: 'var(--bg-card, var(--bg-card, #0c1829))', border: '1px solid #1a3050', borderRadius: 8,
               padding: '6px 14px', textAlign: 'center',
             }}>
               <div style={{ fontFamily: "'Syne',sans-serif", fontSize: 20, fontWeight: 800, color: k.color }}>{k.value}</div>
-              <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 8, color: '#3d5a80', textTransform: 'uppercase' }}>{k.label}</div>
+              <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 8, color: 'var(--text-muted, var(--text-muted, #3d5a80))', textTransform: 'uppercase' }}>{k.label}</div>
             </div>
           ))}
         </div>
@@ -201,17 +201,17 @@ export default function OperatorView() {
           { id: 'all',       label: '📋 Todos' },
         ].map(f => (
           <button key={f.id} onClick={() => setFilter(f.id)} style={{
-            background: filter === f.id ? 'rgba(26,111,255,0.15)' : 'transparent',
-            border: `1px solid ${filter === f.id ? 'rgba(26,111,255,0.4)' : '#1a3050'}`,
+            background: filter === f.id ? 'var(--nav-active-bg, rgba(26,111,255,0.15))' : 'transparent',
+            border: `1px solid ${filter === f.id ? 'var(--accent-border, rgba(26,111,255,0.4))' : 'var(--border, var(--border, #1a3050))'}`,
             borderRadius: 6, padding: '5px 14px', cursor: 'pointer',
-            color: filter === f.id ? '#5a9fff' : '#6b8ab0', fontSize: 12,
+            color: filter === f.id ? 'var(--accent, var(--accent, #5a9fff))' : 'var(--text-secondary, var(--text-secondary, #6b8ab0))', fontSize: 12,
           }}>
             {f.label}
           </button>
         ))}
         <button onClick={fetchEvents} style={{
           marginLeft: 'auto', background: 'none', border: '1px solid #1a3050',
-          borderRadius: 6, padding: '5px 10px', cursor: 'pointer', color: '#6b8ab0', fontSize: 12,
+          borderRadius: 6, padding: '5px 10px', cursor: 'pointer', color: 'var(--text-secondary, var(--text-secondary, #6b8ab0))', fontSize: 12,
         }}>
           ↻ Actualizar
         </button>
@@ -220,11 +220,11 @@ export default function OperatorView() {
       {/* Lista de alertas */}
       <div style={{ flex: 1, overflow: 'auto', padding: '12px 20px', display: 'flex', flexDirection: 'column', gap: 10 }}>
         {loading && events.length === 0 && (
-          <div style={{ textAlign: 'center', color: '#3d5a80', padding: 40 }}>Cargando alertas...</div>
+          <div style={{ textAlign: 'center', color: 'var(--text-muted, var(--text-muted, #3d5a80))', padding: 40 }}>Cargando alertas...</div>
         )}
 
         {!loading && visibleEvents.length === 0 && (
-          <div style={{ textAlign: 'center', color: '#3d5a80', padding: 60 }}>
+          <div style={{ textAlign: 'center', color: 'var(--text-muted, var(--text-muted, #3d5a80))', padding: 60 }}>
             <div style={{ fontSize: 32, marginBottom: 12 }}>✅</div>
             <div style={{ fontFamily: "'Syne',sans-serif", fontSize: 16, fontWeight: 700 }}>
               {filter === 'assigned' ? 'Sin alertas en tus paradas' : 'Sin alertas pendientes'}
@@ -247,8 +247,8 @@ export default function OperatorView() {
 
           return (
             <div key={ev.id} style={{
-              background: '#0c1829',
-              border: `1px solid ${ev.status === 'resolved' ? '#1a3050' : sev.border}`,
+              background: 'var(--bg-card, var(--bg-card, #0c1829))',
+              border: `1px solid ${ev.status === 'resolved' ? 'var(--border, var(--border, #1a3050))' : sev.border}`,
               borderLeft: `4px solid ${sev.color}`,
               borderRadius: 12, padding: '14px 16px',
               opacity: ev.status === 'resolved' ? 0.6 : 1,
@@ -268,10 +268,10 @@ export default function OperatorView() {
                   </div>
 
                   {/* Mensaje */}
-                  <div style={{ fontSize: 12, color: '#b0c4de', marginBottom: 4 }}>{ev.message}</div>
+                  <div style={{ fontSize: 12, color: 'var(--text-secondary, var(--text-secondary, #b0c4de))', marginBottom: 4 }}>{ev.message}</div>
 
                   {/* Parada + hora */}
-                  <div style={{ display: 'flex', gap: 12, fontSize: 10, color: '#3d5a80' }}>
+                  <div style={{ display: 'flex', gap: 12, fontSize: 10, color: 'var(--text-muted, var(--text-muted, #3d5a80))' }}>
                     <span>📍 {ev.device_name || ev.device_id}</span>
                     <span>🕐 {tsStr}</span>
                     {ev.attended_by && <span>👤 Atendido por: {ev.attended_by}</span>}
@@ -294,19 +294,19 @@ export default function OperatorView() {
               {device && ev.status !== 'resolved' && (
                 <div style={{
                   display: 'flex', gap: 10, marginBottom: 12,
-                  padding: '8px 10px', background: '#060d1a', borderRadius: 8,
+                  padding: '8px 10px', background: 'var(--bg-app, var(--bg-app, #060d1a))', borderRadius: 8,
                   fontSize: 10, fontFamily: "'DM Mono',monospace",
                 }}>
-                  <span style={{ color: '#3d5a80' }}>Estado live:</span>
-                  <span style={{ color: device.status === 'online' ? '#00e676' : '#ff5252' }}>
+                  <span style={{ color: 'var(--text-muted, var(--text-muted, #3d5a80))' }}>Estado live:</span>
+                  <span style={{ color: device.status === 'online' ? 'var(--online, var(--online, #00e676))' : 'var(--offline, var(--offline, #ff5252))' }}>
                     {device.status === 'online' ? '● EN LÍNEA' : '● OFFLINE'}
                   </span>
-                  <span style={{ color: '#1a6fff' }}>SOC {t.soc ?? device.soc ?? '--'}%</span>
-                  <span style={{ color: '#ffd740' }}>{t.panel_power ? `☀ ${t.panel_power.toFixed(0)}W` : ''}</span>
+                  <span style={{ color: 'var(--accent, var(--accent, #1a6fff))' }}>SOC {t.soc ?? device.soc ?? '--'}%</span>
+                  <span style={{ color: 'var(--warning, var(--warning, #ffd740))' }}>{t.panel_power ? `☀ ${t.panel_power.toFixed(0)}W` : ''}</span>
                   <span style={{ color: '#ff9800' }}>{t.temperature ? `🌡 ${t.temperature.toFixed(1)}°C` : ''}</span>
                   <button
                     onClick={() => navigate(`/device/${ev.device_id}`)}
-                    style={{ marginLeft: 'auto', background: 'none', border: 'none', color: '#5a9fff', cursor: 'pointer', fontSize: 10 }}
+                    style={{ marginLeft: 'auto', background: 'none', border: 'none', color: 'var(--accent, var(--accent, #5a9fff))', cursor: 'pointer', fontSize: 10 }}
                   >
                     Ver parada →
                   </button>
@@ -323,7 +323,7 @@ export default function OperatorView() {
                       style={{
                         background: 'rgba(255,215,64,0.1)', border: '1px solid rgba(255,215,64,0.4)',
                         borderRadius: 8, padding: '7px 18px', cursor: 'pointer',
-                        color: '#ffd740', fontSize: 12, fontWeight: 600,
+                        color: 'var(--warning, var(--warning, #ffd740))', fontSize: 12, fontWeight: 600,
                         opacity: actionLoading[ev.id] ? 0.5 : 1,
                       }}
                     >
@@ -337,7 +337,7 @@ export default function OperatorView() {
                       style={{
                         background: 'rgba(0,230,118,0.1)', border: '1px solid rgba(0,230,118,0.4)',
                         borderRadius: 8, padding: '7px 18px', cursor: 'pointer',
-                        color: '#00e676', fontSize: 12, fontWeight: 600,
+                        color: 'var(--online, var(--online, #00e676))', fontSize: 12, fontWeight: 600,
                         opacity: actionLoading[ev.id] ? 0.5 : 1,
                       }}
                     >
@@ -349,7 +349,7 @@ export default function OperatorView() {
 
               {/* Resuelto — mostrar tiempos */}
               {ev.status === 'resolved' && ev.resolved_at && (
-                <div style={{ fontSize: 10, color: '#00e676', fontFamily: "'DM Mono',monospace" }}>
+                <div style={{ fontSize: 10, color: 'var(--online, var(--online, #00e676))', fontFamily: "'DM Mono',monospace" }}>
                   ✅ Resuelto el {new Date(ev.resolved_at.endsWith('Z') ? ev.resolved_at : ev.resolved_at + 'Z')
                     .toLocaleString('es-EC', { timeZone: 'America/Guayaquil' })} por {ev.resolved_by}
                 </div>

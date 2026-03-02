@@ -5,9 +5,13 @@ import LoginPage from './pages/Login'
 import AppShell from './pages/AppShell'
 import { useStore } from './store'
 import { connectSocket } from './socket'
+import { loadSavedTheme } from './themes'
 
 export default function App() {
   const { token, fetchMe } = useStore()
+
+  // Cargar tema guardado al inicio
+  useEffect(() => { loadSavedTheme() }, [])
 
   useEffect(() => {
     if (token) {
@@ -21,14 +25,14 @@ export default function App() {
       <style>{`
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
-          background: #060d1a;
-          color: #e8f0fe;
+          background: var(--bg-app, #060d1a);
+          color: var(--text-primary, #e8f0fe);
           font-family: 'DM Sans', sans-serif;
           font-size: 14px;
         }
         ::-webkit-scrollbar { width: 4px; height: 4px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #1a3050; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb { background: var(--border, #1a3050); border-radius: 4px; }
         body::before {
           content: '';
           position: fixed; inset: 0; pointer-events: none; z-index: 0;
@@ -48,8 +52,8 @@ export default function App() {
         position="top-right"
         toastOptions={{
           style: {
-            background: '#111f35',
-            color: '#e8f0fe',
+            background: 'var(--bg-input, var(--bg-input, #111f35))',
+            color: 'var(--text-primary, var(--text-primary, #e8f0fe))',
             border: '1px solid #1a3050',
             fontFamily: "'DM Sans', sans-serif",
           }
