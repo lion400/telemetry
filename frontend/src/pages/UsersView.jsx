@@ -6,7 +6,7 @@ import { useStore } from '../store'
 const API = '/api'
 
 const ROLES = {
-  gerente:    { color: '#ff9800', label: 'Gerente',    icon: '' },
+  gerente:    { color: '#ff9800', label: 'Gerente',    icon: '👑' },
   supervisor: { color: 'var(--warning, var(--warning, #ffd740))', label: 'Supervisor', icon: '🔭' },
   operador:   { color: 'var(--accent, var(--accent, #5a9fff))', label: 'Operador',   icon: '🛠' },
 }
@@ -324,7 +324,64 @@ export default function UsersView() {
   const { user: me, devices } = useStore()
   const [users, setUsers]         = useState([])
   const [showForm, setShowForm]   = useState(false)
-  const [form, setForm]           = useState({ username: '', email: '', password: '', role: 'operador' })
+  // Campos fijos siempre presentes
+  const FIXED_FIELDS = [
+    { key: 'username',  label: 'Usuario',     type: 'text',     required: true,  placeholder: 'nombre_usuario' },
+    { key: 'email',     label: 'Email',       type: 'email',    required: true,  placeholder: 'correo@emov.gob.ec' },
+    { key: 'password',  label: 'Contraseña',  type: 'password', required: true,  placeholder: '••••••••' },
+  ]
+  // Campos de perfil — configurables (on/off) con valores por defecto ON
+  const DEFAULT_PROFILE_FIELDS = [
+    { key: 'nombres',   label: 'Nombres',    type: 'text',   required: false, placeholder: 'Nombres' },
+    { key: 'apellidos', label: 'Apellidos',  type: 'text',   required: false, placeholder: 'Apellidos' },
+    { key: 'direccion', label: 'Dirección',  type: 'text',   required: false, placeholder: 'Dirección Av.' },
+    { key: 'edad',      label: 'Edad',       type: 'number', required: false, placeholder: 'Edad' },
+  ]
+  // Campos extra agregados por el gerente
+  const STORAGE_KEY = 'st_user_extra_fields'
+  const loadExtraFields = () => { try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]') } catch { return [] } }
+  const loadActiveFields = () => { try { return JSON.parse(localStorage.getItem('st_user_active_fields') || 'null') } catch { return null } }
+
+  const [extraFields, setExtraFields]   = useState(loadExtraFields)
+  // activeFields: set de keys de perfil activos (null = todos activos)
+  const [activeFields, setActiveFields] = useState(() => loadActiveFields() || DEFAULT_PROFILE_FIELDS.map(f => f.key))
+  const [newFieldLabel, setNewFieldLabel] = useState('')
+  const [newFieldType, setNewFieldType]   = useState('text')
+  const [showFieldEditor, setShowFieldEditor] = useState(false)
+
+  const allProfileFields = [...DEFAULT_PROFILE_FIELDS, ...extraFields]
+  const visibleProfileFields = allProfileFields.filter(f => activeFields.includes(f.key))
+
+  const toggleField = (key) => {
+    const next = activeFields.includes(key)
+      ? activeFields.filter(k => k !== key)
+      : [...activeFields, key]
+    setActiveFields(next)
+    localStorage.setItem('st_user_active_fields', JSON.stringify(next))
+  }
+
+  const addExtraField = () => {
+    const label = newFieldLabel.trim()
+    if (!label) return
+    const key = 'custom_' + label.toLowerCase().replace(/\s+/g, '_').replace(/[^a-z0-9_]/g, '')
+    if (allProfileFields.find(f => f.key === key)) { toast.error('Ya existe ese campo'); return }
+    const newField = { key, label, type: newFieldType, required: false, placeholder: `Ej: ${label}`, custom: true }
+    const next = [...extraFields, newField]
+    setExtraFields(next)
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(next))
+    setActiveFields(prev => [...prev, key])
+    setNewFieldLabel('')
+    toast.success(`Campo "${label}" agregado`)
+  }
+
+  const removeExtraField = (key) => {
+    const next = extraFields.filter(f => f.key !== key)
+    setExtraFields(next)
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(next))
+    setActiveFields(prev => prev.filter(k => k !== key))
+  }
+
+  const [form, setForm] = useState({ username: '', email: '', password: '', role: 'operador' })
   const [log, setLog]             = useState([])
   const [modalUser, setModalUser] = useState(null)
 
@@ -347,7 +404,11 @@ export default function UsersView() {
   const createUser = async (e) => {
     e.preventDefault()
     try {
-      await axios.post(`${API}/users`, form)
+      // Separar campos fijos de perfil
+      const { username, email, password, role, ...profileRaw } = form
+      const profile = {}
+      visibleProfileFields.forEach(f => { if (profileRaw[f.key] !== undefined) profile[f.key] = profileRaw[f.key] })
+      await axios.post(`${API}/users`, { username, email, password, role, profile })
       toast.success('Usuario creado')
       setShowForm(false)
       setForm({ username: '', email: '', password: '', role: 'operador' })
@@ -417,22 +478,128 @@ export default function UsersView() {
             <h3 style={{ fontFamily: "'Syne',sans-serif", fontSize: 14, fontWeight: 700, marginBottom: 14, color: 'var(--accent, var(--accent, #5a9fff))' }}>
               Nuevo Usuario
             </h3>
+            {/* ── Editor de campos ── */}
+            <div style={{ marginBottom: 16 }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
+                <span style={{ fontFamily: "'DM Mono',monospace", fontSize: 9, color: 'var(--text-muted, #3d5a80)', letterSpacing: 1, textTransform: 'uppercase' }}>
+                  Campos del formulario
+                </span>
+                <button onClick={() => setShowFieldEditor(s => !s)} style={{
+                  background: 'none', border: '1px solid var(--border, #1a3050)', borderRadius: 6,
+                  padding: '3px 10px', cursor: 'pointer', fontSize: 10,
+                  color: 'var(--text-secondary, #6b8ab0)',
+                }}>
+                  {showFieldEditor ? '✕ Cerrar editor' : '⚙ Configurar campos'}
+                </button>
+              </div>
+
+              {/* Chips de campos activos/inactivos */}
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                {allProfileFields.map(f => {
+                  const active = activeFields.includes(f.key)
+                  return (
+                    <div key={f.key} style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                      <button
+                        onClick={() => toggleField(f.key)}
+                        style={{
+                          background: active ? 'var(--accent-dim, rgba(26,111,255,0.15))' : 'var(--bg-input, #111f35)',
+                          border: `1px solid ${active ? 'var(--accent-border, rgba(26,111,255,0.4))' : 'var(--border, #1a3050)'}`,
+                          borderRadius: 20, padding: '3px 10px', cursor: 'pointer', fontSize: 10,
+                          color: active ? 'var(--accent, #5a9fff)' : 'var(--text-muted, #3d5a80)',
+                          display: 'flex', alignItems: 'center', gap: 4,
+                        }}
+                      >
+                        {active ? '✓' : '○'} {f.label}
+                      </button>
+                      {f.custom && (
+                        <button onClick={() => removeExtraField(f.key)} style={{
+                          background: 'none', border: 'none', cursor: 'pointer',
+                          color: 'var(--offline, #ff5252)', fontSize: 10, padding: '0 2px',
+                        }}>✕</button>
+                      )}
+                    </div>
+                  )
+                })}
+              </div>
+
+              {/* Agregar campo nuevo */}
+              {showFieldEditor && (
+                <div style={{
+                  marginTop: 12, background: 'var(--bg-input, #111f35)',
+                  border: '1px solid var(--border, #1a3050)', borderRadius: 8, padding: 12,
+                  display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap',
+                }}>
+                  <input
+                    value={newFieldLabel}
+                    onChange={e => setNewFieldLabel(e.target.value)}
+                    onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), addExtraField())}
+                    placeholder="Nombre del campo (ej: Código empleado)"
+                    style={{
+                      flex: 1, minWidth: 160,
+                      background: 'var(--bg-card, #0c1829)', border: '1px solid var(--border, #1a3050)',
+                      borderRadius: 6, padding: '6px 10px', color: 'var(--text-primary, #e8f0fe)',
+                      fontSize: 12, outline: 'none',
+                    }}
+                  />
+                  <select
+                    value={newFieldType}
+                    onChange={e => setNewFieldType(e.target.value)}
+                    style={{
+                      background: 'var(--bg-card, #0c1829)', border: '1px solid var(--border, #1a3050)',
+                      borderRadius: 6, padding: '6px 8px', color: 'var(--text-primary, #e8f0fe)',
+                      fontSize: 12, cursor: 'pointer',
+                    }}
+                  >
+                    <option value="text">Texto</option>
+                    <option value="number">Número</option>
+                    <option value="email">Email</option>
+                    <option value="tel">Teléfono</option>
+                    <option value="date">Fecha</option>
+                  </select>
+                  <button onClick={addExtraField} style={{
+                    background: 'var(--accent, #5a9fff)', border: 'none', borderRadius: 6,
+                    padding: '6px 14px', cursor: 'pointer', color: '#fff', fontSize: 12, fontWeight: 700,
+                  }}>+ Agregar</button>
+                </div>
+              )}
+            </div>
+
+            {/* ── Formulario de creación ── */}
             <form onSubmit={createUser}>
-              <input style={inputStyle} placeholder="Usuario" value={form.username}
-                onChange={e => setForm(f => ({ ...f, username: e.target.value }))} required />
-              <input style={inputStyle} placeholder="Email" type="email" value={form.email}
-                onChange={e => setForm(f => ({ ...f, email: e.target.value }))} required />
-              <input style={inputStyle} placeholder="Contraseña" type="password" value={form.password}
-                onChange={e => setForm(f => ({ ...f, password: e.target.value }))} required />
+              {/* Campos fijos */}
+              <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 8, color: 'var(--text-muted, #3d5a80)', letterSpacing: 1, textTransform: 'uppercase', marginBottom: 8 }}>
+                Datos de acceso
+              </div>
+              {FIXED_FIELDS.map(f => (
+                <input key={f.key} style={inputStyle} placeholder={f.label} type={f.type}
+                  value={form[f.key] || ''}
+                  onChange={e => setForm(p => ({ ...p, [f.key]: e.target.value }))} required />
+              ))}
               <select style={{ ...inputStyle, cursor: 'pointer' }} value={form.role}
                 onChange={e => setForm(f => ({ ...f, role: e.target.value }))}>
                 <option value="operador">🛠 Operador</option>
                 <option value="supervisor">🔭 Supervisor</option>
                 <option value="gerente">👑 Gerente</option>
               </select>
+
+              {/* Campos de perfil visibles */}
+              {visibleProfileFields.length > 0 && (
+                <>
+                  <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 8, color: 'var(--text-muted, #3d5a80)', letterSpacing: 1, textTransform: 'uppercase', margin: '4px 0 8px' }}>
+                    Información del perfil
+                  </div>
+                  {visibleProfileFields.map(f => (
+                    <input key={f.key} style={inputStyle} placeholder={f.placeholder || f.label}
+                      type={f.type} required={f.required}
+                      value={form[f.key] || ''}
+                      onChange={e => setForm(p => ({ ...p, [f.key]: e.target.value }))} />
+                  ))}
+                </>
+              )}
+
               <button type="submit" style={{
                 width: '100%', background: 'var(--accent-dim, rgba(26,111,255,0.2))', border: '1px solid rgba(26,111,255,0.4)',
-                borderRadius: 8, padding: '9px', color: 'var(--accent, var(--accent, #5a9fff))', cursor: 'pointer', fontSize: 13, fontWeight: 700,
+                borderRadius: 8, padding: '9px', color: 'var(--accent, var(--accent, #5a9fff))', cursor: 'pointer', fontSize: 13, fontWeight: 700, marginTop: 4,
               }}>Crear Usuario</button>
             </form>
           </div>
@@ -471,6 +638,29 @@ export default function UsersView() {
                         <div>
                           <div style={{ fontWeight: 600, fontSize: 13 }}>{u.username}</div>
                           <div style={{ fontSize: 10, color: 'var(--text-muted, var(--text-muted, #3d5a80))' }}>{u.email}</div>
+                          {/* Profile fields */}
+                          {(() => {
+                            try {
+                              const p = typeof u.profile === 'string' ? JSON.parse(u.profile || '{}') : (u.profile || {})
+                              const entries = Object.entries(p).filter(([,v]) => v)
+                              if (!entries.length) return null
+                              return (
+                                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4, marginTop: 4 }}>
+                                  {entries.map(([k, v]) => (
+                                    <span key={k} style={{
+                                      fontSize: 9, fontFamily: "'DM Mono',monospace",
+                                      background: 'var(--bg-input, #111f35)',
+                                      border: '1px solid var(--border, #1a3050)',
+                                      borderRadius: 4, padding: '1px 6px',
+                                      color: 'var(--text-secondary, #6b8ab0)',
+                                    }}>
+                                      {k.replace('custom_','').replace(/_/g,' ')}: {v}
+                                    </span>
+                                  ))}
+                                </div>
+                              )
+                            } catch { return null }
+                          })()}
                         </div>
                       </div>
                     </td>
@@ -483,7 +673,7 @@ export default function UsersView() {
                         }}>
                           <option value="operador">🛠 Operador</option>
                           <option value="supervisor">🔭 Supervisor</option>
-                          <option value="gerente">👑 Gerente</option>
+                          <option value="gerente"> Gerente</option>
                         </select>
                       ) : (
                         <span style={{

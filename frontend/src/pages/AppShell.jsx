@@ -30,8 +30,170 @@ function useIsMobile() {
   return isMobile
 }
 
+// ── UserMenu — dropdown con perfil y logout ──────────────────────────────
+function UserMenu({ user, logout, navigate, isMobile }) {
+  const [open, setOpen] = React.useState(false)
+  const ref = React.useRef()
+  const ROLES_MAP = { gerente: { icon: '👑', label: 'Gerente', color: '#ffd740' }, supervisor: { icon: '🔭', label: 'Supervisor', color: '#00d4ff' }, operador: { icon: '🛠', label: 'Operador', color: '#00e676' } }
+  const rol = ROLES_MAP[user?.role] || ROLES_MAP.operador
+  const canSeeUsers = user?.role === 'gerente' || user?.role === 'supervisor'
+
+  // Cerrar al click fuera
+  React.useEffect(() => {
+    if (!open) return
+    const handler = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false) }
+    document.addEventListener('mousedown', handler)
+    return () => document.removeEventListener('mousedown', handler)
+  }, [open])
+
+  return (
+    <div ref={ref} style={{ position: 'relative' }}>
+      {/* Botón trigger */}
+      <div
+        onClick={() => setOpen(o => !o)}
+        style={{
+          display: 'flex', alignItems: 'center', gap: isMobile ? 5 : 8,
+          background: open ? 'var(--bg-card, #0c1829)' : 'var(--bg-input, #111f35)',
+          borderRadius: 8, padding: isMobile ? '5px 8px' : '5px 12px',
+          border: `1px solid ${open ? 'var(--accent-border, rgba(26,111,255,0.4))' : 'var(--border, #1a3050)'}`,
+          cursor: 'pointer', fontSize: 12, transition: 'all 0.15s',
+          color: 'var(--text-header, #e8f0fe)',
+        }}
+      >
+        <span style={{ fontSize: 14 }}>👤</span>
+        {!isMobile && (
+          <div>
+            <div style={{ fontWeight: 600, fontSize: 12 }}>{user?.username}</div>
+            <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9, letterSpacing: 0.8, textTransform: 'uppercase', color: rol.color }}>
+              {rol.icon} {rol.label}
+            </div>
+          </div>
+        )}
+        <span style={{ fontSize: 10, color: 'var(--text-header, #e8f0fe)', opacity: 0.6, marginLeft: 2 }}>
+          {open ? '▲' : '▼'}
+        </span>
+      </div>
+
+      {/* Dropdown */}
+      {open && (
+        <div style={{
+          position: 'absolute', top: 'calc(100% + 8px)', right: 0,
+          background: 'var(--bg-card, #0c1829)',
+          border: '1px solid var(--border, #1a3050)',
+          borderRadius: 10, minWidth: 180,
+          boxShadow: '0 8px 32px rgba(0,0,0,0.5)',
+          overflow: 'hidden', zIndex: 9999,
+          animation: 'fadeIn 0.12s ease',
+        }}>
+          {/* Header del menú */}
+          <div style={{
+            padding: '12px 16px',
+            borderBottom: '1px solid var(--border, #1a3050)',
+            background: 'var(--bg-input, #111f35)',
+          }}>
+            <div style={{ fontFamily: "'Syne',sans-serif", fontWeight: 700, fontSize: 14, color: 'var(--text-primary, #e8f0fe)' }}>
+              {user?.username}
+            </div>
+            <div style={{ fontSize: 10, color: 'var(--text-muted, #3d5a80)', marginTop: 1 }}>
+              {user?.email}
+            </div>
+            <div style={{
+              display: 'inline-flex', alignItems: 'center', gap: 4, marginTop: 6,
+              background: `${rol.color}18`, border: `1px solid ${rol.color}40`,
+              borderRadius: 20, padding: '2px 8px',
+              fontSize: 9, fontFamily: "'DM Mono',monospace",
+              color: rol.color, letterSpacing: 0.5,
+            }}>
+              {rol.icon} {rol.label}
+            </div>
+          </div>
+
+          {/* Ir a Usuarios — solo gerente/supervisor */}
+          {canSeeUsers && (
+            <button
+              onClick={() => { setOpen(false); navigate('/users') }}
+              style={{
+                width: '100%', display: 'flex', alignItems: 'center', gap: 10,
+                padding: '11px 16px', background: 'none', border: 'none',
+                cursor: 'pointer', fontSize: 12, color: 'var(--text-primary, #e8f0fe)',
+                textAlign: 'left',
+                borderBottom: '1px solid var(--border, #1a3050)',
+                transition: 'background 0.1s',
+              }}
+              onMouseEnter={e => e.currentTarget.style.background = 'var(--bg-hover, rgba(26,48,80,0.4))'}
+              onMouseLeave={e => e.currentTarget.style.background = 'none'}
+            >
+              <span style={{ fontSize: 14 }}>👥</span>
+              <span>Gestión de Usuarios</span>
+            </button>
+          )}
+
+          {/* Logout */}
+          <button
+            onClick={() => { setOpen(false); logout() }}
+            style={{
+              width: '100%', display: 'flex', alignItems: 'center', gap: 10,
+              padding: '11px 16px', background: 'none', border: 'none',
+              cursor: 'pointer', fontSize: 12,
+              color: 'var(--offline, #ff5252)', textAlign: 'left',
+              transition: 'background 0.1s',
+            }}
+            onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,82,82,0.08)'}
+            onMouseLeave={e => e.currentTarget.style.background = 'none'}
+          >
+            <span style={{ fontSize: 14 }}>⏻</span>
+            <span>Cerrar sesión</span>
+          </button>
+        </div>
+      )}
+    </div>
+  )
+}
+
+// ── Hook: lee logo/favicon personalizados desde localStorage ─────────────
+function useBrandAssets() {
+  const [logoUrl, setLogoUrl] = React.useState(() => localStorage.getItem('st_logo') || null)
+  const [appName, setAppName] = React.useState(() => localStorage.getItem('st_appname') || null)
+
+  React.useEffect(() => {
+    // Aplicar favicon personalizado si existe
+    const favicon = localStorage.getItem('st_favicon')
+    if (favicon) {
+      let link = document.querySelector("link[rel='icon']")
+      if (!link) { link = document.createElement('link'); link.rel = 'icon'; document.head.appendChild(link) }
+      link.href = favicon
+    }
+    // Escuchar cambios desde BrandingView
+    const onStorage = (e) => {
+      if (e.key === 'st_logo')    setLogoUrl(e.newValue)
+      if (e.key === 'st_appname') setAppName(e.newValue)
+      if (e.key === 'st_favicon' && e.newValue) {
+        let link = document.querySelector("link[rel='icon']")
+        if (!link) { link = document.createElement('link'); link.rel = 'icon'; document.head.appendChild(link) }
+        link.href = e.newValue
+      }
+    }
+    window.addEventListener('storage', onStorage)
+    // También escuchar evento custom (mismo tab)
+    const onCustom = (e) => {
+      if (e.detail.key === 'st_logo')    setLogoUrl(e.detail.value)
+      if (e.detail.key === 'st_appname') setAppName(e.detail.value)
+      if (e.detail.key === 'st_favicon') {
+        let link = document.querySelector("link[rel='icon']")
+        if (!link) { link = document.createElement('link'); link.rel = 'icon'; document.head.appendChild(link) }
+        link.href = e.detail.value
+      }
+    }
+    window.addEventListener('st_brand_update', onCustom)
+    return () => { window.removeEventListener('storage', onStorage); window.removeEventListener('st_brand_update', onCustom) }
+  }, [])
+
+  return { logoUrl, appName }
+}
+
 export default function AppShell() {
   const { user, logout, unreadEvents, fetchDevices, fetchEvents, fetchGeocercas, markAlertsSeen } = useStore()
+  const { logoUrl, appName } = useBrandAssets()
   const navigate = useNavigate()
   const loc = useLocation()
   const [clock, setClock] = useState('')
@@ -161,6 +323,7 @@ export default function AppShell() {
     <>
       <style>{`
         @keyframes pulse-dot { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(.7)} }
+        @keyframes fadeIn { from{opacity:0;transform:translateY(-6px)} to{opacity:1;transform:translateY(0)} }
 
         /* Popup Leaflet dark */
         .dark-popup .leaflet-popup-content-wrapper {
@@ -214,10 +377,16 @@ export default function AppShell() {
               opacity: (!isMobile && collapsed) ? 0 : 1, transition: 'opacity 0.15s',
               whiteSpace: 'nowrap',
             }}>
-              <div style={{ width: 26, height: 26, background: 'var(--accent, #1a6fff)', borderRadius: 6, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, flexShrink: 0 }}>☀</div>
+              {logoUrl
+                ? <img src={logoUrl} alt="Logo" style={{ height: 30, maxWidth: 120, objectFit: 'contain', borderRadius: 4, flexShrink: 0 }} />
+                : <div style={{ width: 26, height: 26, background: 'var(--accent, #DD102E)', borderRadius: 6, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, flexShrink: 0 }}>☀</div>
+              }
               <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                  Solar<span style={{ color: 'var(--text-header, #e8f0fe)', opacity: 0.75 }}>Track</span>
+                  {appName
+                    ? <span style={{ color: 'var(--text-header, #e8f0fe)' }}>{appName}</span>
+                    : <span>Solar<span style={{ color: 'var(--text-header, #e8f0fe)', opacity: 0.75 }}>Track</span></span>
+                  }
                   {!isMobile && (
                     <span style={{ color: 'var(--text-header, #e8f0fe)', fontSize: 11, fontWeight: 400, opacity: 0.7 }}>· Paradas Seguras</span>
                   )}
@@ -385,28 +554,8 @@ export default function AppShell() {
               </div>
             )}
 
-            {/* Usuario + logout */}
-            <div
-              onClick={logout}
-              title="Cerrar sesión"
-              style={{
-                display: 'flex', alignItems: 'center', gap: isMobile ? 5 : 8,
-                background: 'var(--bg-input, #111f35)', borderRadius: 8,
-                padding: isMobile ? '5px 8px' : '5px 12px',
-                border: '1px solid #1a3050', cursor: 'pointer', fontSize: 12,
-              }}
-            >
-              <span style={{ fontSize: 14 }}>👤</span>
-              {!isMobile && (
-                <div>
-                  <div style={{ fontWeight: 500 }}>{user?.username}</div>
-                  <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9, letterSpacing: 0.8, textTransform: 'uppercase', color: 'var(--accent, #5a9fff)' }}>
-                    {user?.role}
-                  </div>
-                </div>
-              )}
-              <span style={{ color: 'var(--text-muted, #3d5a80)' }}>⏻</span>
-            </div>
+            {/* Usuario + menú desplegable */}
+            <UserMenu user={user} logout={logout} navigate={navigate} isMobile={isMobile} />
           </div>
         </header>
 

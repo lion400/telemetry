@@ -7,22 +7,22 @@ const { requireRole } = require('../middleware/auth');
 // List users (gerente + supervisor can view)
 router.get('/', requireRole('gerente', 'supervisor'), async (req, res) => {
   const users = await db.all(
-    'SELECT id, username, email, role, active, created_at, last_login FROM users ORDER BY role, username'
+    'SELECT id, username, email, role, active, profile, created_at, last_login FROM users ORDER BY role, username'
   );
   res.json(users);
 });
 
 // Create user (gerente only)
 router.post('/', requireRole('gerente'), async (req, res) => {
-  const { username, email, password, role } = req.body;
+  const { username, email, password, role, profile } = req.body;
   if (!username || !email || !password || !role) {
     return res.status(400).json({ error: 'Todos los campos son requeridos' });
   }
   try {
     const hash = await bcrypt.hash(password, 12);
     const result = await db.run(
-      'INSERT INTO users (username, email, password, role) VALUES (?,?,?,?)',
-      [username, email, hash, role]
+      'INSERT INTO users (username, email, password, role, profile) VALUES (?,?,?,?,?)',
+      [username, email, hash, role, JSON.stringify(profile || {})]
     );
     await db.run('INSERT INTO access_log (user_id, action, ip) VALUES (?,?,?)',
       [result.lastID, 'created', req.ip]);
@@ -116,6 +116,17 @@ router.put('/:id/report-types', requireRole('gerente'), async (req, res) => {
   }
   if (req.app.locals.backup) req.app.locals.backup();
   res.json({ ok: true });
+});
+
+// Actualizar profile de usuario
+router.put('/:id/profile', requireRole('gerente'), async (req, res) => {
+  try {
+    const { profile } = req.body;
+    await run('UPDATE users SET profile=? WHERE id=?', [JSON.stringify(profile || {}), req.params.id]);
+    res.json({ ok: true });
+  } catch(e) {
+    res.status(500).json({ error: e.message });
+  }
 });
 
 module.exports = router;

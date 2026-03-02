@@ -52,6 +52,7 @@ async function initialize() {
     role TEXT NOT NULL DEFAULT 'operador'
       CHECK(role IN ('gerente','supervisor','operador')),
     active INTEGER DEFAULT 1,
+    profile TEXT DEFAULT '{}',
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     last_login DATETIME
   )`);
@@ -222,6 +223,15 @@ async function initialize() {
 }
 
 // Migraciones V2 — agrega columnas nuevas si no existen (safe to run multiple times)
+// Migración profile column
+async function addProfileColumn() {
+  try {
+    await run("ALTER TABLE users ADD COLUMN profile TEXT DEFAULT '{}'")
+    console.log('✓ Migración: columna profile agregada a users')
+  } catch(e) {
+    // Ya existe — ignorar
+  }
+}
 async function addV2Tables() {
   const migrations = [
     `ALTER TABLE events ADD COLUMN status TEXT DEFAULT 'pending'`,

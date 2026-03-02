@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react'
+import React, { useState, useCallback, useRef } from 'react'
 import { THEMES, applyTheme } from '../themes'
 import toast from 'react-hot-toast'
 
@@ -183,6 +183,67 @@ function ThemeCard({ theme, isActive, isPreview, onApply, onPreviewEnter, onPrev
 
 // ── Vista principal ───────────────────────────────────────────────────────
 export default function BrandingView() {
+  // ── Assets de marca ──────────────────────────────────────────────────────
+  const [logoUrl,   setLogoUrl]   = useState(() => localStorage.getItem('st_logo')    || null)
+  const [faviconUrl,setFaviconUrl]= useState(() => localStorage.getItem('st_favicon') || null)
+  const [appName,   setAppName]   = useState(() => localStorage.getItem('st_appname') || '')
+  const logoInputRef    = useRef()
+  const faviconInputRef = useRef()
+
+  const saveBrandAsset = (key, value, setter) => {
+    localStorage.setItem(key, value)
+    setter(value)
+    // Notificar al mismo tab (storage event no se dispara en la misma página)
+    window.dispatchEvent(new CustomEvent('st_brand_update', { detail: { key, value } }))
+  }
+
+  const handleLogoUpload = (e) => {
+    const file = e.target.files[0]
+    if (!file) return
+    if (file.size > 500 * 1024) { toast.error('El logo no debe superar 500KB'); return }
+    const reader = new FileReader()
+    reader.onload = (ev) => {
+      saveBrandAsset('st_logo', ev.target.result, setLogoUrl)
+      toast.success('Logo actualizado en la barra superior', { icon: '🖼' })
+    }
+    reader.readAsDataURL(file)
+  }
+
+  const handleFaviconUpload = (e) => {
+    const file = e.target.files[0]
+    if (!file) return
+    if (file.size > 100 * 1024) { toast.error('El favicon no debe superar 100KB'); return }
+    const reader = new FileReader()
+    reader.onload = (ev) => {
+      saveBrandAsset('st_favicon', ev.target.result, setFaviconUrl)
+      // Aplicar favicon inmediatamente en este tab también
+      let link = document.querySelector("link[rel='icon']")
+      if (!link) { link = document.createElement('link'); link.rel = 'icon'; document.head.appendChild(link) }
+      link.href = ev.target.result
+      toast.success('Favicon actualizado en la pestaña del navegador', { icon: '📌' })
+    }
+    reader.readAsDataURL(file)
+  }
+
+  const handleAppName = (e) => {
+    const val = e.target.value
+    setAppName(val)
+    localStorage.setItem('st_appname', val)
+    window.dispatchEvent(new CustomEvent('st_brand_update', { detail: { key: 'st_appname', value: val } }))
+  }
+
+  const clearAsset = (key, setter) => {
+    localStorage.removeItem(key)
+    setter(null)
+    window.dispatchEvent(new CustomEvent('st_brand_update', { detail: { key, value: null } }))
+    if (key === 'st_favicon') {
+      // Restaurar favicon original
+      let link = document.querySelector("link[rel='icon']")
+      if (link) link.href = '/favicon.png'
+    }
+    toast.success('Eliminado — se restauró el valor por defecto')
+  }
+
   const [activeTheme, setActiveTheme] = useState(
     localStorage.getItem('solartrack_theme') || 'emov-oscuro'
   )
@@ -196,7 +257,7 @@ export default function BrandingView() {
     setActiveTheme(themeId)
     setPreviewTheme(null)
     const name = THEMES.find(t => t.id === themeId)?.name
-    toast.success(`Tema "${name}" aplicado a toda la plataforma`, { icon: '🎨' })
+    toast.success(`Tema "${name}" aplicado a toda la plataforma`, { icon: '' })
   }
 
   const handlePreviewEnter = useCallback((themeId) => {
@@ -247,6 +308,161 @@ export default function BrandingView() {
       </div>
 
       <div style={{ flex: 1, overflow: 'auto', padding: '24px' }}>
+
+        {/* ── Activos de Marca ───────────────────────────────────────── */}
+        <section style={{ marginBottom: 36 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
+            <div style={{ width: 3, height: 18, background: 'var(--accent, #DD102E)', borderRadius: 2 }} />
+            <span style={{ fontFamily: "'Syne',sans-serif", fontSize: 13, fontWeight: 700, color: 'var(--text-primary, #e8f0fe)' }}>
+              Identidad de Marca
+            </span>
+            <span style={{ fontFamily: "'DM Mono',monospace", fontSize: 9, color: 'var(--text-muted, #3d5a80)', letterSpacing: 1 }}>
+              LOGO · FAVICON · NOMBRE
+            </span>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 14 }}>
+
+            {/* ── Logo ── */}
+            <div style={{ background: 'var(--bg-card, #0c1829)', border: '1px solid var(--border, #1a3050)', borderRadius: 12, padding: 16 }}>
+              <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9, color: 'var(--text-muted, #3d5a80)', letterSpacing: 1, textTransform: 'uppercase', marginBottom: 12 }}>
+                🖼 Logo — sustituye "SolarTrack" en el header
+              </div>
+              {/* Preview */}
+              <div style={{
+                height: 64, background: 'var(--bg-input, #111f35)', borderRadius: 8,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                marginBottom: 12, border: '1px dashed var(--border, #1a3050)',
+                overflow: 'hidden',
+              }}>
+                {logoUrl
+                  ? <img src={logoUrl} alt="Logo" style={{ maxHeight: 52, maxWidth: '90%', objectFit: 'contain' }} />
+                  : <span style={{ fontSize: 11, color: 'var(--text-muted, #3d5a80)' }}>Sin logo — se usa "SolarTrack"</span>
+                }
+              </div>
+              <div style={{ fontSize: 10, color: 'var(--text-muted, #3d5a80)', marginBottom: 10 }}>
+                PNG/SVG/JPG · máx 500KB · fondo transparente recomendado
+              </div>
+              <div style={{ display: 'flex', gap: 8 }}>
+                <button
+                  onClick={() => logoInputRef.current.click()}
+                  style={{
+                    flex: 1, background: 'var(--accent, #DD102E)', border: 'none',
+                    borderRadius: 7, padding: '8px', cursor: 'pointer',
+                    color: '#fff', fontSize: 11, fontWeight: 700,
+                  }}
+                >
+                  ↑ Subir logo
+                </button>
+                {logoUrl && (
+                  <button
+                    onClick={() => clearAsset('st_logo', setLogoUrl)}
+                    style={{
+                      background: 'var(--bg-input, #111f35)', border: '1px solid var(--border, #1a3050)',
+                      borderRadius: 7, padding: '8px 12px', cursor: 'pointer',
+                      color: 'var(--text-secondary, #6b8ab0)', fontSize: 11,
+                    }}
+                  >✕</button>
+                )}
+              </div>
+              <input ref={logoInputRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={handleLogoUpload} />
+            </div>
+
+            {/* ── Favicon ── */}
+            <div style={{ background: 'var(--bg-card, #0c1829)', border: '1px solid var(--border, #1a3050)', borderRadius: 12, padding: 16 }}>
+              <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9, color: 'var(--text-muted, #3d5a80)', letterSpacing: 1, textTransform: 'uppercase', marginBottom: 12 }}>
+                📌 Favicon — icono de la pestaña del navegador
+              </div>
+              <div style={{
+                height: 64, background: 'var(--bg-input, #111f35)', borderRadius: 8,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                marginBottom: 12, border: '1px dashed var(--border, #1a3050)',
+                gap: 16,
+              }}>
+                {faviconUrl
+                  ? <>
+                      <img src={faviconUrl} alt="Favicon" style={{ width: 32, height: 32, objectFit: 'contain', borderRadius: 4 }} />
+                      <div style={{ fontSize: 9, color: 'var(--text-secondary, #6b8ab0)' }}>
+                        <div>Vista prestaña:</div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginTop: 4, background: 'rgba(255,255,255,0.08)', borderRadius: 4, padding: '3px 7px' }}>
+                          <img src={faviconUrl} style={{ width: 12, height: 12 }} alt="" />
+                          <span style={{ fontSize: 9 }}>{appName || 'SolarTrack'}</span>
+                        </div>
+                      </div>
+                    </>
+                  : <span style={{ fontSize: 11, color: 'var(--text-muted, #3d5a80)' }}>Sin favicon personalizado</span>
+                }
+              </div>
+              <div style={{ fontSize: 10, color: 'var(--text-muted, #3d5a80)', marginBottom: 10 }}>
+                ICO/PNG/SVG · máx 100KB · cuadrado recomendado
+              </div>
+              <div style={{ display: 'flex', gap: 8 }}>
+                <button
+                  onClick={() => faviconInputRef.current.click()}
+                  style={{
+                    flex: 1, background: 'var(--accent, #DD102E)', border: 'none',
+                    borderRadius: 7, padding: '8px', cursor: 'pointer',
+                    color: '#fff', fontSize: 11, fontWeight: 700,
+                  }}
+                >
+                  ↑ Subir favicon
+                </button>
+                {faviconUrl && (
+                  <button
+                    onClick={() => clearAsset('st_favicon', setFaviconUrl)}
+                    style={{
+                      background: 'var(--bg-input, #111f35)', border: '1px solid var(--border, #1a3050)',
+                      borderRadius: 7, padding: '8px 12px', cursor: 'pointer',
+                      color: 'var(--text-secondary, #6b8ab0)', fontSize: 11,
+                    }}
+                  >✕</button>
+                )}
+              </div>
+              <input ref={faviconInputRef} type="file" accept="image/*,.ico" style={{ display: 'none' }} onChange={handleFaviconUpload} />
+            </div>
+
+            {/* ── Nombre de la app ── */}
+            <div style={{ background: 'var(--bg-card, #0c1829)', border: '1px solid var(--border, #1a3050)', borderRadius: 12, padding: 16 }}>
+              <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9, color: 'var(--text-muted, #3d5a80)', letterSpacing: 1, textTransform: 'uppercase', marginBottom: 12 }}>
+                ✏️ Nombre — reemplaza "SolarTrack" en el header
+              </div>
+              <input
+                type="text"
+                value={appName}
+                onChange={handleAppName}
+                placeholder="SolarTrack"
+                maxLength={24}
+                style={{
+                  width: '100%', background: 'var(--bg-input, #111f35)',
+                  border: '1px solid var(--border, #1a3050)', borderRadius: 7,
+                  padding: '10px 12px', color: 'var(--text-primary, #e8f0fe)',
+                  fontSize: 14, fontFamily: "'Syne',sans-serif", fontWeight: 700,
+                  marginBottom: 8, outline: 'none',
+                }}
+              />
+              <div style={{ fontSize: 10, color: 'var(--text-muted, #3d5a80)', marginBottom: 12 }}>
+                Máx 24 caracteres · se aplica en tiempo real
+              </div>
+              {/* Vista previa del header */}
+              <div style={{
+                background: 'var(--bg-header, rgba(6,13,26,0.97))',
+                borderRadius: 7, padding: '8px 12px',
+                display: 'flex', alignItems: 'center', gap: 8,
+                border: '1px solid var(--border, #1a3050)',
+              }}>
+                {logoUrl
+                  ? <img src={logoUrl} alt="" style={{ height: 20, maxWidth: 60, objectFit: 'contain' }} />
+                  : <div style={{ width: 18, height: 18, background: 'var(--accent, #DD102E)', borderRadius: 4, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 9 }}>☀</div>
+                }
+                <span style={{ fontFamily: "'Syne',sans-serif", fontSize: 12, fontWeight: 800, color: 'var(--text-header, #e8f0fe)' }}>
+                  {appName || 'SolarTrack'}
+                </span>
+                <span style={{ fontSize: 9, color: 'var(--text-header, #e8f0fe)', opacity: 0.6 }}>· Paradas Seguras</span>
+              </div>
+            </div>
+
+          </div>
+        </section>
 
         {/* ── Paleta EMOV ────────────────────────────────────────────── */}
         <section style={{ marginBottom: 36 }}>
