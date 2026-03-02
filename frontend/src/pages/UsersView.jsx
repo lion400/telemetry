@@ -319,6 +319,147 @@ function AssignModal({ user, devices, onClose, onSaved }) {
   )
 }
 
+// ── Modal de edición de usuario ──────────────────────────────────────────
+function EditUserModal({ user, allProfileFields, activeFields, onClose, onSaved }) {
+  const [form, setForm] = useState({
+    username: user.username || '',
+    email:    user.email    || '',
+    role:     user.role     || 'operador',
+    password: '',
+    ...(() => { try { return typeof user.profile === 'string' ? JSON.parse(user.profile || '{}') : (user.profile || {}) } catch { return {} } })(),
+  })
+  const [saving, setSaving] = useState(false)
+
+  const visibleProfileFields = allProfileFields.filter(f => activeFields.includes(f.key))
+
+  const handleSave = async () => {
+    setSaving(true)
+    try {
+      const { username, email, password, role, ...profileRaw } = form
+      const profile = {}
+      visibleProfileFields.forEach(f => { if (profileRaw[f.key] !== undefined) profile[f.key] = profileRaw[f.key] })
+      await axios.put(`${API}/users/${user.id}`, { username, email, role, profile, ...(password ? { password } : {}) })
+      toast.success('Usuario actualizado')
+      onSaved()
+      onClose()
+    } catch(err) {
+      toast.error(err.response?.data?.error || 'Error actualizando')
+    } finally { setSaving(false) }
+  }
+
+  const inputStyle = {
+    width: '100%', background: 'var(--bg-input, #111f35)',
+    border: '1px solid var(--border, #1a3050)', borderRadius: 8,
+    padding: '9px 12px', color: 'var(--text-primary, #e8f0fe)',
+    fontSize: 13, outline: 'none', marginBottom: 10,
+  }
+  const labelStyle = {
+    fontFamily: "'DM Mono',monospace", fontSize: 9, color: 'var(--text-muted, #3d5a80)',
+    letterSpacing: 1, textTransform: 'uppercase', marginBottom: 4, display: 'block',
+  }
+
+  return (
+    <div style={{
+      position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)',
+      zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center',
+      backdropFilter: 'blur(4px)', padding: 16,
+    }} onClick={e => e.target === e.currentTarget && onClose()}>
+      <div style={{
+        background: 'var(--bg-card, #0c1829)', border: '1px solid var(--border, #1a3050)',
+        borderRadius: 14, width: '100%', maxWidth: 480,
+        boxShadow: '0 20px 60px rgba(0,0,0,0.6)',
+        display: 'flex', flexDirection: 'column', maxHeight: '90vh',
+      }}>
+        {/* Header */}
+        <div style={{
+          padding: '16px 20px', borderBottom: '1px solid var(--border, #1a3050)',
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          flexShrink: 0,
+        }}>
+          <div>
+            <div style={{ fontFamily: "'Syne',sans-serif", fontSize: 15, fontWeight: 800, color: 'var(--text-primary, #e8f0fe)' }}>
+              ✏️ Editar usuario
+            </div>
+            <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9, color: 'var(--text-muted, #3d5a80)', marginTop: 2 }}>
+              ID #{user.id} · creado {new Date(user.created_at).toLocaleDateString('es-EC')}
+            </div>
+          </div>
+          <button onClick={onClose} style={{
+            background: 'none', border: '1px solid var(--border, #1a3050)',
+            borderRadius: 7, padding: '4px 10px', cursor: 'pointer',
+            color: 'var(--text-secondary, #6b8ab0)', fontSize: 13,
+          }}>✕</button>
+        </div>
+
+        {/* Body scrollable */}
+        <div style={{ padding: '18px 20px', overflowY: 'auto', flex: 1 }}>
+
+          {/* Datos de acceso */}
+          <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 8, color: 'var(--text-muted, #3d5a80)', letterSpacing: 1, textTransform: 'uppercase', marginBottom: 10 }}>
+            Datos de acceso
+          </div>
+
+          <label style={labelStyle}>Usuario</label>
+          <input style={inputStyle} value={form.username}
+            onChange={e => setForm(f => ({ ...f, username: e.target.value }))} />
+
+          <label style={labelStyle}>Email</label>
+          <input style={inputStyle} type="email" value={form.email}
+            onChange={e => setForm(f => ({ ...f, email: e.target.value }))} />
+
+          <label style={labelStyle}>Nueva contraseña <span style={{ color: 'var(--text-muted, #3d5a80)' }}>(dejar vacío para no cambiar)</span></label>
+          <input style={inputStyle} type="password" placeholder="••••••••" value={form.password}
+            onChange={e => setForm(f => ({ ...f, password: e.target.value }))} />
+
+          <label style={labelStyle}>Rol</label>
+          <select style={{ ...inputStyle, cursor: 'pointer' }} value={form.role}
+            onChange={e => setForm(f => ({ ...f, role: e.target.value }))}>
+            <option value="operador">🛠 Operador</option>
+            <option value="supervisor">🔭 Supervisor</option>
+            <option value="gerente">👑 Gerente</option>
+          </select>
+
+          {/* Campos de perfil */}
+          {visibleProfileFields.length > 0 && (
+            <>
+              <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 8, color: 'var(--text-muted, #3d5a80)', letterSpacing: 1, textTransform: 'uppercase', margin: '6px 0 10px' }}>
+                Información del perfil
+              </div>
+              {visibleProfileFields.map(f => (
+                <div key={f.key}>
+                  <label style={labelStyle}>{f.label}</label>
+                  <input style={inputStyle} type={f.type} placeholder={f.placeholder || f.label}
+                    value={form[f.key] || ''}
+                    onChange={e => setForm(p => ({ ...p, [f.key]: e.target.value }))} />
+                </div>
+              ))}
+            </>
+          )}
+        </div>
+
+        {/* Footer */}
+        <div style={{
+          padding: '14px 20px', borderTop: '1px solid var(--border, #1a3050)',
+          display: 'flex', gap: 10, flexShrink: 0,
+        }}>
+          <button onClick={onClose} style={{
+            flex: 1, background: 'none', border: '1px solid var(--border, #1a3050)',
+            borderRadius: 8, padding: '9px', cursor: 'pointer',
+            color: 'var(--text-secondary, #6b8ab0)', fontSize: 13,
+          }}>Cancelar</button>
+          <button onClick={handleSave} disabled={saving} style={{
+            flex: 2, background: 'var(--accent-dim, rgba(26,111,255,0.2))',
+            border: '1px solid var(--accent-border, rgba(26,111,255,0.4))',
+            borderRadius: 8, padding: '9px', cursor: saving ? 'wait' : 'pointer',
+            color: 'var(--accent, #5a9fff)', fontSize: 13, fontWeight: 700,
+            opacity: saving ? 0.6 : 1,
+          }}>{saving ? 'Guardando...' : '✓ Guardar cambios'}</button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 // ── Vista principal ────────────────────────────────────────────────────────
 export default function UsersView() {
   const { user: me, devices } = useStore()
@@ -332,10 +473,10 @@ export default function UsersView() {
   ]
   // Campos de perfil — configurables (on/off) con valores por defecto ON
   const DEFAULT_PROFILE_FIELDS = [
-    { key: 'nombres',   label: 'Nombres',    type: 'text',   required: false, placeholder: 'Nombres' },
-    { key: 'apellidos', label: 'Apellidos',  type: 'text',   required: false, placeholder: 'Apellidos' },
-    { key: 'direccion', label: 'Dirección',  type: 'text',   required: false, placeholder: 'Dirección Av.' },
-    { key: 'edad',      label: 'Edad',       type: 'number', required: false, placeholder: 'Edad' },
+    { key: 'nombres',   label: 'Nombres',    type: 'text',   required: false, placeholder: 'Ej: Juan Carlos' },
+    { key: 'apellidos', label: 'Apellidos',  type: 'text',   required: false, placeholder: 'Ej: Pérez Mora' },
+    { key: 'direccion', label: 'Dirección',  type: 'text',   required: false, placeholder: 'Ej: Av. España 1-45' },
+    { key: 'edad',      label: 'Edad',       type: 'number', required: false, placeholder: 'Ej: 34' },
   ]
   // Campos extra agregados por el gerente
   const STORAGE_KEY = 'st_user_extra_fields'
@@ -384,6 +525,7 @@ export default function UsersView() {
   const [form, setForm] = useState({ username: '', email: '', password: '', role: 'operador' })
   const [log, setLog]             = useState([])
   const [modalUser, setModalUser] = useState(null)
+  const [editUser,  setEditUser]  = useState(null)
 
   const fetchUsers = async () => {
     try {
@@ -439,6 +581,17 @@ export default function UsersView() {
 
   return (
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+
+      {/* Modal editar usuario */}
+      {editUser && (
+        <EditUserModal
+          user={editUser}
+          allProfileFields={[...DEFAULT_PROFILE_FIELDS, ...extraFields]}
+          activeFields={activeFields}
+          onClose={() => setEditUser(null)}
+          onSaved={fetchUsers}
+        />
+      )}
 
       {/* Modal flotante */}
       {modalUser && (
@@ -673,7 +826,7 @@ export default function UsersView() {
                         }}>
                           <option value="operador">🛠 Operador</option>
                           <option value="supervisor">🔭 Supervisor</option>
-                          <option value="gerente"> Gerente</option>
+                          <option value="gerente">👑 Gerente</option>
                         </select>
                       ) : (
                         <span style={{
@@ -699,6 +852,13 @@ export default function UsersView() {
                     </td>
                     <td style={{ padding: '12px 16px' }}>
                       <div style={{ display: 'flex', gap: 6 }}>
+                        {me?.role === 'gerente' && (
+                          <button onClick={() => setEditUser(u)} style={{
+                            background: 'var(--bg-input, #111f35)', border: '1px solid var(--border, #1a3050)',
+                            borderRadius: 7, padding: '5px 12px', cursor: 'pointer',
+                            color: 'var(--text-secondary, #6b8ab0)', fontSize: 11, fontWeight: 600,
+                          }}>✏️ Editar</button>
+                        )}
                         <button onClick={() => setModalUser(u)} style={{
                           background: 'var(--nav-active-bg, rgba(26,111,255,0.1))', border: '1px solid rgba(26,111,255,0.3)',
                           borderRadius: 7, padding: '5px 12px', cursor: 'pointer',

@@ -129,4 +129,29 @@ router.put('/:id/profile', requireRole('gerente'), async (req, res) => {
   }
 });
 
+// Editar usuario completo (username, email, password opcional, profile)
+router.put('/:id', requireRole('gerente'), async (req, res) => {
+  try {
+    const { username, email, password, role, profile } = req.body;
+    const updates = []
+    const params = []
+    if (username) { updates.push('username=?'); params.push(username) }
+    if (email)    { updates.push('email=?');    params.push(email) }
+    if (role)     { updates.push('role=?');     params.push(role) }
+    if (profile !== undefined) { updates.push('profile=?'); params.push(JSON.stringify(profile)) }
+    if (password && password.trim()) {
+      const bcrypt = require('bcrypt')
+      const hash = await bcrypt.hash(password, 10)
+      updates.push('password=?'); params.push(hash)
+    }
+    if (!updates.length) return res.status(400).json({ error: 'Nada que actualizar' })
+    params.push(req.params.id)
+    await run(`UPDATE users SET ${updates.join(',')} WHERE id=?`, params)
+    res.json({ ok: true })
+  } catch(e) {
+    if (e.message?.includes('UNIQUE')) return res.status(400).json({ error: 'Usuario o email ya existe' })
+    res.status(500).json({ error: e.message })
+  }
+});
+
 module.exports = router;
