@@ -33,8 +33,8 @@ export default function MapView() {
     if (!L) return
 
     const map = L.map(mapRef.current, {
-      center: [-2.4204, -79.3437], // La Troncal, Cañar
-      zoom: 14,
+      center: [-2.9027, -79.0045], // Cuenca, Azuay
+      zoom: 13,
       zoomControl: false,
     })
 
