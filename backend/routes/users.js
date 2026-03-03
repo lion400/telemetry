@@ -158,7 +158,7 @@ router.put('/:id', requireRole('gerente'), async (req, res) => {
 // ── PDF Reporte de usuarios (solo gerente) ─────────────────────────────────
 router.get("/report/pdf", requireRole("gerente"), async (req, res) => {
   try {
-    const users = await all(
+    const users = await db.all(
       "SELECT u.id, u.username, u.email, u.role, u.active, u.created_at, u.last_login, u.profile, " +
       "GROUP_CONCAT(DISTINCT d.name) as devices " +
       "FROM users u " +
