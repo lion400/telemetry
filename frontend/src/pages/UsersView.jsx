@@ -483,8 +483,8 @@ export default function UsersView() {
   // Campos fijos siempre presentes
   const FIXED_FIELDS = [
     { key: 'username',  label: 'Usuario',     type: 'text',     required: true,  placeholder: 'nombre_usuario' },
-    { key: 'email',     label: 'Email',       type: 'email',    required: true,  placeholder: 'correo@emov.gob.ec' },
     { key: 'password',  label: 'Contraseña',  type: 'password', required: true,  placeholder: '••••••••' },
+    { key: 'email',     label: 'Email',       type: 'email',    required: true,  placeholder: 'correo@emov.gob.ec' },
   ]
   // Campos de perfil — configurables (on/off) con valores por defecto ON
   const DEFAULT_PROFILE_FIELDS = [
