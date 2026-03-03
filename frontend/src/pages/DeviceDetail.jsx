@@ -55,7 +55,18 @@ const CUSTOM_TOOLTIP = ({ active, payload, label }) => {
   )
 }
 
+
+function useIsMobile() {
+  const [m, setM] = React.useState(window.innerWidth < 768)
+  React.useEffect(() => {
+    const h = () => setM(window.innerWidth < 768)
+    window.addEventListener('resize', h)
+    return () => window.removeEventListener('resize', h)
+  }, [])
+  return m
+}
 export default function DeviceDetail() {
+  const isMobile = useIsMobile()
   const { id } = useParams()
   const navigate = useNavigate()
   const { telemetry: storeTelemetry } = useStore()
@@ -162,7 +173,7 @@ export default function DeviceDetail() {
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
 
       {/* Header */}
-      <div style={{ padding: '12px 24px', borderBottom: '1px solid #1a3050', display: 'flex', alignItems: 'center', gap: 16 }}>
+      <div style={{ padding: isMobile ? '10px 12px' : '12px 24px', borderBottom: '1px solid #1a3050', display: 'flex', alignItems: 'center', gap: isMobile ? 10 : 16, flexWrap: 'wrap' }}>
         <button onClick={() => navigate(-1)} style={{ background: 'none', border: '1px solid #1a3050', borderRadius: 8, padding: '5px 12px', color: 'var(--text-secondary, var(--text-secondary, #6b8ab0))', cursor: 'pointer', fontSize: 12 }}>
           ← Volver
         </button>
@@ -229,14 +240,14 @@ export default function DeviceDetail() {
       </div>
 
       {/* Tab content */}
-      <div style={{ flex: 1, overflow: 'auto', padding: '20px 24px' }}>
+      <div style={{ flex: 1, overflow: 'auto', padding: isMobile ? '12px' : '20px 24px' }}>
 
         {/* ── BATERÍA ─────────────────────────────────────────────────────── */}
         {activeTab === 'battery' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
 
             {/* SOC bar */}
-            <div style={{ background: 'var(--bg-card, var(--bg-card, #0c1829))', border: '1px solid #1a3050', borderRadius: 12, padding: '20px 24px' }}>
+            <div style={{ background: 'var(--bg-card, var(--bg-card, #0c1829))', border: '1px solid #1a3050', borderRadius: 12, padding: isMobile ? '14px 14px' : '20px 24px' }}>
               <SectionTitle color={socColor}>Estado de carga — LFP 100Ah / 1.28kWh</SectionTitle>
               <div style={{ position: 'relative', height: 32, background: 'var(--bg-input, var(--bg-input, #111f35))', borderRadius: 8, overflow: 'hidden', border: '1px solid #1a3050', marginBottom: 8 }}>
                 <div style={{
@@ -413,7 +424,7 @@ export default function DeviceDetail() {
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
 
               {/* Temperatura */}
-              <div style={{ background: 'var(--bg-card, var(--bg-card, #0c1829))', border: '1px solid #1a3050', borderRadius: 12, padding: '20px 24px', textAlign: 'center' }}>
+              <div style={{ background: 'var(--bg-card, var(--bg-card, #0c1829))', border: '1px solid #1a3050', borderRadius: 12, padding: isMobile ? '14px 14px' : '20px 24px', textAlign: 'center' }}>
                 <div style={{ fontSize: 40, marginBottom: 8 }}>🌡</div>
                 <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9, color: 'var(--text-muted, var(--text-muted, #3d5a80))', letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: 8 }}>
                   TEMPERATURA — WMS301
@@ -428,7 +439,7 @@ export default function DeviceDetail() {
               </div>
 
               {/* Humedad */}
-              <div style={{ background: 'var(--bg-card, var(--bg-card, #0c1829))', border: '1px solid #1a3050', borderRadius: 12, padding: '20px 24px', textAlign: 'center' }}>
+              <div style={{ background: 'var(--bg-card, var(--bg-card, #0c1829))', border: '1px solid #1a3050', borderRadius: 12, padding: isMobile ? '14px 14px' : '20px 24px', textAlign: 'center' }}>
                 <div style={{ fontSize: 40, marginBottom: 8 }}>💧</div>
                 <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9, color: 'var(--text-muted, var(--text-muted, #3d5a80))', letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: 8 }}>
                   HUMEDAD RELATIVA — WMS301

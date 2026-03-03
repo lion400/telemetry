@@ -90,7 +90,18 @@ function getColValue(ev, colId) {
   }
 }
 
+
+function useIsMobile() {
+  const [m, setM] = React.useState(window.innerWidth < 768)
+  React.useEffect(() => {
+    const h = () => setM(window.innerWidth < 768)
+    window.addEventListener('resize', h)
+    return () => window.removeEventListener('resize', h)
+  }, [])
+  return m
+}
 export default function EventsView() {
+  const isMobile = useIsMobile()
   const { devices, fetchEvents: storeFetchEvents } = useStore()
   const [events, setEvents] = useState([])
   const [total, setTotal] = useState(0)
@@ -208,7 +219,7 @@ export default function EventsView() {
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
 
       {/* Header */}
-      <div style={{ padding: '14px 24px', borderBottom: '1px solid #1a3050', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+      <div style={{ padding: isMobile ? '10px 12px' : '14px 24px', borderBottom: '1px solid #1a3050', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8 }}>
         <div>
           <h1 style={{ fontFamily: "'Syne',sans-serif", fontSize: 20, fontWeight: 800 }}>Historial de Eventos</h1>
           <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 10, color: 'var(--text-muted, var(--text-muted, #3d5a80))', marginTop: 2 }}>
@@ -228,7 +239,7 @@ export default function EventsView() {
             <div style={{
               position: 'absolute', right: 0, top: 40, zIndex: 500, width: 300,
               background: 'var(--bg-card, var(--bg-card, #0c1829))', border: '1px solid #1a3050', borderRadius: 12,
-              padding: '14px', boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
+              padding: '14px', boxShadow: '0 8px 32px rgba(0,0,0,0.4)', maxWidth: isMobile ? 'calc(100vw - 24px)' : 'none',
             }}>
               {/* Selector de columnas */}
               <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9, letterSpacing: 1.5, color: 'var(--text-muted, var(--text-muted, #3d5a80))', textTransform: 'uppercase', marginBottom: 10 }}>
@@ -261,7 +272,7 @@ export default function EventsView() {
       </div>
 
       {/* Filtros */}
-      <div style={{ padding: '10px 24px', borderBottom: '1px solid #1a3050', display: 'flex', gap: 10, flexWrap: 'wrap', background: 'var(--bg-card, var(--bg-card, #0c1829))' }}>
+      <div style={{ padding: isMobile ? '8px 12px' : '10px 24px', borderBottom: '1px solid #1a3050', display: 'flex', gap: 8, flexWrap: 'wrap', background: 'var(--bg-card, var(--bg-card, #0c1829))' }}>
         <select style={inp} value={filters.device_id} onChange={e => { setFilters(f => ({...f, device_id: e.target.value})); setPage(0) }}>
           <option value="">Todas las paradas</option>
           {devices.map(d => <option key={d.device_id} value={d.device_id}>{d.name}</option>)}
@@ -286,7 +297,7 @@ export default function EventsView() {
 
       {/* Tabla */}
       <div style={{ flex: 1, overflow: 'auto' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+        </div><div style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}><table style={{ width: '100%', borderCollapse: 'collapse', minWidth: isMobile ? 600 : 'unset' }}>
           <thead>
             <tr style={{ background: 'var(--bg-card, var(--bg-card, #0c1829))', position: 'sticky', top: 0, zIndex: 10 }}>
               {['Fecha / Hora', 'Parada', 'Tipo', 'Severidad', 'Estado', 'SLA', 'Mensaje', 'Acciones'].map(h => (
@@ -362,7 +373,7 @@ export default function EventsView() {
       </div>
 
       {/* Paginación */}
-      <div style={{ padding: '10px 24px', borderTop: '1px solid #1a3050', display: 'flex', alignItems: 'center', gap: 10, justifyContent: 'flex-end' }}>
+      <div style={{ padding: isMobile ? '8px 12px' : '10px 24px', borderTop: '1px solid #1a3050', display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'space-between', flexWrap: 'wrap' }}>
         <span style={{ fontSize: 11, color: 'var(--text-secondary, var(--text-secondary, #6b8ab0))' }}>
           {total === 0 ? '0' : `${page * LIMIT + 1}–${Math.min((page + 1) * LIMIT, total)}`} de {total}
         </span>

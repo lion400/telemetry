@@ -77,10 +77,11 @@ function UserMenu({ user, logout, navigate, isMobile }) {
       {/* Dropdown */}
       {open && (
         <div style={{
-          position: 'absolute', top: 'calc(100% + 8px)', right: 0,
+          position: 'fixed',
+          top: 52, right: 8,
           background: 'var(--bg-card, #0c1829)',
           border: '1px solid var(--border, #1a3050)',
-          borderRadius: 10, minWidth: 180,
+          borderRadius: 10, minWidth: 200, maxWidth: 'calc(100vw - 16px)',
           boxShadow: '0 8px 32px rgba(0,0,0,0.5)',
           overflow: 'hidden', zIndex: 9999,
           animation: 'fadeIn 0.12s ease',
@@ -392,7 +393,7 @@ export default function AppShell() {
               whiteSpace: 'nowrap',
             }}>
               {logoUrl
-                ? <img src={logoUrl} alt="Logo" style={{ height: 30, maxWidth: 120, objectFit: 'contain', borderRadius: 4, flexShrink: 0 }} />
+                ? <img src={logoUrl} alt="Logo" style={{ height: isMobile ? 26 : 30, maxWidth: isMobile ? 80 : 120, objectFit: 'contain', borderRadius: 4, flexShrink: 0 }} />
                 : <div style={{ width: 26, height: 26, background: 'var(--accent, #DD102E)', borderRadius: 6, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, flexShrink: 0 }}>☀</div>
               }
               <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
@@ -405,8 +406,8 @@ export default function AppShell() {
                     <span style={{ color: 'var(--text-header, #e8f0fe)', fontSize: 11, fontWeight: 400, opacity: 0.7 }}>· Paradas Seguras</span>
                   )}
                 </div>
-                {/* Ubicación real del usuario */}
-                {(userLocation || locLoading) && (
+                {/* Ubicación real del usuario — solo desktop */}
+                {!isMobile && (userLocation || locLoading) && (
                   <div style={{
                     fontFamily: "'DM Mono',monospace", fontSize: 9, fontWeight: 400,
                     color: 'var(--text-header, #e8f0fe)', opacity: userLocation ? 0.85 : 0.5,
@@ -414,7 +415,7 @@ export default function AppShell() {
                     display: 'flex', alignItems: 'center', gap: 3,
                   }}>
                     {locLoading
-                      ? <span style={{ color: 'var(--text-header, #e8f0fe)', opacity: 0.5 }}>📍 Obteniendo ubicación...</span>
+                      ? <span style={{ color: 'var(--text-header, #e8f0fe)', opacity: 0.5 }}>📍...</span>
                       : <span>📍 {userLocation}</span>
                     }
                   </div>
@@ -543,15 +544,15 @@ export default function AppShell() {
               </div>
             )}
 
-            {/* EN VIVO */}
+            {/* EN VIVO — dot only on mobile */}
             <div style={{
               display: 'flex', alignItems: 'center', gap: 5,
               background: 'rgba(0,230,118,0.1)', border: '1px solid rgba(0,230,118,0.3)',
-              borderRadius: 20, padding: isMobile ? '3px 7px' : '3px 10px',
-              color: 'var(--online, #00e676)', fontSize: isMobile ? 9 : 10,
+              borderRadius: 20, padding: isMobile ? '4px 6px' : '3px 10px',
+              color: 'var(--online, #00e676)', fontSize: 10,
             }}>
-              <div style={{ width: 5, height: 5, borderRadius: '50%', background: 'var(--online, #00e676)', animation: 'pulse-dot 1.5s infinite' }} />
-              {isMobile ? 'LIVE' : 'EN VIVO'}
+              <div style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--online, #00e676)', animation: 'pulse-dot 1.5s infinite', flexShrink: 0 }} />
+              {!isMobile && 'EN VIVO'}
             </div>
 
             {/* Alertas */}
@@ -560,8 +561,9 @@ export default function AppShell() {
                 onClick={() => navigate('/events')}
                 style={{
                   background: 'rgba(255,82,82,0.15)', border: '1px solid rgba(255,82,82,0.4)',
-                  borderRadius: 20, padding: isMobile ? '3px 7px' : '3px 10px',
+                  borderRadius: 20, padding: isMobile ? '4px 7px' : '3px 10px',
                   color: 'var(--offline, #ff5252)', fontSize: isMobile ? 10 : 11, cursor: 'pointer',
+                  display: 'flex', alignItems: 'center', gap: 4,
                 }}
               >
                 ⚠ {unreadEvents}

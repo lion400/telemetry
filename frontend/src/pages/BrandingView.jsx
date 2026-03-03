@@ -182,7 +182,18 @@ function ThemeCard({ theme, isActive, isPreview, onApply, onPreviewEnter, onPrev
 }
 
 // ── Vista principal ───────────────────────────────────────────────────────
+
+function useIsMobile() {
+  const [m, setM] = React.useState(window.innerWidth < 768)
+  React.useEffect(() => {
+    const h = () => setM(window.innerWidth < 768)
+    window.addEventListener('resize', h)
+    return () => window.removeEventListener('resize', h)
+  }, [])
+  return m
+}
 export default function BrandingView() {
+  const isMobile = useIsMobile()
   // ── Assets de marca ──────────────────────────────────────────────────────
   const [logoUrl,   setLogoUrl]   = useState(() => localStorage.getItem('st_logo')    || null)
   const [faviconUrl,setFaviconUrl]= useState(() => localStorage.getItem('st_favicon') || null)
@@ -341,7 +352,7 @@ export default function BrandingView() {
         )}
       </div>
 
-      <div style={{ flex: 1, overflow: 'auto', padding: '24px' }}>
+      <div style={{ flex: 1, overflow: 'auto', padding: isMobile ? '14px 12px' : '24px' }}>
 
         {/* ── Activos de Marca ───────────────────────────────────────── */}
         <section style={{ marginBottom: 36 }}>
@@ -355,7 +366,7 @@ export default function BrandingView() {
             </span>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 14 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fill, minmax(260px, 1fr))', gap: 12 }}>
 
             {/* ── Logo ── */}
             <div style={{ background: 'var(--bg-card, #0c1829)', border: '1px solid var(--border, #1a3050)', borderRadius: 12, padding: 16 }}>
@@ -512,7 +523,7 @@ export default function BrandingView() {
             </span>
           </div>
 
-          <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', gap: isMobile ? 6 : 10, flexWrap: 'wrap' }}>
             {EMOV_PALETTE.map(c => (
               <div
                 key={c.hex}

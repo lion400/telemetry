@@ -20,6 +20,7 @@ const REPORT_TYPES = [
 
 // ── Modal flotante de asignaciones ────────────────────────────────────────
 function AssignModal({ user, devices, onClose, onSaved }) {
+  const isMobile = useIsMobile()
   const [tab, setTab]                         = useState('paradas')
   const [assignedDevices, setAssignedDevices] = useState([])
   const [assignedReports, setAssignedReports] = useState([])
@@ -85,7 +86,7 @@ function AssignModal({ user, devices, onClose, onSaved }) {
       <div
         onClick={e => e.stopPropagation()}
         style={{
-          width: '100%', maxWidth: 620, maxHeight: '88vh',
+          width: '100%', maxWidth: isMobile ? '100%' : 620, maxHeight: isMobile ? '92vh' : '88vh', margin: '0', borderRadius: isMobile ? '16px 16px 0 0' : 16,
           background: 'var(--bg-sidebar, var(--bg-sidebar, #0a1628))', border: '1px solid #1a3050',
           borderRadius: 16, display: 'flex', flexDirection: 'column',
           boxShadow: '0 24px 80px rgba(0,0,0,0.6)', overflow: 'hidden',
@@ -93,7 +94,7 @@ function AssignModal({ user, devices, onClose, onSaved }) {
       >
         {/* Header */}
         <div style={{
-          padding: '20px 24px 16px', borderBottom: '1px solid #1a3050',
+          padding: isMobile ? '14px 16px 12px' : '20px 24px 16px', borderBottom: '1px solid #1a3050',
           background: 'linear-gradient(135deg, var(--bg-card, #0c1829), var(--bg-input, #111f35))', flexShrink: 0,
         }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -321,6 +322,7 @@ function AssignModal({ user, devices, onClose, onSaved }) {
 
 // ── Modal de edición de usuario ──────────────────────────────────────────
 function EditUserModal({ user, allProfileFields, activeFields, onClose, onSaved }) {
+  const isMobile = useIsMobile()
   const [form, setForm] = useState({
     username: user.username || '',
     email:    user.email    || '',
@@ -361,14 +363,16 @@ function EditUserModal({ user, allProfileFields, activeFields, onClose, onSaved 
   return (
     <div style={{
       position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)',
-      zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center',
-      backdropFilter: 'blur(4px)', padding: 16,
+      zIndex: 9999, display: 'flex', alignItems: isMobile ? 'flex-end' : 'center', justifyContent: 'center',
+      backdropFilter: 'blur(4px)', padding: isMobile ? 0 : 16,
     }} onClick={e => e.target === e.currentTarget && onClose()}>
       <div style={{
         background: 'var(--bg-card, #0c1829)', border: '1px solid var(--border, #1a3050)',
-        borderRadius: 14, width: '100%', maxWidth: 480,
+        borderRadius: 14, width: '100%', maxWidth: isMobile ? '100%' : 480,
+        margin: isMobile ? '0' : 'auto',
+        borderRadius: isMobile ? '16px 16px 0 0' : 14,
         boxShadow: '0 20px 60px rgba(0,0,0,0.6)',
-        display: 'flex', flexDirection: 'column', maxHeight: '90vh',
+        display: 'flex', flexDirection: 'column', maxHeight: isMobile ? '92vh' : '90vh',
       }}>
         {/* Header */}
         <div style={{
@@ -461,7 +465,18 @@ function EditUserModal({ user, allProfileFields, activeFields, onClose, onSaved 
 }
 
 // ── Vista principal ────────────────────────────────────────────────────────
+
+function useIsMobile() {
+  const [m, setM] = React.useState(window.innerWidth < 768)
+  React.useEffect(() => {
+    const h = () => setM(window.innerWidth < 768)
+    window.addEventListener('resize', h)
+    return () => window.removeEventListener('resize', h)
+  }, [])
+  return m
+}
 export default function UsersView() {
+  const isMobile = useIsMobile()
   const { user: me, devices } = useStore()
   const [users, setUsers]         = useState([])
   const [showForm, setShowForm]   = useState(false)
@@ -604,7 +619,7 @@ export default function UsersView() {
       )}
 
       {/* Header */}
-      <div style={{ padding: '14px 24px', borderBottom: '1px solid #1a3050', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexShrink: 0 }}>
+      <div style={{ padding: isMobile ? '10px 12px' : '14px 24px', borderBottom: '1px solid #1a3050', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexShrink: 0, flexWrap: 'wrap', gap: 8 }}>
         <div>
           <h1 style={{ fontFamily: "'Syne',sans-serif", fontSize: 20, fontWeight: 800 }}>Gestión de Usuarios</h1>
           <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9, color: 'var(--text-muted, var(--text-muted, #3d5a80))', letterSpacing: 1, textTransform: 'uppercase', marginTop: 2 }}>
@@ -623,11 +638,11 @@ export default function UsersView() {
         )}
       </div>
 
-      <div style={{ flex: 1, overflow: 'auto', padding: '16px 24px', display: 'flex', flexDirection: 'column', gap: 14 }}>
+      <div style={{ flex: 1, overflow: 'auto', padding: isMobile ? '10px 12px' : '16px 24px', display: 'flex', flexDirection: 'column', gap: 14 }}>
 
         {/* Formulario */}
         {showForm && (
-          <div style={{ background: 'var(--bg-card, var(--bg-card, #0c1829))', border: '1px solid #1a3050', borderRadius: 12, padding: 20, maxWidth: 480 }}>
+          <div style={{ background: 'var(--bg-card, var(--bg-card, #0c1829))', border: '1px solid #1a3050', borderRadius: 12, padding: isMobile ? 14 : 20, maxWidth: isMobile ? '100%' : 480 }}>
             <h3 style={{ fontFamily: "'Syne',sans-serif", fontSize: 14, fontWeight: 700, marginBottom: 14, color: 'var(--accent, var(--accent, #5a9fff))' }}>
               Nuevo Usuario
             </h3>
@@ -759,8 +774,8 @@ export default function UsersView() {
         )}
 
         {/* Tabla de usuarios */}
-        <div style={{ background: 'var(--bg-card, var(--bg-card, #0c1829))', border: '1px solid #1a3050', borderRadius: 12, overflow: 'hidden' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+        <div style={{ background: 'var(--bg-card, var(--bg-card, #0c1829))', border: '1px solid #1a3050', borderRadius: 12, overflow: isMobile ? 'auto' : 'hidden' }}>
+          <div style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}><table style={{ width: '100%', borderCollapse: 'collapse', minWidth: isMobile ? 580 : 'unset' }}>
             <thead>
               <tr style={{ background: 'var(--bg-app, var(--bg-app, #060d1a))' }}>
                 {['Usuario', 'Rol', 'Estado', 'Último acceso', 'Acciones'].map(h => (
@@ -879,12 +894,12 @@ export default function UsersView() {
                 )
               })}
             </tbody>
-          </table>
+          </table></div>
         </div>
 
         {/* Bitácora */}
         {log.length > 0 && (
-          <div style={{ background: 'var(--bg-card, var(--bg-card, #0c1829))', border: '1px solid #1a3050', borderRadius: 12, overflow: 'hidden' }}>
+          <div style={{ background: 'var(--bg-card, var(--bg-card, #0c1829))', border: '1px solid #1a3050', borderRadius: 12, overflow: isMobile ? 'auto' : 'hidden' }}>
             <div style={{ padding: '12px 16px', borderBottom: '1px solid #1a3050', display: 'flex', alignItems: 'center', gap: 8 }}>
               <span style={{ fontFamily: "'Syne',sans-serif", fontSize: 13, fontWeight: 700 }}>📋 Bitácora de Accesos</span>
               <span style={{ fontFamily: "'DM Mono',monospace", fontSize: 9, color: 'var(--text-muted, var(--text-muted, #3d5a80))', background: 'var(--bg-input, var(--bg-input, #111f35))', padding: '2px 8px', borderRadius: 8 }}>

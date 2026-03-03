@@ -297,7 +297,7 @@ export default function MapView() {
 
         {/* Map controls */}
         <div style={{
-          position: 'absolute', top: 12, left: 12, zIndex: 1000,
+          position: 'absolute', top: 12, left: 12, zIndex: 1000, touchAction: 'none',
           display: 'flex', flexDirection: 'column', gap: 6,
         }}>
           <button

@@ -89,7 +89,18 @@ function SLATimer({ deadline, label, compact }) {
   )
 }
 
+
+function useIsMobile() {
+  const [m, setM] = React.useState(window.innerWidth < 768)
+  React.useEffect(() => {
+    const h = () => setM(window.innerWidth < 768)
+    window.addEventListener('resize', h)
+    return () => window.removeEventListener('resize', h)
+  }, [])
+  return m
+}
 export default function OperatorView() {
+  const isMobile = useIsMobile()
   const navigate = useNavigate()
   const { user, devices, telemetry, fetchEvents: storeFetchEvents } = useStore()
   const [events, setEvents] = useState([])
@@ -162,7 +173,7 @@ export default function OperatorView() {
 
       {/* Header */}
       <div style={{
-        padding: '12px 20px', borderBottom: '1px solid #1a3050',
+        padding: isMobile ? '10px 12px' : '12px 20px', borderBottom: '1px solid #1a3050',
         display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexShrink: 0,
       }}>
         <div>
@@ -218,7 +229,7 @@ export default function OperatorView() {
       </div>
 
       {/* Lista de alertas */}
-      <div style={{ flex: 1, overflow: 'auto', padding: '12px 20px', display: 'flex', flexDirection: 'column', gap: 10 }}>
+      <div style={{ flex: 1, overflow: 'auto', padding: isMobile ? '8px 10px' : '12px 20px', display: 'flex', flexDirection: 'column', gap: 10 }}>
         {loading && events.length === 0 && (
           <div style={{ textAlign: 'center', color: 'var(--text-muted, var(--text-muted, #3d5a80))', padding: 40 }}>Cargando alertas...</div>
         )}
@@ -250,7 +261,7 @@ export default function OperatorView() {
               background: 'var(--bg-card, var(--bg-card, #0c1829))',
               border: `1px solid ${ev.status === 'resolved' ? 'var(--border, var(--border, #1a3050))' : sev.border}`,
               borderLeft: `4px solid ${sev.color}`,
-              borderRadius: 12, padding: '14px 16px',
+              borderRadius: 12, padding: isMobile ? '10px 12px' : '14px 16px',
               opacity: ev.status === 'resolved' ? 0.6 : 1,
             }}>
               {/* Fila superior */}

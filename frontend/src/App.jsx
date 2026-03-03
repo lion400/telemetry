@@ -34,6 +34,19 @@ export default function App() {
     <>
       <style>{`
         * { box-sizing: border-box; margin: 0; padding: 0; }
+        * { -webkit-tap-highlight-color: transparent; }
+        button, [role=button], div[onClick], div[style*='cursor: pointer'] {
+          touch-action: manipulation;
+          -webkit-tap-highlight-color: transparent;
+        }
+        input, select, textarea {
+          font-size: 16px !important; /* prevents iOS zoom on focus */
+          touch-action: manipulation;
+        }
+        @media (max-width: 767px) {
+          ::-webkit-scrollbar { display: none; }
+          body { overflow-x: hidden; }
+        }
         body {
           background: var(--bg-app, #060d1a);
           color: var(--text-primary, #e8f0fe);
