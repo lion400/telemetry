@@ -16,7 +16,7 @@ const NAV = [
   { id: '/alerts',   label: 'Alertas',   icon: '🔔', badge: 'unread', roles: ['operador'] },
   { id: '/events',   label: 'Eventos',   icon: '◈', badge: 'unread', roles: ['gerente', 'supervisor', 'admin'] },
   { id: '/users',    label: 'Usuarios',  icon: '◻', roles: ['gerente', 'admin'] },
-  { id: '/branding', label: 'Temas',     icon: '🎨', roles: ['gerente', 'admin'] },
+  { id: '/branding', label: 'Temas',     icon: '*', roles: ['gerente', 'admin'] },
 ]
 
 // Hook para detectar tamaño de pantalla
