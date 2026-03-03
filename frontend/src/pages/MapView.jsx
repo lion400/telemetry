@@ -305,6 +305,7 @@ export default function MapView() {
                 return (
                   <div
                     key={d.device_id}
+                    onClick={() => toggleDevice(d.device_id)}
                     style={{
                       padding: '8px 12px 8px 20px', cursor: 'pointer',
                       borderBottom: '1px solid rgba(26,48,80,0.5)',
