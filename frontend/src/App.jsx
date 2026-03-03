@@ -5,13 +5,23 @@ import LoginPage from './pages/Login'
 import AppShell from './pages/AppShell'
 import { useStore } from './store'
 import { connectSocket } from './socket'
-import { loadSavedTheme } from './themes'
+import { loadSavedTheme, loadThemeFromServer } from './themes'
 
 export default function App() {
   const { token, fetchMe } = useStore()
 
-  // Cargar tema guardado al inicio
-  useEffect(() => { loadSavedTheme() }, [])
+  // Cargar tema: primero cache local (sin flash), luego sincronizar con servidor
+  useEffect(() => {
+    loadSavedTheme()          // inmediato desde sessionStorage
+    loadThemeFromServer().then(branding => {
+      // Aplicar favicon global si existe en servidor
+      if (branding?.favicon_url) {
+        let link = document.querySelector("link[rel='icon']")
+        if (!link) { link = document.createElement('link'); link.rel = 'icon'; document.head.appendChild(link) }
+        link.href = branding.favicon_url
+      }
+    })
+  }, [])
 
   useEffect(() => {
     if (token) {

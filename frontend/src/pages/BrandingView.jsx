@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useRef } from 'react'
-import { THEMES, applyTheme } from '../themes'
+import { THEMES, applyTheme, saveThemeToServer, loadThemeFromServer } from '../themes'
 import toast from 'react-hot-toast'
 
 // ── Paleta EMOV extraída del sitio ────────────────────────────────────────
@@ -190,14 +190,25 @@ export default function BrandingView() {
   const logoInputRef    = useRef()
   const faviconInputRef = useRef()
 
-  const saveBrandAsset = (key, value, setter) => {
+  const saveBrandAsset = async (key, value, setter) => {
     localStorage.setItem(key, value)
     setter(value)
-    // Notificar al mismo tab (storage event no se dispara en la misma página)
     window.dispatchEvent(new CustomEvent('st_brand_update', { detail: { key, value } }))
+    // Persistir en servidor — mapear key local a campo API
+    const apiKeyMap = { st_logo: 'logo_url', st_favicon: 'favicon_url', st_appname: 'app_name' }
+    const apiKey = apiKeyMap[key]
+    if (apiKey) {
+      try {
+        await fetch('/api/branding', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+          body: JSON.stringify({ [apiKey]: value })
+        })
+      } catch(e) { console.warn('Error guardando branding en servidor:', e) }
+    }
   }
 
-  const handleLogoUpload = (e) => {
+  const handleLogoUpload = async (e) => {
     const file = e.target.files[0]
     if (!file) return
     if (file.size > 500 * 1024) { toast.error('El logo no debe superar 500KB'); return }
@@ -209,7 +220,7 @@ export default function BrandingView() {
     reader.readAsDataURL(file)
   }
 
-  const handleFaviconUpload = (e) => {
+  const handleFaviconUpload = async (e) => {
     const file = e.target.files[0]
     if (!file) return
     if (file.size > 100 * 1024) { toast.error('El favicon no debe superar 100KB'); return }
@@ -232,32 +243,55 @@ export default function BrandingView() {
     window.dispatchEvent(new CustomEvent('st_brand_update', { detail: { key: 'st_appname', value: val } }))
   }
 
-  const clearAsset = (key, setter) => {
+  const clearAsset = async (key, setter) => {
     localStorage.removeItem(key)
     setter(null)
     window.dispatchEvent(new CustomEvent('st_brand_update', { detail: { key, value: null } }))
     if (key === 'st_favicon') {
-      // Restaurar favicon original
       let link = document.querySelector("link[rel='icon']")
       if (link) link.href = '/favicon.png'
+    }
+    // Limpiar en servidor también
+    const apiKeyMap = { st_logo: 'logo_url', st_favicon: 'favicon_url', st_appname: 'app_name' }
+    const apiKey = apiKeyMap[key]
+    if (apiKey) {
+      try {
+        await fetch('/api/branding', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+          body: JSON.stringify({ [apiKey]: '' })
+        })
+      } catch(e) {}
     }
     toast.success('Eliminado — se restauró el valor por defecto')
   }
 
   const [activeTheme, setActiveTheme] = useState(
-    localStorage.getItem('solartrack_theme') || 'emov-oscuro'
+    sessionStorage.getItem('st_theme_cache') || 'solartrack'
   )
+  const [brandingLoaded, setBrandingLoaded] = useState(false)
+
+  // Cargar configuración global desde servidor al abrir la vista
+  React.useEffect(() => {
+    loadThemeFromServer().then(b => {
+      if (b.active_theme) setActiveTheme(b.active_theme)
+      if (b.logo_url)     { setLogoUrl(b.logo_url);     localStorage.setItem('st_logo', b.logo_url) }
+      if (b.favicon_url)  { setFaviconUrl(b.favicon_url); localStorage.setItem('st_favicon', b.favicon_url) }
+      if (b.app_name)     { setAppName(b.app_name);     localStorage.setItem('st_appname', b.app_name) }
+      setBrandingLoaded(true)
+    })
+  }, [])
   const [previewTheme, setPreviewTheme] = useState(null)
   const [hoveredColor, setHoveredColor] = useState(null)
 
   const currentTheme = THEMES.find(t => t.id === activeTheme) || THEMES[0]
 
-  const applyAndSave = (themeId) => {
-    applyTheme(themeId)
+  const applyAndSave = async (themeId) => {
+    await saveThemeToServer(themeId)
     setActiveTheme(themeId)
     setPreviewTheme(null)
     const name = THEMES.find(t => t.id === themeId)?.name
-    toast.success(`Tema "${name}" aplicado a toda la plataforma`, { icon: '' })
+    toast.success(`Tema "${name}" aplicado para todos los usuarios`, { icon: '🌐' })
   }
 
   const handlePreviewEnter = useCallback((themeId) => {

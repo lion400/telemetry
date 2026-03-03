@@ -221,7 +221,7 @@ export const THEMES = [
 
 export const DEFAULT_THEME_ID = 'solartrack'
 
-// Aplica un tema inyectando variables CSS en :root
+// ── Aplica CSS vars al DOM (solo visual, sin persistir) ───────────────────
 export function applyTheme(themeId) {
   const theme = THEMES.find(t => t.id === themeId) || THEMES[0]
   const root = document.documentElement
@@ -230,18 +230,53 @@ export function applyTheme(themeId) {
     root.style.setProperty(key, val)
   })
   root.setAttribute('data-theme', themeId)
-  localStorage.setItem('solartrack_theme', themeId)
+  // Cache en sessionStorage solo para carga rápida sin flash
+  // La fuente de verdad siempre es la API
+  sessionStorage.setItem('st_theme_cache', themeId)
 }
 
-// Carga el tema guardado o el por defecto
+// ── Carga el tema desde el servidor (fuente de verdad global) ─────────────
+export async function loadThemeFromServer() {
+  try {
+    // Aplicar cache inmediatamente para evitar flash blanco
+    const cached = sessionStorage.getItem('st_theme_cache') || DEFAULT_THEME_ID
+    applyTheme(cached)
+    // Sincronizar con servidor
+    const res = await fetch('/api/branding')
+    const data = await res.json()
+    const themeId = data.active_theme || DEFAULT_THEME_ID
+    applyTheme(themeId)
+    return data  // incluye logo_url, favicon_url, app_name, active_theme
+  } catch {
+    applyTheme(DEFAULT_THEME_ID)
+    return {}
+  }
+}
+
+// ── Guarda el tema en el servidor y lo aplica visualmente ─────────────────
+export async function saveThemeToServer(themeId) {
+  applyTheme(themeId)
+  try {
+    await fetch('/api/branding', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+      },
+      body: JSON.stringify({ active_theme: themeId })
+    })
+  } catch(e) { console.warn('Error guardando tema:', e) }
+}
+
+// ── Compatibilidad — carga cache local de forma síncrona ─────────────────
 export function loadSavedTheme() {
-  const saved = localStorage.getItem('solartrack_theme') || DEFAULT_THEME_ID
-  applyTheme(saved)
-  return saved
+  const cached = sessionStorage.getItem('st_theme_cache') || DEFAULT_THEME_ID
+  applyTheme(cached)
+  return cached
 }
 
 export function getActiveThemeId() {
-  return localStorage.getItem('solartrack_theme') || DEFAULT_THEME_ID
+  return sessionStorage.getItem('st_theme_cache') || DEFAULT_THEME_ID
 }
 
 export function getActiveTheme() {

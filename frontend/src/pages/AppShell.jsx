@@ -16,7 +16,7 @@ const NAV = [
   { id: '/alerts',   label: 'Alertas',   icon: '🔔', badge: 'unread', roles: ['operador'] },
   { id: '/events',   label: 'Eventos',   icon: '◈', badge: 'unread', roles: ['gerente', 'supervisor', 'admin'] },
   { id: '/users',    label: 'Usuarios',  icon: '◻', roles: ['gerente', 'admin'] },
-  { id: '/branding', label: 'Temas',     icon: '*', roles: ['gerente', 'admin'] },
+  { id: '/branding', label: 'Temas',     icon: '🎨', roles: ['gerente', 'admin'] },
 ]
 
 // Hook para detectar tamaño de pantalla
@@ -150,19 +150,33 @@ function UserMenu({ user, logout, navigate, isMobile }) {
   )
 }
 
-// ── Hook: lee logo/favicon personalizados desde localStorage ─────────────
+// ── Hook: lee logo/favicon desde servidor (fuente de verdad global) ──────
 function useBrandAssets() {
   const [logoUrl, setLogoUrl] = React.useState(() => localStorage.getItem('st_logo') || null)
   const [appName, setAppName] = React.useState(() => localStorage.getItem('st_appname') || null)
 
   React.useEffect(() => {
-    // Aplicar favicon personalizado si existe
-    const favicon = localStorage.getItem('st_favicon')
-    if (favicon) {
-      let link = document.querySelector("link[rel='icon']")
-      if (!link) { link = document.createElement('link'); link.rel = 'icon'; document.head.appendChild(link) }
-      link.href = favicon
-    }
+    // Cargar desde servidor y sincronizar
+    fetch('/api/branding')
+      .then(r => r.json())
+      .then(b => {
+        if (b.logo_url)    { setLogoUrl(b.logo_url);  localStorage.setItem('st_logo', b.logo_url) }
+        if (b.app_name)    { setAppName(b.app_name);  localStorage.setItem('st_appname', b.app_name) }
+        if (b.favicon_url) {
+          localStorage.setItem('st_favicon', b.favicon_url)
+          let link = document.querySelector("link[rel='icon']")
+          if (!link) { link = document.createElement('link'); link.rel = 'icon'; document.head.appendChild(link) }
+          link.href = b.favicon_url
+        }
+      }).catch(() => {
+        // Fallback a localStorage si el servidor no responde
+        const favicon = localStorage.getItem('st_favicon')
+        if (favicon) {
+          let link = document.querySelector("link[rel='icon']")
+          if (!link) { link = document.createElement('link'); link.rel = 'icon'; document.head.appendChild(link) }
+          link.href = favicon
+        }
+      })
     // Escuchar cambios desde BrandingView
     const onStorage = (e) => {
       if (e.key === 'st_logo')    setLogoUrl(e.newValue)

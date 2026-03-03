@@ -260,6 +260,26 @@ async function addV2Tables() {
     report_type TEXT NOT NULL,
     UNIQUE(user_id, report_type)
   )`);
+
+  // Configuración global de branding (tema, logo, nombre, favicon)
+  await run(`CREATE TABLE IF NOT EXISTS branding (
+    key   TEXT PRIMARY KEY,
+    value TEXT NOT NULL DEFAULT ''
+  )`);
 }
 
-module.exports = { initialize, addV2Tables, run, all, get, getDb };
+// Lee todos los valores de branding como objeto plano
+async function getBranding() {
+  const rows = await all('SELECT key, value FROM branding', []);
+  const obj = {
+    app_name:     'SolarTrack',
+    org_name:     'EMOV — Paradas Seguras',
+    active_theme: 'solartrack',
+    logo_url:     '',
+    favicon_url:  '',
+  };
+  rows.forEach(r => { obj[r.key] = r.value; });
+  return obj;
+}
+
+module.exports = { initialize, addV2Tables, run, all, get, getDb, getBranding };
