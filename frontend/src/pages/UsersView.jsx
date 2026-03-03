@@ -488,10 +488,10 @@ export default function UsersView() {
   ]
   // Campos de perfil — configurables (on/off) con valores por defecto ON
   const DEFAULT_PROFILE_FIELDS = [
-    { key: 'nombres',   label: 'Nombres',    type: 'text',   required: false, placeholder: 'Nombres' },
-    { key: 'apellidos', label: 'Apellidos',  type: 'text',   required: false, placeholder: 'Apellidos' },
-    { key: 'direccion', label: 'Dirección',  type: 'text',   required: false, placeholder: 'Dirección Av.' },
-    { key: 'edad',      label: 'Edad',       type: 'number', required: false, placeholder: 'Edad' },
+    { key: 'nombres',   label: 'Nombres',    type: 'text',   required: false, placeholder: 'Ej: Juan Carlos' },
+    { key: 'apellidos', label: 'Apellidos',  type: 'text',   required: false, placeholder: 'Ej: Pérez Mora' },
+    { key: 'direccion', label: 'Dirección',  type: 'text',   required: false, placeholder: 'Ej: Av. España 1-45' },
+    { key: 'edad',      label: 'Edad',       type: 'number', required: false, placeholder: 'Ej: 34' },
   ]
   // Campos extra agregados por el gerente
   const STORAGE_KEY = 'st_user_extra_fields'
@@ -626,16 +626,34 @@ export default function UsersView() {
             {users.length} usuarios registrados
           </div>
         </div>
-        {me?.role === 'gerente' && (
-          <button onClick={() => setShowForm(s => !s)} style={{
-            background: showForm ? 'var(--bg-input, var(--bg-input, #111f35))' : 'var(--nav-active-bg, rgba(26,111,255,0.15))',
-            border: `1px solid ${showForm ? 'var(--border, var(--border, #1a3050))' : 'var(--accent-border, rgba(26,111,255,0.4))'}`,
-            borderRadius: 8, padding: '8px 18px', cursor: 'pointer',
-            color: showForm ? 'var(--text-secondary, var(--text-secondary, #6b8ab0))' : 'var(--accent, var(--accent, #5a9fff))', fontSize: 13, fontWeight: 600,
-          }}>
-            {showForm ? '✕ Cancelar' : '+ Nuevo usuario'}
-          </button>
-        )}
+        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+          {me?.role === 'gerente' && (
+            <button onClick={async () => {
+              const token = localStorage.getItem('token')
+              try {
+                const res = await fetch('/api/users/report/pdf', { headers: { Authorization: `Bearer ${token}` } })
+                const html = await res.text()
+                const w = window.open('', '_blank')
+                w.document.write(html); w.document.close()
+                setTimeout(() => w.print(), 800)
+              } catch(e) { alert('Error generando PDF') }
+            }} style={{
+              background: 'rgba(255,82,82,0.1)', border: '1px solid rgba(255,82,82,0.3)',
+              borderRadius: 8, padding: '8px 16px', cursor: 'pointer',
+              color: '#ff5252', fontSize: 13, fontWeight: 600,
+            }}>📄 PDF Usuarios</button>
+          )}
+          {me?.role === 'gerente' && (
+            <button onClick={() => setShowForm(s => !s)} style={{
+              background: showForm ? 'var(--bg-input, var(--bg-input, #111f35))' : 'var(--nav-active-bg, rgba(26,111,255,0.15))',
+              border: `1px solid ${showForm ? 'var(--border, var(--border, #1a3050))' : 'var(--accent-border, rgba(26,111,255,0.4))'}`,
+              borderRadius: 8, padding: '8px 18px', cursor: 'pointer',
+              color: showForm ? 'var(--text-secondary, var(--text-secondary, #6b8ab0))' : 'var(--accent, var(--accent, #5a9fff))', fontSize: 13, fontWeight: 600,
+            }}>
+              {showForm ? '✕ Cancelar' : '+ Nuevo usuario'}
+            </button>
+          )}
+        </div>
       </div>
 
       <div style={{ flex: 1, overflow: 'auto', padding: isMobile ? '10px 12px' : '16px 24px', display: 'flex', flexDirection: 'column', gap: 14 }}>

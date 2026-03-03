@@ -9,6 +9,7 @@ import EventsView from './EventsView'
 import UsersView from './UsersView'
 import DeviceDetail from './DeviceDetail'
 import OperatorView from './OperatorView'
+import StopsView from './StopsView'
 
 const NAV = [
   { id: '/',         label: 'Dashboard', icon: '⬡', roles: ['gerente', 'supervisor', 'admin'] },
@@ -16,6 +17,7 @@ const NAV = [
   { id: '/alerts',   label: 'Alertas',   icon: '🔔', badge: 'unread', roles: ['operador'] },
   { id: '/events',   label: 'Eventos',   icon: '◈', badge: 'unread', roles: ['gerente', 'supervisor', 'admin'] },
   { id: '/users',    label: 'Usuarios',  icon: '◻', roles: ['gerente', 'admin'] },
+  { id: '/stops',    label: 'Paradas',   icon: '-', roles: ['gerente', 'admin'] },
   { id: '/branding', label: 'Temas',     icon: '*', roles: ['gerente', 'admin'] },
 ]
 
@@ -631,6 +633,7 @@ export default function AppShell() {
             <Route path="/alerts"     element={<OperatorView />} />
             <Route path="/events"     element={<EventsView />} />
             <Route path="/users"      element={<UsersView />} />
+            <Route path="/stops"      element={<StopsView />} />
             <Route path="/branding"   element={<BrandingView />} />
             <Route path="/device/:id" element={<DeviceDetail />} />
           </Routes>

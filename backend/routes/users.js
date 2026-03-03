@@ -154,4 +154,72 @@ router.put('/:id', requireRole('gerente'), async (req, res) => {
   }
 });
 
+
+// ── PDF Reporte de usuarios (solo gerente) ─────────────────────────────────
+router.get("/report/pdf", requireRole("gerente"), async (req, res) => {
+  try {
+    const users = await all(
+      "SELECT u.id, u.username, u.email, u.role, u.active, u.created_at, u.last_login, u.profile, " +
+      "GROUP_CONCAT(DISTINCT d.name) as devices " +
+      "FROM users u " +
+      "LEFT JOIN user_devices ud ON ud.user_id = u.id " +
+      "LEFT JOIN devices d ON d.device_id = ud.device_id " +
+      "GROUP BY u.id ORDER BY u.role, u.username", []
+    )
+    const now = new Date().toLocaleString("es-EC", { timeZone: "America/Guayaquil" })
+    const roleLabel = { gerente: "Gerente", supervisor: "Supervisor", operador: "Operador" }
+    const rows = users.map(u => {
+      const profile = (() => { try { return JSON.parse(u.profile || "{}") } catch { return {} } })()
+      const profileStr = Object.entries(profile).map(([k,v]) => k + ": " + v).join(", ") || "—"
+      const lastLogin = u.last_login
+        ? new Date(u.last_login.endsWith("Z") ? u.last_login : u.last_login + "Z")
+            .toLocaleString("es-EC", { timeZone: "America/Guayaquil" })
+        : "Nunca"
+      const rc = { gerente: "#ffd740", supervisor: "#00d4ff", operador: "#00e676" }[u.role] || "#aaa"
+      return "<tr><td>" + u.id + "</td><td><strong>" + u.username + "</strong></td><td>" + u.email + "</td>" +
+        "<td><span style=\"padding:2px 8px;border-radius:12px;font-size:10px;font-weight:600;background:" + rc + "22;color:" + rc + "\">" + (roleLabel[u.role]||u.role) + "</span></td>" +
+        "<td><span style=\"padding:2px 8px;border-radius:12px;font-size:10px;background:" + (u.active?"#00e67622":"#ff525222") + ";color:" + (u.active?"#00e676":"#ff5252") + "\">" + (u.active?"Activo":"Inactivo") + "</span></td>" +
+        "<td style=\"font-size:11px\">" + profileStr + "</td>" +
+        "<td style=\"font-size:11px\">" + (u.devices||"—") + "</td>" +
+        "<td style=\"font-size:11px\">" + lastLogin + "</td></tr>"
+    }).join("")
+    const totals = { total: users.length, gerentes: users.filter(u=>u.role==="gerente").length,
+      supervisores: users.filter(u=>u.role==="supervisor").length,
+      operadores: users.filter(u=>u.role==="operador").length, activos: users.filter(u=>u.active).length }
+    const html = "<!DOCTYPE html><html><head><meta charset=\"UTF-8\"><style>" +
+      "body{font-family:Helvetica,Arial,sans-serif;color:#1a2a3a;margin:0;padding:24px;font-size:13px}" +
+      "h1{font-size:22px;margin-bottom:4px;color:#0a1628}" +
+      ".subtitle{color:#6b8ab0;font-size:12px;margin-bottom:20px}" +
+      ".meta{display:flex;gap:24px;margin-bottom:20px;padding:12px 16px;background:#f4f8ff;border-radius:8px}" +
+      ".mi{font-size:12px}.mi strong{display:block;font-size:20px;color:#1a6fff}" +
+      "table{width:100%;border-collapse:collapse;font-size:12px}" +
+      "th{background:#0a1628;color:#fff;padding:9px 12px;text-align:left;font-size:10px;letter-spacing:.5px;text-transform:uppercase}" +
+      "td{padding:8px 12px;border-bottom:1px solid #e8f0fe;vertical-align:top}" +
+      "tr:nth-child(even) td{background:#f8faff}" +
+      ".footer{margin-top:24px;font-size:10px;color:#6b8ab0;text-align:right}" +
+      ".logo{color:#DD102E;font-weight:900;font-size:24px}" +
+      "</style></head><body>" +
+      "<div style=\"display:flex;align-items:center;justify-content:space-between;margin-bottom:8px\">" +
+        "<div class=\"logo\">EMOV · SolarTrack</div>" +
+        "<div style=\"font-size:10px;color:#6b8ab0\">Generado: " + now + "</div>" +
+      "</div>" +
+      "<h1>Reporte de Usuarios del Sistema</h1>" +
+      "<p class=\"subtitle\">Gestión de usuarios y roles — Paradas Seguras, Cuenca, Ecuador</p>" +
+      "<div class=\"meta\">" +
+        "<div class=\"mi\"><strong>" + totals.total + "</strong> Total</div>" +
+        "<div class=\"mi\"><strong>" + totals.gerentes + "</strong> Gerentes</div>" +
+        "<div class=\"mi\"><strong>" + totals.supervisores + "</strong> Supervisores</div>" +
+        "<div class=\"mi\"><strong>" + totals.operadores + "</strong> Operadores</div>" +
+        "<div class=\"mi\"><strong>" + totals.activos + "</strong> Activos</div>" +
+      "</div>" +
+      "<table><thead><tr><th>#</th><th>Usuario</th><th>Email</th><th>Rol</th><th>Estado</th><th>Perfil</th><th>Paradas</th><th>Último acceso</th></tr></thead>" +
+      "<tbody>" + rows + "</tbody></table>" +
+      "<div class=\"footer\">EMOV EP · SolarTrack · Cuenca, Ecuador · Confidencial</div>" +
+      "</body></html>"
+    res.setHeader("Content-Type", "text/html; charset=utf-8")
+    res.setHeader("X-PDF-Print", "true")
+    res.send(html)
+  } catch(e) { res.status(500).json({ error: e.message }) }
+});
+
 module.exports = router;

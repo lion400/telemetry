@@ -43,18 +43,98 @@ router.get('/:id', async (req, res) => {
 
 // ── Actualizar parada ─────────────────────────────────────────────────────────
 router.put('/:id', async (req, res) => {
-  const { name, address, group_id, photo_url } = req.body;
-  await db.run(
-    'UPDATE devices SET name=?, address=?, group_id=?, photo_url=? WHERE device_id=?',
-    [name, address, group_id, photo_url, req.params.id]
-  );
-  res.json({ ok: true });
+  try {
+    const { name, address, group_id, photo_url, lat, lng, imei } = req.body;
+    const fields = [], vals = [];
+    if (name      !== undefined) { fields.push('name=?');      vals.push(name) }
+    if (address   !== undefined) { fields.push('address=?');   vals.push(address) }
+    if (group_id  !== undefined) { fields.push('group_id=?');  vals.push(group_id||null) }
+    if (photo_url !== undefined) { fields.push('photo_url=?'); vals.push(photo_url) }
+    if (lat       !== undefined) { fields.push('lat=?');       vals.push(lat) }
+    if (lng       !== undefined) { fields.push('lng=?');       vals.push(lng) }
+    if (imei      !== undefined) { fields.push('imei=?');      vals.push(imei) }
+    if (!fields.length) return res.status(400).json({ error: 'Nada que actualizar' });
+    vals.push(req.params.id);
+    await db.run(`UPDATE devices SET ${fields.join(',')} WHERE device_id=?`, vals);
+    if (lat !== undefined && lng !== undefined) {
+      await db.run('UPDATE geocercas SET center_lat=?, center_lng=? WHERE device_id=?', [lat, lng, req.params.id]);
+    }
+    res.json({ ok: true });
+  } catch(e) { res.status(500).json({ error: e.message }); }
 });
 
 // ── Grupos ────────────────────────────────────────────────────────────────────
 router.get('/meta/groups', async (req, res) => {
   const groups = await db.all('SELECT * FROM groups ORDER BY name');
   res.json(groups);
+});
+
+// ── CRUD Paradas (gerente) ────────────────────────────────────────────────────
+
+router.post('/', verifyToken, requireRole('gerente'), async (req, res) => {
+  try {
+    const { device_id, imei, name, address, group_id, lat, lng, photo_url } = req.body;
+    if (!device_id || !name) return res.status(400).json({ error: 'device_id y name son requeridos' });
+    await db.run(
+      'INSERT INTO devices (device_id, imei, name, address, group_id, lat, lng, photo_url, active) VALUES (?,?,?,?,?,?,?,?,1)',
+      [device_id, imei||null, name, address||'', group_id||null, lat||null, lng||null, photo_url||null]
+    );
+    if (lat && lng) {
+      await db.run(
+        'INSERT OR IGNORE INTO geocercas (device_id, name, type, center_lat, center_lng, radius) VALUES (?,?,?,?,?,?)',
+        [device_id, 'Zona ' + name, 'circle', lat, lng, 50]
+      );
+    }
+    res.json({ ok: true });
+  } catch(e) {
+    if (e.message && e.message.includes('UNIQUE')) return res.status(400).json({ error: 'ID de parada ya existe' });
+    res.status(500).json({ error: e.message });
+  }
+});
+
+router.delete('/:id', verifyToken, requireRole('gerente'), async (req, res) => {
+  try {
+    await db.run('UPDATE devices SET active = 0 WHERE device_id = ?', [req.params.id]);
+    res.json({ ok: true });
+  } catch(e) { res.status(500).json({ error: e.message }); }
+});
+
+router.put('/:id/reactivate', verifyToken, requireRole('gerente'), async (req, res) => {
+  try {
+    await db.run('UPDATE devices SET active = 1 WHERE device_id = ?', [req.params.id]);
+    res.json({ ok: true });
+  } catch(e) { res.status(500).json({ error: e.message }); }
+});
+
+// ── CRUD Zonas/Grupos ─────────────────────────────────────────────────────────
+
+router.post('/meta/groups', verifyToken, requireRole('gerente'), async (req, res) => {
+  try {
+    const { name, color } = req.body;
+    if (!name) return res.status(400).json({ error: 'Nombre requerido' });
+    const result = await db.run('INSERT INTO groups (name, color) VALUES (?, ?)', [name.trim(), color || '#1a6fff']);
+    res.json({ ok: true, id: result.lastID });
+  } catch(e) {
+    if (e.message && e.message.includes('UNIQUE')) return res.status(400).json({ error: 'Zona ya existe' });
+    res.status(500).json({ error: e.message });
+  }
+});
+
+router.put('/meta/groups/:id', verifyToken, requireRole('gerente'), async (req, res) => {
+  try {
+    const { name, color } = req.body;
+    await db.run('UPDATE groups SET name=?, color=? WHERE id=?', [name, color, req.params.id]);
+    res.json({ ok: true });
+  } catch(e) { res.status(500).json({ error: e.message }); }
+});
+
+router.delete('/meta/groups/:id', verifyToken, requireRole('gerente'), async (req, res) => {
+  try {
+    const count = await db.get('SELECT COUNT(*) as n FROM devices WHERE group_id=? AND active=1', [req.params.id]);
+    if (count.n > 0) return res.status(400).json({ error: 'Zona tiene ' + count.n + ' paradas activas. Reasígnalas primero.' });
+    await db.run('DELETE FROM groups WHERE id=?', [req.params.id]);
+    res.json({ ok: true });
+  } catch(e) { res.status(500).json({ error: e.message }); }
 });
 
 // ── Webhook Queclink GV310LAU ─────────────────────────────────────────────────

@@ -109,6 +109,7 @@ export default function EventsView() {
   const [page, setPage] = useState(0)
   const [loading, setLoading] = useState(false)
   const [showExportMenu, setShowExportMenu] = useState(false)
+  const [exportZone, setExportZone] = useState('')
   const [selectedCols, setSelectedCols] = useState(new Set(ALL_COLUMNS.map(c => c.id)))
   const LIMIT = 30
 
@@ -146,6 +147,11 @@ export default function EventsView() {
   }
 
   // ── CSV ────────────────────────────────────────────────────────────────────
+  // Events filtered by export zone
+  const exportEvents = exportZone
+    ? events.filter(ev => devices.find(d => d.device_id === ev.device_id && d.group_name === exportZone))
+    : events
+
   const exportCSV = () => {
     const cols = ALL_COLUMNS.filter(c => selectedCols.has(c.id))
     const header = cols.map(c => `"${c.label}"`).join(',')
@@ -245,6 +251,20 @@ export default function EventsView() {
               background: 'var(--bg-card, var(--bg-card, #0c1829))', border: '1px solid #1a3050', borderRadius: 12,
               padding: '14px', boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
             }}>
+              {/* Selector de zona */}
+              <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9, letterSpacing: 1.5, color: 'var(--text-muted, #3d5a80)', textTransform: 'uppercase', marginBottom: 6 }}>
+                Filtrar por zona
+              </div>
+              <select
+                value={exportZone}
+                onChange={e => setExportZone(e.target.value)}
+                style={{ width: '100%', background: 'var(--bg-input,#111f35)', border: '1px solid #1a3050', borderRadius: 6, padding: '6px 10px', color: 'var(--text-primary,#e8f0fe)', fontSize: 12, outline: 'none', marginBottom: 12 }}
+              >
+                <option value="">Todas las zonas</option>
+                {[...new Set(devices.map(d => d.group_name).filter(Boolean))].map(g => (
+                  <option key={g} value={g}>{g}</option>
+                ))}
+              </select>
               {/* Selector de columnas */}
               <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9, letterSpacing: 1.5, color: 'var(--text-muted, var(--text-muted, #3d5a80))', textTransform: 'uppercase', marginBottom: 10 }}>
                 Columnas a exportar

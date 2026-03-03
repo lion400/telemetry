@@ -22,7 +22,13 @@ export const useStore = create((set, get) => ({
     return data
   },
 
-  logout: () => {
+  logout: async () => {
+    try {
+      const token = localStorage.getItem('token')
+      if (token) {
+        await axios.post(`${API}/auth/logout`, {}, { headers: { Authorization: `Bearer ${token}` } })
+      }
+    } catch (e) {}
     localStorage.removeItem('token')
     set({ token: null, user: null, devices: [], selectedDevice: null, telemetry: {}, events: [] })
   },
