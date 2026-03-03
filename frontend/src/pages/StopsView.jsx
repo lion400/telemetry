@@ -29,16 +29,36 @@ function ZoneModal({ zone, onClose, onSaved }) {
     } catch(e) { toast.error(e.response?.data?.error || 'Error') } finally { setSaving(false) }
   }
 
-  const inp = { width:'100%', background:'#111f35', border:'1px solid #1a3050', borderRadius:8, padding:'9px 12px', color:'#e8f0fe', fontSize:13, outline:'none', marginBottom:12 }
-  const lbl = { fontFamily:"'DM Mono',monospace", fontSize:9, color:'#3d5a80', letterSpacing:1, textTransform:'uppercase', marginBottom:4, display:'block' }
+  const inp = {
+    width: '100%',
+    background: 'var(--bg-input, #111f35)',
+    border: '1px solid var(--border, #1a3050)',
+    borderRadius: 8,
+    padding: '9px 12px',
+    color: 'var(--text-primary, #e8f0fe)',
+    fontSize: 13,
+    outline: 'none',
+    marginBottom: 12,
+  }
+  const lbl = {
+    fontFamily: "'DM Mono',monospace",
+    fontSize: 9,
+    color: 'var(--text-muted, #3d5a80)',
+    letterSpacing: 1,
+    textTransform: 'uppercase',
+    marginBottom: 4,
+    display: 'block',
+  }
 
   return (
-    <div style={{ position:'fixed', inset:0, background:'rgba(0,0,0,0.7)', zIndex:9999, display:'flex', alignItems:'center', justifyContent:'center', backdropFilter:'blur(4px)', padding:16 }}
-      onClick={e => e.target === e.currentTarget && onClose()}>
-      <div style={{ background:'#0c1829', border:'1px solid #1a3050', borderRadius:14, width:'100%', maxWidth:400, boxShadow:'0 20px 60px rgba(0,0,0,0.6)' }}>
-        <div style={{ padding:'14px 18px', borderBottom:'1px solid #1a3050', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
-          <div style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:15, color:'#e8f0fe' }}>{zone ? '✏️ Editar zona' : '+ Nueva zona'}</div>
-          <button onClick={onClose} style={{ background:'none', border:'1px solid #1a3050', borderRadius:7, padding:'4px 10px', color:'#6b8ab0', cursor:'pointer' }}>✕</button>
+    <div
+      style={{ position:'fixed', inset:0, background:'rgba(0,0,0,0.7)', zIndex:9999, display:'flex', alignItems:'center', justifyContent:'center', backdropFilter:'blur(4px)', padding:16 }}
+      onClick={e => e.target === e.currentTarget && onClose()}
+    >
+      <div style={{ background:'var(--bg-card, #0c1829)', border:'1px solid var(--border, #1a3050)', borderRadius:14, width:'100%', maxWidth:400, boxShadow:'0 20px 60px rgba(0,0,0,0.6)' }}>
+        <div style={{ padding:'14px 18px', borderBottom:'1px solid var(--border, #1a3050)', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
+          <div style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:15, color:'var(--text-primary, #e8f0fe)' }}>{zone ? '✏️ Editar zona' : '+ Nueva zona'}</div>
+          <button onClick={onClose} style={{ background:'none', border:'1px solid var(--border, #1a3050)', borderRadius:7, padding:'4px 10px', color:'var(--text-secondary, #6b8ab0)', cursor:'pointer' }}>✕</button>
         </div>
         <div style={{ padding:'18px 18px 6px' }}>
           <label style={lbl}>Nombre de la zona</label>
@@ -50,7 +70,7 @@ function ZoneModal({ zone, onClose, onSaved }) {
             {PRESET_COLORS.map(c => (
               <div key={c} onClick={() => setForm(f => ({...f, color:c}))} style={{
                 width:28, height:28, borderRadius:6, background:c, cursor:'pointer',
-                border:`3px solid ${form.color===c ? '#fff' : 'transparent'}`,
+                border:`3px solid ${form.color===c ? 'var(--text-primary, #fff)' : 'transparent'}`,
                 boxShadow: form.color===c ? `0 0 0 2px ${c}` : 'none',
                 transition:'all 0.1s',
               }} />
@@ -58,14 +78,14 @@ function ZoneModal({ zone, onClose, onSaved }) {
             <input type="color" value={form.color} onChange={e => setForm(f => ({...f, color:e.target.value}))}
               style={{ width:28, height:28, border:'none', borderRadius:6, cursor:'pointer', padding:0, background:'none' }} title="Color personalizado" />
           </div>
-          <div style={{ display:'flex', alignItems:'center', gap:10, padding:'10px 14px', background:'rgba(255,255,255,0.04)', borderRadius:8, marginBottom:16 }}>
+          <div style={{ display:'flex', alignItems:'center', gap:10, padding:'10px 14px', background:'var(--bg-hover, rgba(26,48,80,0.4))', borderRadius:8, marginBottom:16 }}>
             <div style={{ width:16, height:16, borderRadius:4, background:form.color, flexShrink:0 }} />
-            <span style={{ fontFamily:"'Syne',sans-serif", fontWeight:700, fontSize:13, color:'#e8f0fe' }}>{form.name || 'Vista previa'}</span>
+            <span style={{ fontFamily:"'Syne',sans-serif", fontWeight:700, fontSize:13, color:'var(--text-primary, #e8f0fe)' }}>{form.name || 'Vista previa'}</span>
           </div>
         </div>
         <div style={{ padding:'0 18px 18px', display:'flex', gap:8 }}>
-          <button onClick={onClose} style={{ flex:1, background:'none', border:'1px solid #1a3050', borderRadius:8, padding:9, color:'#6b8ab0', cursor:'pointer', fontSize:13 }}>Cancelar</button>
-          <button onClick={handleSave} disabled={saving} style={{ flex:2, background:'rgba(26,111,255,0.2)', border:'1px solid rgba(26,111,255,0.4)', borderRadius:8, padding:9, color:'#5a9fff', cursor:'pointer', fontSize:13, fontWeight:700, opacity:saving?0.6:1 }}>
+          <button onClick={onClose} style={{ flex:1, background:'none', border:'1px solid var(--border, #1a3050)', borderRadius:8, padding:9, color:'var(--text-secondary, #6b8ab0)', cursor:'pointer', fontSize:13 }}>Cancelar</button>
+          <button onClick={handleSave} disabled={saving} style={{ flex:2, background:'var(--accent-dim, rgba(26,111,255,0.2))', border:'1px solid var(--accent-border, rgba(26,111,255,0.4))', borderRadius:8, padding:9, color:'var(--accent, #5a9fff)', cursor:'pointer', fontSize:13, fontWeight:700, opacity:saving?0.6:1 }}>
             {saving ? 'Guardando...' : zone ? '✓ Actualizar' : '✓ Crear zona'}
           </button>
         </div>
@@ -113,20 +133,40 @@ function StopModal({ stop, groups, onClose, onSaved }) {
     } catch(e) { toast.error(e.response?.data?.error || 'Error') } finally { setSaving(false) }
   }
 
-  const inp = { width:'100%', background:'#111f35', border:'1px solid #1a3050', borderRadius:8, padding:'8px 12px', color:'#e8f0fe', fontSize:13, outline:'none', marginBottom:10 }
-  const lbl = { fontFamily:"'DM Mono',monospace", fontSize:9, color:'#3d5a80', letterSpacing:1, textTransform:'uppercase', marginBottom:3, display:'block' }
+  const inp = {
+    width: '100%',
+    background: 'var(--bg-input, #111f35)',
+    border: '1px solid var(--border, #1a3050)',
+    borderRadius: 8,
+    padding: '8px 12px',
+    color: 'var(--text-primary, #e8f0fe)',
+    fontSize: 13,
+    outline: 'none',
+    marginBottom: 10,
+  }
+  const lbl = {
+    fontFamily: "'DM Mono',monospace",
+    fontSize: 9,
+    color: 'var(--text-muted, #3d5a80)',
+    letterSpacing: 1,
+    textTransform: 'uppercase',
+    marginBottom: 3,
+    display: 'block',
+  }
   const gmaps = form.lat && form.lng ? `https://www.google.com/maps?q=${form.lat},${form.lng}` : null
 
   return (
-    <div style={{ position:'fixed', inset:0, background:'rgba(0,0,0,0.75)', zIndex:9999, display:'flex', alignItems:'center', justifyContent:'center', backdropFilter:'blur(4px)', padding:16 }}
-      onClick={e => e.target === e.currentTarget && onClose()}>
-      <div style={{ background:'#0c1829', border:'1px solid #1a3050', borderRadius:14, width:'100%', maxWidth:520, maxHeight:'92vh', display:'flex', flexDirection:'column', boxShadow:'0 20px 60px rgba(0,0,0,0.7)' }}>
-        <div style={{ padding:'14px 18px', borderBottom:'1px solid #1a3050', display:'flex', alignItems:'center', justifyContent:'space-between', flexShrink:0 }}>
+    <div
+      style={{ position:'fixed', inset:0, background:'rgba(0,0,0,0.75)', zIndex:9999, display:'flex', alignItems:'center', justifyContent:'center', backdropFilter:'blur(4px)', padding:16 }}
+      onClick={e => e.target === e.currentTarget && onClose()}
+    >
+      <div style={{ background:'var(--bg-card, #0c1829)', border:'1px solid var(--border, #1a3050)', borderRadius:14, width:'100%', maxWidth:520, maxHeight:'92vh', display:'flex', flexDirection:'column', boxShadow:'0 20px 60px rgba(0,0,0,0.7)' }}>
+        <div style={{ padding:'14px 18px', borderBottom:'1px solid var(--border, #1a3050)', display:'flex', alignItems:'center', justifyContent:'space-between', flexShrink:0 }}>
           <div>
-            <div style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:15, color:'#e8f0fe' }}>{isEdit ? '✏️ Editar parada' : '+ Nueva parada'}</div>
-            {isEdit && <div style={{ fontFamily:"'DM Mono',monospace", fontSize:9, color:'#3d5a80', marginTop:2 }}>{stop.device_id}</div>}
+            <div style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:15, color:'var(--text-primary, #e8f0fe)' }}>{isEdit ? '✏️ Editar parada' : '+ Nueva parada'}</div>
+            {isEdit && <div style={{ fontFamily:"'DM Mono',monospace", fontSize:9, color:'var(--text-muted, #3d5a80)', marginTop:2 }}>{stop.device_id}</div>}
           </div>
-          <button onClick={onClose} style={{ background:'none', border:'1px solid #1a3050', borderRadius:7, padding:'4px 10px', color:'#6b8ab0', cursor:'pointer' }}>✕</button>
+          <button onClick={onClose} style={{ background:'none', border:'1px solid var(--border, #1a3050)', borderRadius:7, padding:'4px 10px', color:'var(--text-secondary, #6b8ab0)', cursor:'pointer' }}>✕</button>
         </div>
 
         <div style={{ padding:'14px 18px', overflowY:'auto', flex:1 }}>
@@ -134,17 +174,21 @@ function StopModal({ stop, groups, onClose, onSaved }) {
           <label style={lbl}>Foto de la parada</label>
           {form.photo_url ? (
             <div style={{ position:'relative', marginBottom:10 }}>
-              <img src={form.photo_url} alt="" style={{ width:'100%', height:140, objectFit:'cover', borderRadius:8, border:'1px solid #1a3050', display:'block' }} />
+              <img src={form.photo_url} alt="" style={{ width:'100%', height:140, objectFit:'cover', borderRadius:8, border:'1px solid var(--border, #1a3050)', display:'block' }} />
               <button onClick={() => setForm(f => ({...f,photo_url:''}))} style={{ position:'absolute', top:6, right:6, background:'rgba(255,82,82,0.9)', border:'none', borderRadius:6, padding:'3px 8px', color:'#fff', cursor:'pointer', fontSize:11 }}>✕</button>
             </div>
           ) : (
-            <div style={{ width:'100%', height:90, border:'2px dashed #1a3050', borderRadius:8, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', cursor:'pointer', color:'#3d5a80', fontSize:12, marginBottom:8 }}
-              onClick={() => fileRef.current?.click()}>
+            <div
+              style={{ width:'100%', height:90, border:'2px dashed var(--border, #1a3050)', borderRadius:8, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', cursor:'pointer', color:'var(--text-muted, #3d5a80)', fontSize:12, marginBottom:8 }}
+              onClick={() => fileRef.current?.click()}
+            >
               {uploading ? '⏳ Cargando...' : '📷 Clic para subir foto'}<span style={{ fontSize:10, marginTop:3 }}>JPG / PNG · máx 2MB</span>
             </div>
           )}
           <input ref={fileRef} type="file" accept="image/*" style={{ display:'none' }} onChange={handlePhoto} />
-          {!form.photo_url && <button onClick={() => fileRef.current?.click()} style={{ ...inp, cursor:'pointer', color:'#6b8ab0', marginBottom:12 }}>📷 Subir foto</button>}
+          {!form.photo_url && (
+            <button onClick={() => fileRef.current?.click()} style={{ ...inp, cursor:'pointer', color:'var(--text-secondary, #6b8ab0)', marginBottom:12 }}>📷 Subir foto</button>
+          )}
 
           {/* IDs — solo en creación */}
           {!isEdit && (
@@ -190,15 +234,15 @@ function StopModal({ stop, groups, onClose, onSaved }) {
           </div>
 
           {gmaps && (
-            <a href={gmaps} target="_blank" rel="noopener noreferrer" style={{ display:'block', textAlign:'center', padding:'8px', background:'rgba(26,111,255,0.08)', border:'1px solid rgba(26,111,255,0.25)', borderRadius:8, color:'#5a9fff', textDecoration:'none', fontSize:12, fontWeight:600, marginBottom:4 }}>
+            <a href={gmaps} target="_blank" rel="noopener noreferrer" style={{ display:'block', textAlign:'center', padding:'8px', background:'var(--accent-dim, rgba(26,111,255,0.08))', border:'1px solid var(--accent-border, rgba(26,111,255,0.25))', borderRadius:8, color:'var(--accent, #5a9fff)', textDecoration:'none', fontSize:12, fontWeight:600, marginBottom:4 }}>
               🗺 Verificar ubicación en Google Maps
             </a>
           )}
         </div>
 
-        <div style={{ padding:'12px 18px', borderTop:'1px solid #1a3050', display:'flex', gap:8, flexShrink:0 }}>
-          <button onClick={onClose} style={{ flex:1, background:'none', border:'1px solid #1a3050', borderRadius:8, padding:9, color:'#6b8ab0', cursor:'pointer', fontSize:13 }}>Cancelar</button>
-          <button onClick={handleSave} disabled={saving} style={{ flex:2, background:'rgba(26,111,255,0.2)', border:'1px solid rgba(26,111,255,0.4)', borderRadius:8, padding:9, color:'#5a9fff', cursor:'pointer', fontSize:13, fontWeight:700, opacity:saving?0.6:1 }}>
+        <div style={{ padding:'12px 18px', borderTop:'1px solid var(--border, #1a3050)', display:'flex', gap:8, flexShrink:0 }}>
+          <button onClick={onClose} style={{ flex:1, background:'none', border:'1px solid var(--border, #1a3050)', borderRadius:8, padding:9, color:'var(--text-secondary, #6b8ab0)', cursor:'pointer', fontSize:13 }}>Cancelar</button>
+          <button onClick={handleSave} disabled={saving} style={{ flex:2, background:'var(--accent-dim, rgba(26,111,255,0.2))', border:'1px solid var(--accent-border, rgba(26,111,255,0.4))', borderRadius:8, padding:9, color:'var(--accent, #5a9fff)', cursor:'pointer', fontSize:13, fontWeight:700, opacity:saving?0.6:1 }}>
             {saving ? 'Guardando...' : isEdit ? '✓ Guardar cambios' : '✓ Crear parada'}
           </button>
         </div>
@@ -214,7 +258,7 @@ export default function StopsView() {
   const [stops, setStops] = useState([])
   const [groups, setGroups] = useState([])
   const [loading, setLoading] = useState(true)
-  const [tab, setTab] = useState('stops') // 'stops' | 'zones'
+  const [tab, setTab] = useState('stops')
   const [filterZone, setFilterZone] = useState('')
   const [filterText, setFilterText] = useState('')
   const [showInactive, setShowInactive] = useState(false)
@@ -262,32 +306,63 @@ export default function StopsView() {
   })
 
   const cardStyle = {
-    background:'var(--bg-card,#0c1829)', border:'1px solid var(--border,#1a3050)',
-    borderRadius:12, padding:isMobile?'12px':'16px', display:'flex',
-    flexDirection:'column', gap:10,
+    background: 'var(--bg-card, #0c1829)',
+    border: '1px solid var(--border, #1a3050)',
+    borderRadius: 12,
+    padding: isMobile ? '12px' : '16px',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 10,
   }
 
   const btnPrimary = {
-    background:'var(--accent-dim,rgba(26,111,255,0.2))', border:'1px solid var(--accent-border,rgba(26,111,255,0.4))',
-    borderRadius:8, padding:'8px 16px', color:'var(--accent,#5a9fff)', cursor:'pointer', fontSize:12, fontWeight:700,
+    background: 'var(--accent-dim, rgba(26,111,255,0.2))',
+    border: '1px solid var(--accent-border, rgba(26,111,255,0.4))',
+    borderRadius: 8,
+    padding: '8px 16px',
+    color: 'var(--accent, #5a9fff)',
+    cursor: 'pointer',
+    fontSize: 12,
+    fontWeight: 700,
   }
   const btnDanger = {
-    background:'rgba(255,82,82,0.1)', border:'1px solid rgba(255,82,82,0.3)',
-    borderRadius:8, padding:'6px 12px', color:'#ff5252', cursor:'pointer', fontSize:11,
+    background: 'rgba(255,82,82,0.1)',
+    border: '1px solid rgba(255,82,82,0.3)',
+    borderRadius: 8,
+    padding: '6px 12px',
+    color: 'var(--offline, #ff5252)',
+    cursor: 'pointer',
+    fontSize: 11,
   }
   const btnSuccess = {
-    background:'rgba(0,230,118,0.1)', border:'1px solid rgba(0,230,118,0.3)',
-    borderRadius:8, padding:'6px 12px', color:'#00e676', cursor:'pointer', fontSize:11,
+    background: 'rgba(0,230,118,0.1)',
+    border: '1px solid rgba(0,230,118,0.3)',
+    borderRadius: 8,
+    padding: '6px 12px',
+    color: 'var(--online, #00e676)',
+    cursor: 'pointer',
+    fontSize: 11,
+  }
+
+  const filterInpStyle = {
+    background: 'var(--bg-input, #111f35)',
+    border: '1px solid var(--border, #1a3050)',
+    borderRadius: 8,
+    padding: '7px 12px',
+    color: 'var(--text-primary, #e8f0fe)',
+    fontSize: 12,
+    outline: 'none',
+    cursor: 'pointer',
   }
 
   return (
-    <div style={{ height:'100%', display:'flex', flexDirection:'column', overflow:'hidden' }}>
+    <div style={{ height:'100%', display:'flex', flexDirection:'column', overflow:'hidden', background:'var(--bg-app, #060d1a)' }}>
 
       {/* Header */}
-      <div style={{ padding:isMobile?'10px 12px':'14px 24px', borderBottom:'1px solid var(--border,#1a3050)', display:'flex', alignItems:'center', justifyContent:'space-between', flexShrink:0, flexWrap:'wrap', gap:8 }}>
+      <div style={{ padding:isMobile?'10px 12px':'14px 24px', borderBottom:'1px solid var(--border, #1a3050)', display:'flex', alignItems:'center', justifyContent:'space-between', flexShrink:0, flexWrap:'wrap', gap:8, background:'var(--bg-app, #060d1a)' }}>
         <div>
-          <h1 style={{ fontFamily:"'Syne',sans-serif", fontSize:isMobile?17:20, fontWeight:800 }}>Gestión de Paradas</h1>
-          <div style={{ fontFamily:"'DM Mono',monospace", fontSize:9, color:'var(--text-muted,#3d5a80)', letterSpacing:1, textTransform:'uppercase', marginTop:2 }}>
+          <h1 style={{ fontFamily:"'Syne',sans-serif", fontSize:isMobile?17:20, fontWeight:800, color:'var(--text-primary, #e8f0fe)' }}>Gestión de Paradas</h1>
+          <div style={{ fontFamily:"'DM Mono',monospace", fontSize:9, color:'var(--text-muted, #3d5a80)', letterSpacing:1, textTransform:'uppercase', marginTop:2 }}>
             {stops.filter(s=>s.active!==0).length} activas · {groups.length} zonas
           </div>
         </div>
@@ -302,23 +377,29 @@ export default function StopsView() {
       </div>
 
       {/* Tabs */}
-      <div style={{ display:'flex', gap:0, borderBottom:'1px solid var(--border,#1a3050)', flexShrink:0, background:'var(--bg-card,#0c1829)' }}>
+      <div style={{ display:'flex', gap:0, borderBottom:'1px solid var(--border, #1a3050)', flexShrink:0, background:'var(--bg-card, #0c1829)' }}>
         {[
           { id:'stops', label:`🚏 Paradas (${stops.filter(s=>s.active!==0).length})` },
           { id:'zones', label:`📍 Zonas (${groups.length})` },
         ].map(t => (
           <button key={t.id} onClick={() => setTab(t.id)} style={{
-            padding:isMobile?'10px 16px':'11px 24px', background:'none', border:'none', cursor:'pointer',
-            color: tab===t.id ? 'var(--accent,#5a9fff)' : 'var(--text-secondary,#6b8ab0)',
-            borderBottom: `2px solid ${tab===t.id ? 'var(--accent,#5a9fff)' : 'transparent'}`,
-            fontFamily:"'DM Mono',monospace", fontSize:isMobile?10:11, letterSpacing:0.5, fontWeight:tab===t.id?700:400,
-            transition:'all 0.15s',
+            padding: isMobile?'10px 16px':'11px 24px',
+            background: 'none',
+            border: 'none',
+            cursor: 'pointer',
+            color: tab===t.id ? 'var(--nav-active-text, #5a9fff)' : 'var(--text-secondary, #6b8ab0)',
+            borderBottom: `2px solid ${tab===t.id ? 'var(--accent, #1a6fff)' : 'transparent'}`,
+            fontFamily: "'DM Mono',monospace",
+            fontSize: isMobile?10:11,
+            letterSpacing: 0.5,
+            fontWeight: tab===t.id ? 700 : 400,
+            transition: 'all 0.15s',
           }}>{t.label}</button>
         ))}
       </div>
 
       {/* Content */}
-      <div style={{ flex:1, overflow:'auto', padding:isMobile?'10px 12px':'16px 24px' }}>
+      <div style={{ flex:1, overflow:'auto', padding:isMobile?'10px 12px':'16px 24px', background:'var(--bg-app, #060d1a)' }}>
 
         {/* ── Tab: Paradas ── */}
         {tab === 'stops' && (
@@ -328,24 +409,32 @@ export default function StopsView() {
               <input
                 type="text" placeholder="Buscar por nombre, dirección o ID..."
                 value={filterText} onChange={e => setFilterText(e.target.value)}
-                style={{ flex:1, minWidth:160, background:'var(--bg-input,#111f35)', border:'1px solid var(--border,#1a3050)', borderRadius:8, padding:'7px 12px', color:'var(--text-primary,#e8f0fe)', fontSize:12, outline:'none' }}
+                style={{ ...filterInpStyle, flex:1, minWidth:160 }}
               />
-              <select value={filterZone} onChange={e => setFilterZone(e.target.value)}
-                style={{ background:'var(--bg-input,#111f35)', border:'1px solid var(--border,#1a3050)', borderRadius:8, padding:'7px 12px', color:'var(--text-primary,#e8f0fe)', fontSize:12, outline:'none', cursor:'pointer' }}>
+              <select value={filterZone} onChange={e => setFilterZone(e.target.value)} style={filterInpStyle}>
                 <option value="">Todas las zonas</option>
                 {groups.map(g => <option key={g.id} value={g.id}>{g.name}</option>)}
               </select>
-              <button onClick={() => setShowInactive(v=>!v)} style={{ background: showInactive?'rgba(255,215,64,0.1)':'var(--bg-input,#111f35)', border:`1px solid ${showInactive?'rgba(255,215,64,0.4)':'var(--border,#1a3050)'}`, borderRadius:8, padding:'7px 12px', color:showInactive?'#ffd740':'var(--text-secondary,#6b8ab0)', cursor:'pointer', fontSize:11, whiteSpace:'nowrap' }}>
+              <button
+                onClick={() => setShowInactive(v=>!v)}
+                style={{
+                  ...filterInpStyle,
+                  background: showInactive ? 'rgba(255,215,64,0.1)' : 'var(--bg-input, #111f35)',
+                  border: `1px solid ${showInactive ? 'rgba(255,215,64,0.4)' : 'var(--border, #1a3050)'}`,
+                  color: showInactive ? 'var(--warning, #ffd740)' : 'var(--text-secondary, #6b8ab0)',
+                  whiteSpace: 'nowrap',
+                }}
+              >
                 {showInactive ? '👁 Todas' : '👁 Solo activas'}
               </button>
             </div>
 
             {loading ? (
-              <div style={{ textAlign:'center', padding:60, color:'var(--text-muted,#3d5a80)' }}>Cargando...</div>
+              <div style={{ textAlign:'center', padding:60, color:'var(--text-muted, #3d5a80)' }}>Cargando...</div>
             ) : filteredStops.length === 0 ? (
-              <div style={{ textAlign:'center', padding:60, color:'var(--text-muted,#3d5a80)' }}>
+              <div style={{ textAlign:'center', padding:60, color:'var(--text-muted, #3d5a80)' }}>
                 <div style={{ fontSize:32, marginBottom:12 }}>🚏</div>
-                <div style={{ fontFamily:"'Syne',sans-serif", fontWeight:700 }}>Sin paradas encontradas</div>
+                <div style={{ fontFamily:"'Syne',sans-serif", fontWeight:700, color:'var(--text-primary, #e8f0fe)' }}>Sin paradas encontradas</div>
                 <button onClick={() => setNewStop(true)} style={{ ...btnPrimary, marginTop:16 }}>+ Crear primera parada</button>
               </div>
             ) : (
@@ -355,7 +444,12 @@ export default function StopsView() {
                   const isInactive = s.active === 0
                   const gmaps = s.lat && s.lng ? `https://www.google.com/maps?q=${s.lat},${s.lng}` : null
                   return (
-                    <div key={s.device_id} style={{ ...cardStyle, opacity:isInactive?0.65:1, borderColor:isInactive?'#1a3050':group?.color?`${group.color}40`:'var(--border,#1a3050)', borderLeft:`3px solid ${group?.color||'var(--border,#1a3050)'}` }}>
+                    <div key={s.device_id} style={{
+                      ...cardStyle,
+                      opacity: isInactive ? 0.65 : 1,
+                      borderColor: isInactive ? 'var(--border, #1a3050)' : group?.color ? `${group.color}40` : 'var(--border, #1a3050)',
+                      borderLeft: `3px solid ${group?.color || 'var(--border, #1a3050)'}`,
+                    }}>
                       {/* Foto */}
                       {s.photo_url && (
                         <img src={s.photo_url} alt="" style={{ width:'100%', height:120, objectFit:'cover', borderRadius:8, display:'block' }} />
@@ -363,18 +457,18 @@ export default function StopsView() {
                       {/* Info */}
                       <div style={{ display:'flex', alignItems:'flex-start', justifyContent:'space-between', gap:8 }}>
                         <div style={{ flex:1, minWidth:0 }}>
-                          <div style={{ fontFamily:"'Syne',sans-serif", fontWeight:700, fontSize:14, marginBottom:3, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>
-                            <span style={{ display:'inline-block', width:7, height:7, borderRadius:'50%', background:s.status==='online'?'#00e676':'#ff5252', marginRight:6, flexShrink:0 }} />
+                          <div style={{ fontFamily:"'Syne',sans-serif", fontWeight:700, fontSize:14, marginBottom:3, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap', color:'var(--text-primary, #e8f0fe)' }}>
+                            <span style={{ display:'inline-block', width:7, height:7, borderRadius:'50%', background:s.status==='online'?'var(--online, #00e676)':'var(--offline, #ff5252)', marginRight:6, flexShrink:0 }} />
                             {s.name}
                           </div>
-                          <div style={{ fontSize:11, color:'var(--text-secondary,#6b8ab0)', marginBottom:4 }}>{s.address}</div>
+                          <div style={{ fontSize:11, color:'var(--text-secondary, #6b8ab0)', marginBottom:4 }}>{s.address}</div>
                           <div style={{ display:'flex', gap:6, flexWrap:'wrap' }}>
-                            <span style={{ fontFamily:"'DM Mono',monospace", fontSize:9, padding:'2px 7px', borderRadius:10, background:'rgba(255,255,255,0.05)', color:'var(--text-muted,#3d5a80)' }}>{s.device_id}</span>
+                            <span style={{ fontFamily:"'DM Mono',monospace", fontSize:9, padding:'2px 7px', borderRadius:10, background:'var(--bg-hover, rgba(255,255,255,0.05))', color:'var(--text-muted, #3d5a80)' }}>{s.device_id}</span>
                             {group && <span style={{ fontFamily:"'DM Mono',monospace", fontSize:9, padding:'2px 7px', borderRadius:10, background:`${group.color}18`, color:group.color, border:`1px solid ${group.color}40` }}>{group.name}</span>}
-                            {isInactive && <span style={{ fontFamily:"'DM Mono',monospace", fontSize:9, padding:'2px 7px', borderRadius:10, background:'rgba(255,82,82,0.1)', color:'#ff5252' }}>Inactiva</span>}
+                            {isInactive && <span style={{ fontFamily:"'DM Mono',monospace", fontSize:9, padding:'2px 7px', borderRadius:10, background:'rgba(255,82,82,0.1)', color:'var(--offline, #ff5252)' }}>Inactiva</span>}
                           </div>
                           {s.lat && s.lng && (
-                            <div style={{ fontFamily:"'DM Mono',monospace", fontSize:9, color:'var(--text-muted,#3d5a80)', marginTop:4 }}>
+                            <div style={{ fontFamily:"'DM Mono',monospace", fontSize:9, color:'var(--text-muted, #3d5a80)', marginTop:4 }}>
                               {parseFloat(s.lat).toFixed(5)}, {parseFloat(s.lng).toFixed(5)}
                             </div>
                           )}
@@ -403,11 +497,11 @@ export default function StopsView() {
         {tab === 'zones' && (
           <>
             {groups.length === 0 ? (
-              <div style={{ textAlign:'center', padding:60, color:'var(--text-muted,#3d5a80)' }}>
+              <div style={{ textAlign:'center', padding:60, color:'var(--text-muted, #3d5a80)' }}>
                 <div style={{ fontSize:32, marginBottom:12 }}>📍</div>
-                <div style={{ fontFamily:"'Syne',sans-serif", fontWeight:700 }}>Sin zonas definidas</div>
+                <div style={{ fontFamily:"'Syne',sans-serif", fontWeight:700, color:'var(--text-primary, #e8f0fe)' }}>Sin zonas definidas</div>
                 <div style={{ fontSize:12, marginTop:6, marginBottom:16 }}>Las zonas agrupan paradas por sector geográfico</div>
-                <button onClick={() => setNewZone(true)} style={{ ...btnPrimary }}>+ Crear primera zona</button>
+                <button onClick={() => setNewZone(true)} style={btnPrimary}>+ Crear primera zona</button>
               </div>
             ) : (
               <div style={{ display:'grid', gridTemplateColumns:isMobile?'1fr':'repeat(auto-fill,minmax(280px,1fr))', gap:12 }}>
@@ -420,8 +514,8 @@ export default function StopsView() {
                           <div style={{ width:18, height:18, borderRadius:4, background:g.color }} />
                         </div>
                         <div style={{ flex:1 }}>
-                          <div style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:16, color:'var(--text-primary,#e8f0fe)' }}>{g.name}</div>
-                          <div style={{ fontFamily:"'DM Mono',monospace", fontSize:10, color:'var(--text-muted,#3d5a80)' }}>
+                          <div style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:16, color:'var(--text-primary, #e8f0fe)' }}>{g.name}</div>
+                          <div style={{ fontFamily:"'DM Mono',monospace", fontSize:10, color:'var(--text-muted, #3d5a80)' }}>
                             {stopsInZone.length} parada{stopsInZone.length!==1?'s':''} activa{stopsInZone.length!==1?'s':''}
                           </div>
                         </div>
@@ -429,7 +523,7 @@ export default function StopsView() {
                       {stopsInZone.length > 0 && (
                         <div style={{ display:'flex', flexWrap:'wrap', gap:5 }}>
                           {stopsInZone.map(s => (
-                            <span key={s.device_id} style={{ fontFamily:"'DM Mono',monospace", fontSize:9, padding:'2px 8px', borderRadius:10, background:'rgba(255,255,255,0.05)', color:'var(--text-secondary,#6b8ab0)' }}>
+                            <span key={s.device_id} style={{ fontFamily:"'DM Mono',monospace", fontSize:9, padding:'2px 8px', borderRadius:10, background:'var(--bg-hover, rgba(255,255,255,0.05))', color:'var(--text-secondary, #6b8ab0)' }}>
                               {s.name.split('—')[0].trim().split(' ').slice(-2).join(' ')}
                             </span>
                           ))}
@@ -450,14 +544,19 @@ export default function StopsView() {
 
       {/* Modals */}
       {(newStop || editStop) && (
-        <StopModal stop={editStop} groups={groups}
+        <StopModal
+          stop={editStop}
+          groups={groups}
           onClose={() => { setNewStop(false); setEditStop(null) }}
-          onSaved={fetchAll} />
+          onSaved={fetchAll}
+        />
       )}
       {(newZone || editZone) && (
-        <ZoneModal zone={editZone}
+        <ZoneModal
+          zone={editZone}
           onClose={() => { setNewZone(false); setEditZone(null) }}
-          onSaved={fetchAll} />
+          onSaved={fetchAll}
+        />
       )}
     </div>
   )
