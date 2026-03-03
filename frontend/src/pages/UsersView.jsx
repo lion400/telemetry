@@ -488,10 +488,10 @@ export default function UsersView() {
   ]
   // Campos de perfil — configurables (on/off) con valores por defecto ON
   const DEFAULT_PROFILE_FIELDS = [
-    { key: 'nombres',   label: 'Nombres',    type: 'text',   required: false, placeholder: 'Ej: Juan Carlos' },
-    { key: 'apellidos', label: 'Apellidos',  type: 'text',   required: false, placeholder: 'Ej: Pérez Mora' },
-    { key: 'direccion', label: 'Dirección',  type: 'text',   required: false, placeholder: 'Ej: Av. España 1-45' },
-    { key: 'edad',      label: 'Edad',       type: 'number', required: false, placeholder: 'Ej: 34' },
+    { key: 'nombres',   label: 'Nombres',    type: 'text',   required: false, placeholder: 'Nombres' },
+    { key: 'apellidos', label: 'Apellidos',  type: 'text',   required: false, placeholder: 'Apellidos' },
+    { key: 'direccion', label: 'Dirección',  type: 'text',   required: false, placeholder: 'Dirección Av.' },
+    { key: 'edad',      label: 'Edad',       type: 'number', required: false, placeholder: 'Edad' },
   ]
   // Campos extra agregados por el gerente
   const STORAGE_KEY = 'st_user_extra_fields'
