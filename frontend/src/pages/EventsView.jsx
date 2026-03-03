@@ -237,9 +237,13 @@ export default function EventsView() {
 
           {showExportMenu && (
             <div style={{
-              position: 'absolute', right: 0, top: 40, zIndex: 500, width: 300,
+              position: isMobile ? 'fixed' : 'absolute',
+              right: isMobile ? 8 : 0,
+              top: isMobile ? 52 : 40,
+              left: isMobile ? 8 : 'auto',
+              zIndex: 500, width: isMobile ? 'auto' : 300,
               background: 'var(--bg-card, var(--bg-card, #0c1829))', border: '1px solid #1a3050', borderRadius: 12,
-              padding: '14px', boxShadow: '0 8px 32px rgba(0,0,0,0.4)', maxWidth: isMobile ? 'calc(100vw - 24px)' : 'none',
+              padding: '14px', boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
             }}>
               {/* Selector de columnas */}
               <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9, letterSpacing: 1.5, color: 'var(--text-muted, var(--text-muted, #3d5a80))', textTransform: 'uppercase', marginBottom: 10 }}>
@@ -296,8 +300,9 @@ export default function EventsView() {
       </div>
 
       {/* Tabla */}
-      <div style={{ flex: 1, overflow: 'auto' }}>
-        </div><div style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}><table style={{ width: '100%', borderCollapse: 'collapse', minWidth: isMobile ? 600 : 'unset' }}>
+      <div style={{ flex: 1, overflow: 'auto', padding: isMobile ? '0 8px 8px' : '0' }}>
+        <div style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch', minHeight: 0 }}>
+        <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 640 }}>
           <thead>
             <tr style={{ background: 'var(--bg-card, var(--bg-card, #0c1829))', position: 'sticky', top: 0, zIndex: 10 }}>
               {['Fecha / Hora', 'Parada', 'Tipo', 'Severidad', 'Estado', 'SLA', 'Mensaje', 'Acciones'].map(h => (
@@ -370,6 +375,7 @@ export default function EventsView() {
             })}
           </tbody>
         </table>
+        </div>
       </div>
 
       {/* Paginación */}

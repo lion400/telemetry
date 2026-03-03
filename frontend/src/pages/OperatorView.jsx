@@ -174,57 +174,66 @@ export default function OperatorView() {
       {/* Header */}
       <div style={{
         padding: isMobile ? '10px 12px' : '12px 20px', borderBottom: '1px solid #1a3050',
-        display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexShrink: 0,
+        display: 'flex', flexDirection: isMobile ? 'column' : 'row',
+        alignItems: isMobile ? 'stretch' : 'center', justifyContent: 'space-between',
+        gap: isMobile ? 10 : 0, flexShrink: 0,
       }}>
         <div>
-          <h1 style={{ fontFamily: "'Syne',sans-serif", fontSize: 18, fontWeight: 800 }}>
+          <h1 style={{ fontFamily: "'Syne',sans-serif", fontSize: isMobile ? 16 : 18, fontWeight: 800 }}>
             Panel Operador
           </h1>
-          <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9, color: 'var(--text-muted, var(--text-muted, #3d5a80))', letterSpacing: 1, textTransform: 'uppercase', marginTop: 2 }}>
-            {user?.username} · Gestión de alertas en tiempo real
+          <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9, color: 'var(--text-muted, #3d5a80)', letterSpacing: 1, textTransform: 'uppercase', marginTop: 2 }}>
+            {user?.username} · Alertas en tiempo real
           </div>
         </div>
 
         {/* KPIs rápidos */}
-        <div style={{ display: 'flex', gap: 10 }}>
+        <div style={{ display: 'flex', gap: isMobile ? 8 : 10 }}>
           {[
-            { label: 'Pendientes', value: pendingCount,   color: 'var(--offline, var(--offline, #ff5252))' },
-            { label: 'Atendiendo', value: attendingCount, color: 'var(--warning, var(--warning, #ffd740))' },
-            { label: 'Críticos',   value: criticalCount,  color: 'var(--offline, var(--offline, #ff5252))' },
+            { label: 'Pendientes', value: pendingCount,   color: 'var(--offline, #ff5252)' },
+            { label: 'Atendiendo', value: attendingCount, color: 'var(--warning, #ffd740)' },
+            { label: 'Críticos',   value: criticalCount,  color: 'var(--offline, #ff5252)' },
           ].map(k => (
             <div key={k.label} style={{
-              background: 'var(--bg-card, var(--bg-card, #0c1829))', border: '1px solid #1a3050', borderRadius: 8,
-              padding: '6px 14px', textAlign: 'center',
+              background: 'var(--bg-card, #0c1829)', border: '1px solid #1a3050', borderRadius: 8,
+              padding: isMobile ? '5px 10px' : '6px 14px', textAlign: 'center', flex: isMobile ? 1 : 'none',
             }}>
-              <div style={{ fontFamily: "'Syne',sans-serif", fontSize: 20, fontWeight: 800, color: k.color }}>{k.value}</div>
-              <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 8, color: 'var(--text-muted, var(--text-muted, #3d5a80))', textTransform: 'uppercase' }}>{k.label}</div>
+              <div style={{ fontFamily: "'Syne',sans-serif", fontSize: isMobile ? 18 : 20, fontWeight: 800, color: k.color }}>{k.value}</div>
+              <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 8, color: 'var(--text-muted, #3d5a80)', textTransform: 'uppercase' }}>{k.label}</div>
             </div>
           ))}
         </div>
       </div>
 
       {/* Filtros */}
-      <div style={{ padding: '8px 20px', borderBottom: '1px solid #1a3050', display: 'flex', gap: 6, flexShrink: 0 }}>
+      <div style={{
+        padding: isMobile ? '6px 10px' : '8px 20px',
+        borderBottom: '1px solid #1a3050',
+        display: 'flex', gap: 6, flexShrink: 0,
+        overflowX: 'auto', WebkitOverflowScrolling: 'touch',
+      }}>
         {[
-          { id: 'assigned',  label: '📍 Asignadas' },
-          { id: 'pending',   label: '🔴 Pendientes' },
-          { id: 'attending', label: '🟡 Atendiendo' },
-          { id: 'all',       label: '📋 Todos' },
+          { id: 'assigned',  label: isMobile ? '📍 Asig.' : '📍 Asignadas' },
+          { id: 'pending',   label: isMobile ? '🔴 Pend.' : '🔴 Pendientes' },
+          { id: 'attending', label: isMobile ? '🟡 Aten.' : '🟡 Atendiendo' },
+          { id: 'all',       label: isMobile ? '📋 Todos' : '📋 Todos' },
         ].map(f => (
           <button key={f.id} onClick={() => setFilter(f.id)} style={{
             background: filter === f.id ? 'var(--nav-active-bg, rgba(26,111,255,0.15))' : 'transparent',
-            border: `1px solid ${filter === f.id ? 'var(--accent-border, rgba(26,111,255,0.4))' : 'var(--border, var(--border, #1a3050))'}`,
-            borderRadius: 6, padding: '5px 14px', cursor: 'pointer',
-            color: filter === f.id ? 'var(--accent, var(--accent, #5a9fff))' : 'var(--text-secondary, var(--text-secondary, #6b8ab0))', fontSize: 12,
+            border: `1px solid ${filter === f.id ? 'var(--accent-border, rgba(26,111,255,0.4))' : 'var(--border, #1a3050)'}`,
+            borderRadius: 6, padding: isMobile ? '5px 10px' : '5px 14px', cursor: 'pointer',
+            color: filter === f.id ? 'var(--accent, #5a9fff)' : 'var(--text-secondary, #6b8ab0)',
+            fontSize: isMobile ? 11 : 12, whiteSpace: 'nowrap', flexShrink: 0,
           }}>
             {f.label}
           </button>
         ))}
         <button onClick={fetchEvents} style={{
-          marginLeft: 'auto', background: 'none', border: '1px solid #1a3050',
-          borderRadius: 6, padding: '5px 10px', cursor: 'pointer', color: 'var(--text-secondary, var(--text-secondary, #6b8ab0))', fontSize: 12,
+          marginLeft: 'auto', background: 'none', border: '1px solid #1a3050', flexShrink: 0,
+          borderRadius: 6, padding: isMobile ? '5px 8px' : '5px 10px',
+          cursor: 'pointer', color: 'var(--text-secondary, #6b8ab0)', fontSize: 12,
         }}>
-          ↻ Actualizar
+          ↻
         </button>
       </div>
 
@@ -265,76 +274,84 @@ export default function OperatorView() {
               opacity: ev.status === 'resolved' ? 0.6 : 1,
             }}>
               {/* Fila superior */}
-              <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12, marginBottom: 10 }}>
-                <div style={{ flex: 1 }}>
-                  {/* Tipo + severidad */}
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-                    <span style={{
-                      fontFamily: "'DM Mono',monospace", fontSize: 9, fontWeight: 700,
-                      background: sev.bg, border: `1px solid ${sev.border}`,
-                      color: sev.color, borderRadius: 4, padding: '2px 7px',
-                    }}>{sev.label}</span>
-                    <span style={{ fontWeight: 600, fontSize: 13 }}>{TYPES[ev.type] || ev.type}</span>
-                    <span style={{ fontSize: 10, color: st.color }}>{st.icon} {st.label}</span>
-                  </div>
-
-                  {/* Mensaje */}
-                  <div style={{ fontSize: 12, color: 'var(--text-secondary, var(--text-secondary, #b0c4de))', marginBottom: 4 }}>{ev.message}</div>
-
-                  {/* Parada + hora */}
-                  <div style={{ display: 'flex', gap: 12, fontSize: 10, color: 'var(--text-muted, var(--text-muted, #3d5a80))' }}>
-                    <span>📍 {ev.device_name || ev.device_id}</span>
-                    <span>🕐 {tsStr}</span>
-                    {ev.attended_by && <span>👤 Atendido por: {ev.attended_by}</span>}
-                    {ev.resolved_by  && <span>✅ Resuelto por: {ev.resolved_by}</span>}
-                  </div>
+              <div style={{ marginBottom: 10 }}>
+                {/* Tipo + severidad + estado */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6, flexWrap: 'wrap' }}>
+                  <span style={{
+                    fontFamily: "'DM Mono',monospace", fontSize: 9, fontWeight: 700,
+                    background: sev.bg, border: `1px solid ${sev.border}`,
+                    color: sev.color, borderRadius: 4, padding: '2px 7px', flexShrink: 0,
+                  }}>{sev.label}</span>
+                  <span style={{ fontWeight: 600, fontSize: isMobile ? 12 : 13 }}>{TYPES[ev.type] || ev.type}</span>
+                  <span style={{ fontSize: 10, color: st.color, marginLeft: 'auto', flexShrink: 0 }}>{st.icon} {st.label}</span>
                 </div>
 
-                {/* Cronómetros SLA */}
+                {/* Mensaje */}
+                <div style={{ fontSize: 12, color: 'var(--text-secondary, #b0c4de)', marginBottom: 6, wordBreak: 'break-word' }}>{ev.message}</div>
+
+                {/* Parada + hora */}
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: isMobile ? 6 : 12, fontSize: 10, color: 'var(--text-muted, #3d5a80)' }}>
+                  <span>📍 {ev.device_name || ev.device_id}</span>
+                  <span>🕐 {tsStr}</span>
+                  {ev.attended_by && <span>👤 {ev.attended_by}</span>}
+                  {ev.resolved_by  && <span>✅ {ev.resolved_by}</span>}
+                </div>
+
+                {/* Cronómetros SLA — inline compact en mobile, cajas en desktop */}
                 {ev.status !== 'resolved' && (
-                  <div style={{ display: 'flex', gap: 8, flexShrink: 0 }}>
-                    {ev.status === 'pending' && (
-                      <SLATimer deadline={ev.sla_attend_deadline} label="Atención" />
-                    )}
-                    <SLATimer deadline={ev.sla_resolve_deadline} label="Resolución" />
-                  </div>
+                  isMobile ? (
+                    <div style={{ display: 'flex', gap: 8, marginTop: 8, flexWrap: 'wrap' }}>
+                      {ev.status === 'pending' && ev.sla_attend_deadline && (
+                        <SLATimer deadline={ev.sla_attend_deadline} label="Atención" compact />
+                      )}
+                      {ev.sla_resolve_deadline && (
+                        <SLATimer deadline={ev.sla_resolve_deadline} label="Resolución" compact />
+                      )}
+                    </div>
+                  ) : (
+                    <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
+                      {ev.status === 'pending' && (
+                        <SLATimer deadline={ev.sla_attend_deadline} label="Atención" />
+                      )}
+                      <SLATimer deadline={ev.sla_resolve_deadline} label="Resolución" />
+                    </div>
+                  )
                 )}
               </div>
 
               {/* Telemetría live de la parada */}
               {device && ev.status !== 'resolved' && (
                 <div style={{
-                  display: 'flex', gap: 10, marginBottom: 12,
-                  padding: '8px 10px', background: 'var(--bg-app, var(--bg-app, #060d1a))', borderRadius: 8,
-                  fontSize: 10, fontFamily: "'DM Mono',monospace",
+                  display: 'flex', flexWrap: 'wrap', gap: isMobile ? 6 : 10, marginBottom: 12,
+                  padding: '8px 10px', background: 'var(--bg-app, #060d1a)', borderRadius: 8,
+                  fontSize: 10, fontFamily: "'DM Mono',monospace", alignItems: 'center',
                 }}>
-                  <span style={{ color: 'var(--text-muted, var(--text-muted, #3d5a80))' }}>Estado live:</span>
-                  <span style={{ color: device.status === 'online' ? 'var(--online, var(--online, #00e676))' : 'var(--offline, var(--offline, #ff5252))' }}>
+                  <span style={{ color: device.status === 'online' ? 'var(--online, #00e676)' : 'var(--offline, #ff5252)', fontWeight: 700 }}>
                     {device.status === 'online' ? '● EN LÍNEA' : '● OFFLINE'}
                   </span>
-                  <span style={{ color: 'var(--accent, var(--accent, #1a6fff))' }}>SOC {t.soc ?? device.soc ?? '--'}%</span>
-                  <span style={{ color: 'var(--warning, var(--warning, #ffd740))' }}>{t.panel_power ? `☀ ${t.panel_power.toFixed(0)}W` : ''}</span>
-                  <span style={{ color: '#ff9800' }}>{t.temperature ? `🌡 ${t.temperature.toFixed(1)}°C` : ''}</span>
+                  <span style={{ color: 'var(--accent, #1a6fff)' }}>SOC {t.soc ?? device.soc ?? '--'}%</span>
+                  {t.panel_power ? <span style={{ color: 'var(--warning, #ffd740)' }}>☀ {t.panel_power.toFixed(0)}W</span> : null}
+                  {t.temperature  ? <span style={{ color: '#ff9800' }}>🌡 {t.temperature.toFixed(1)}°C</span> : null}
                   <button
                     onClick={() => navigate(`/device/${ev.device_id}`)}
-                    style={{ marginLeft: 'auto', background: 'none', border: 'none', color: 'var(--accent, var(--accent, #5a9fff))', cursor: 'pointer', fontSize: 10 }}
+                    style={{ marginLeft: 'auto', background: 'none', border: 'none', color: 'var(--accent, #5a9fff)', cursor: 'pointer', fontSize: 10, flexShrink: 0 }}
                   >
-                    Ver parada →
+                    Ver →
                   </button>
                 </div>
               )}
 
               {/* Botones de acción */}
               {ev.status !== 'resolved' && (
-                <div style={{ display: 'flex', gap: 8 }}>
+                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
                   {ev.status === 'pending' && (
                     <button
                       onClick={() => attend(ev.id)}
                       disabled={!!actionLoading[ev.id]}
                       style={{
                         background: 'rgba(255,215,64,0.1)', border: '1px solid rgba(255,215,64,0.4)',
-                        borderRadius: 8, padding: '7px 18px', cursor: 'pointer',
-                        color: 'var(--warning, var(--warning, #ffd740))', fontSize: 12, fontWeight: 600,
+                        borderRadius: 8, padding: '8px 18px', cursor: 'pointer', flex: isMobile ? 1 : 'none',
+                        color: 'var(--warning, #ffd740)', fontSize: 12, fontWeight: 600,
                         opacity: actionLoading[ev.id] ? 0.5 : 1,
                       }}
                     >
@@ -347,8 +364,8 @@ export default function OperatorView() {
                       disabled={!!actionLoading[ev.id]}
                       style={{
                         background: 'rgba(0,230,118,0.1)', border: '1px solid rgba(0,230,118,0.4)',
-                        borderRadius: 8, padding: '7px 18px', cursor: 'pointer',
-                        color: 'var(--online, var(--online, #00e676))', fontSize: 12, fontWeight: 600,
+                        borderRadius: 8, padding: '8px 18px', cursor: 'pointer', flex: isMobile ? 1 : 'none',
+                        color: 'var(--online, #00e676)', fontSize: 12, fontWeight: 600,
                         opacity: actionLoading[ev.id] ? 0.5 : 1,
                       }}
                     >

@@ -906,29 +906,43 @@ export default function UsersView() {
                 últimos {Math.min(log.length, 40)}
               </span>
             </div>
-            <div style={{ maxHeight: 240, overflow: 'auto' }}>
-              {log.slice(0, 40).map((l, i) => (
-                <div key={i} style={{
-                  padding: '8px 16px', borderBottom: '1px solid rgba(26,48,80,0.4)',
-                  display: 'grid', gridTemplateColumns: '140px 100px 1fr 1fr', gap: 12,
-                  fontSize: 11, alignItems: 'center',
-                }}>
-                  <span style={{ fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{l.username}</span>
-                  <span style={{
-                    color: l.action === 'login' ? 'var(--online, var(--online, #00e676))' : l.action === 'logout' ? 'var(--warning, var(--warning, #ffd740))' : 'var(--accent, var(--accent, #5a9fff))',
-                    fontFamily: "'DM Mono',monospace", fontSize: 10,
+            <div style={{ maxHeight: isMobile ? 360 : 240, overflowY: 'auto', overflowX: 'hidden' }}>
+              {log.slice(0, 40).map((l, i) => {
+                const actionColor = l.action === 'login' ? 'var(--online, #00e676)' : l.action === 'logout' ? 'var(--warning, #ffd740)' : 'var(--accent, #5a9fff)'
+                const actionLabel = l.action === 'login' ? '→ Ingreso' : l.action === 'logout' ? '← Salida' : l.action
+                const dateStr = l.created_at ? new Date(l.created_at.endsWith('Z') ? l.created_at : l.created_at + 'Z')
+                  .toLocaleString('es-EC', { timeZone: 'America/Guayaquil' }) : '--'
+                const locStr = l.location ? `📍 ${l.location}` : (l.ip ? `🌐 ${l.ip}` : '—')
+
+                if (isMobile) {
+                  return (
+                    <div key={i} style={{
+                      padding: '10px 14px', borderBottom: '1px solid rgba(26,48,80,0.4)',
+                      display: 'flex', flexDirection: 'column', gap: 4,
+                    }}>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <span style={{ fontWeight: 700, fontSize: 13 }}>{l.username}</span>
+                        <span style={{ color: actionColor, fontFamily: "'DM Mono',monospace", fontSize: 11, fontWeight: 600 }}>{actionLabel}</span>
+                      </div>
+                      <div style={{ fontSize: 11, color: 'var(--text-secondary, #6b8ab0)', wordBreak: 'break-word' }}>{locStr}</div>
+                      <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 10, color: 'var(--text-muted, #3d5a80)' }}>🕐 {dateStr}</div>
+                    </div>
+                  )
+                }
+
+                return (
+                  <div key={i} style={{
+                    padding: '8px 16px', borderBottom: '1px solid rgba(26,48,80,0.4)',
+                    display: 'grid', gridTemplateColumns: '140px 100px 1fr 1fr', gap: 12,
+                    fontSize: 11, alignItems: 'center',
                   }}>
-                    {l.action === 'login' ? '→ Ingreso' : l.action === 'logout' ? '← Salida' : l.action}
-                  </span>
-                  <span style={{ color: 'var(--text-secondary, var(--text-secondary, #6b8ab0))', fontSize: 10, fontFamily: "'DM Mono',monospace", overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                    {l.location ? `📍 ${l.location}` : l.ip}
-                  </span>
-                  <span style={{ color: 'var(--text-muted, var(--text-muted, #3d5a80))', fontSize: 10, fontFamily: "'DM Mono',monospace" }}>
-                    {l.created_at ? new Date(l.created_at.endsWith('Z') ? l.created_at : l.created_at + 'Z')
-                      .toLocaleString('es-EC', { timeZone: 'America/Guayaquil' }) : '--'}
-                  </span>
-                </div>
-              ))}
+                    <span style={{ fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{l.username}</span>
+                    <span style={{ color: actionColor, fontFamily: "'DM Mono',monospace", fontSize: 10 }}>{actionLabel}</span>
+                    <span style={{ color: 'var(--text-secondary, #6b8ab0)', fontSize: 10, fontFamily: "'DM Mono',monospace", overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{locStr}</span>
+                    <span style={{ color: 'var(--text-muted, #3d5a80)', fontSize: 10, fontFamily: "'DM Mono',monospace" }}>{dateStr}</span>
+                  </div>
+                )
+              })}
             </div>
           </div>
         )}
