@@ -8,7 +8,7 @@
       "role": "gerente",
       "active": 1,
       "created_at": "2026-03-01 19:50:04",
-      "last_login": "2026-03-03 19:28:24",
+      "last_login": "2026-03-03 19:48:54",
       "profile": "{}"
     },
     {
@@ -24,6 +24,14 @@
     }
   ],
   "access_log": [
+    {
+      "id": 20,
+      "user_id": 1,
+      "action": "login",
+      "ip": "38.224.81.96",
+      "location": "Quito, Ecuador",
+      "created_at": "2026-03-03 19:48:54"
+    },
     {
       "id": 19,
       "user_id": 1,
@@ -178,6 +186,36 @@
     }
   ],
   "events": [
+    {
+      "id": 322,
+      "device_id": "GV310-EC-4474",
+      "type": "shock",
+      "message": "Golpe/choque detectado (acelerómetro GV310LAU)",
+      "severity": "warning",
+      "address": null,
+      "resolved": 0,
+      "status": "pending",
+      "attended_at": null,
+      "attended_by": null,
+      "resolved_at": null,
+      "resolved_by": null,
+      "ts": "2026-03-03 19:35:26"
+    },
+    {
+      "id": 321,
+      "device_id": "GV310-EC-4476",
+      "type": "intrusion",
+      "message": "Intrusión gabinete: puerta 1 abierta",
+      "severity": "critical",
+      "address": null,
+      "resolved": 0,
+      "status": "pending",
+      "attended_at": null,
+      "attended_by": null,
+      "resolved_at": null,
+      "resolved_by": null,
+      "ts": "2026-03-03 19:32:41"
+    },
     {
       "id": 320,
       "device_id": "GV310-EC-4477",
@@ -4991,7 +5029,7 @@
       "lng": -78.9988,
       "photo_url": null,
       "active": 1,
-      "last_seen": "2026-03-03 19:28:11",
+      "last_seen": "2026-03-03 19:48:41",
       "created_at": "2026-03-01 19:50:04"
     },
     {
@@ -5005,7 +5043,7 @@
       "lng": -79.0045,
       "photo_url": null,
       "active": 1,
-      "last_seen": "2026-03-03 19:28:11",
+      "last_seen": "2026-03-03 19:48:41",
       "created_at": "2026-03-01 19:50:04"
     },
     {
@@ -5033,7 +5071,7 @@
       "lng": -79.0089,
       "photo_url": null,
       "active": 1,
-      "last_seen": "2026-03-03 19:28:11",
+      "last_seen": "2026-03-03 19:48:41",
       "created_at": "2026-03-01 19:50:04"
     },
     {
@@ -5061,7 +5099,7 @@
       "lng": -79.0163,
       "photo_url": null,
       "active": 1,
-      "last_seen": "2026-03-03 19:28:11",
+      "last_seen": "2026-03-03 19:48:41",
       "created_at": "2026-03-01 19:50:04"
     },
     {
@@ -5075,7 +5113,7 @@
       "lng": -78.9893,
       "photo_url": null,
       "active": 1,
-      "last_seen": "2026-03-03 19:28:11",
+      "last_seen": "2026-03-03 19:48:41",
       "created_at": "2026-03-01 19:50:04"
     },
     {
@@ -5089,7 +5127,7 @@
       "lng": -79.0328,
       "photo_url": null,
       "active": 1,
-      "last_seen": "2026-03-03 19:28:11",
+      "last_seen": "2026-03-03 19:48:41",
       "created_at": "2026-03-01 19:50:04"
     }
   ],
@@ -5191,5 +5229,5 @@
       "created_at": "2026-03-01 19:50:04"
     }
   ],
-  "exported_at": "2026-03-03T19:28:25.031Z"
+  "exported_at": "2026-03-03T19:48:54.536Z"
 }
