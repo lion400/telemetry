@@ -22,9 +22,10 @@ export const useStore = create((set, get) => ({
     return data
   },
 
-  logout: () => {
+  logout: async () => {
+    try { await axios.post(`${API}/auth/logout`) } catch (e) {}
     localStorage.removeItem('token')
-    set({ token: null, user: null, devices: [], selectedDevice: null, telemetry: {}, events: [] })
+    set({ token: null, user: null, devices: [], selectedDevice: null, selectedDeviceId: null, telemetry: {}, events: [], activeZones: [], onlyShowSelected: false })
   },
 
   fetchMe: async () => {
@@ -137,4 +138,14 @@ export const useStore = create((set, get) => ({
   // ── UI state ──────────────────────────────────────
   activeView: 'dashboard',
   setActiveView: (v) => set({ activeView: v }),
+
+  activeZones: [],
+  toggleZone: (zone) => set(state => ({
+    activeZones: state.activeZones.includes(zone)
+      ? state.activeZones.filter(z => z !== zone)
+      : [...state.activeZones, zone]
+  })),
+
+  onlyShowSelected: false,
+  setOnlyShowSelected: (val) => set({ onlyShowSelected: val }),
 }))

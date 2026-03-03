@@ -4,8 +4,8 @@ const router = express.Router();
 const db = require('../db');
 const { requireRole } = require('../middleware/auth');
 
-// List users (gerente + supervisor can view)
-router.get('/', requireRole('gerente', 'supervisor'), async (req, res) => {
+// List users (gerente only)
+router.get('/', requireRole('gerente'), async (req, res) => {
   const users = await db.all(
     'SELECT id, username, email, role, active, profile, created_at, last_login FROM users ORDER BY role, username'
   );

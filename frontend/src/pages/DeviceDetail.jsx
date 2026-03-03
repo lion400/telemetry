@@ -177,10 +177,15 @@ export default function DeviceDetail() {
         <button onClick={() => navigate(-1)} style={{ background: 'none', border: '1px solid #1a3050', borderRadius: 8, padding: '5px 12px', color: 'var(--text-secondary, var(--text-secondary, #6b8ab0))', cursor: 'pointer', fontSize: 12 }}>
           ← Volver
         </button>
-        <div style={{ flex: 1 }}>
-          <div style={{ fontFamily: "'Syne',sans-serif", fontSize: 18, fontWeight: 800 }}>{device.name}</div>
-          <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 10, color: 'var(--text-muted, var(--text-muted, #3d5a80))', marginTop: 2 }}>
-            {device.address} · IMEI: {device.imei || id}
+        <div style={{ flex: 1, display: 'flex', gap: 12, alignItems: 'center' }}>
+          {device.photo_url && (
+            <img src={device.photo_url} alt={device.name} style={{ width: 44, height: 44, borderRadius: 8, objectFit: 'cover', border: '1px solid #1a3050' }} />
+          )}
+          <div>
+            <div style={{ fontFamily: "'Syne',sans-serif", fontSize: 18, fontWeight: 800 }}>{device.name}</div>
+            <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 10, color: 'var(--text-muted, var(--text-muted, #3d5a80))', marginTop: 2 }}>
+              {device.address} · IMEI: {device.imei || id}
+            </div>
           </div>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>

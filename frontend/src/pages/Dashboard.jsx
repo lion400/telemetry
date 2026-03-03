@@ -42,9 +42,10 @@ function DeviceRow({ device, telemetry, onClick }) {
   const signalOk = (t.rssi ?? device.rssi ?? -200) > -100
   const socColor = typeof soc === 'number' ? (soc > 50 ? 'var(--online, var(--online, #00e676))' : soc > 20 ? 'var(--warning, var(--warning, #ffd740))' : 'var(--offline, var(--offline, #ff5252))') : 'var(--text-secondary, var(--text-secondary, #6b8ab0))'
 
+  const { user } = useStore()
   return (
     <div onClick={onClick} style={{
-      display: 'grid', gridTemplateColumns: '1.6fr 65px 90px 70px 90px 90px 70px 80px',
+      display: 'grid', gridTemplateColumns: '1.6fr 65px 90px 70px 90px 90px 70px 120px',
       alignItems: 'center', padding: '10px 16px',
       borderBottom: '1px solid #1a3050', cursor: 'pointer', transition: 'background 0.15s',
     }}
@@ -92,12 +93,21 @@ function DeviceRow({ device, telemetry, onClick }) {
       <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 12, color: '#ff9800' }}>
         {t.temperature ? `${t.temperature.toFixed(1)}°C` : '--'}
       </div>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-        {doorOpen ? <span style={{ fontSize: 9, color: 'var(--offline, var(--offline, #ff5252))' }}>🔓 ALERTA</span>
-                  : <span style={{ fontSize: 9, color: 'var(--online, var(--online, #00e676))' }}>🔒 OK</span>}
-        <span style={{ fontFamily: "'DM Mono',monospace", fontSize: 9, color: signalOk ? 'var(--accent2, var(--accent2, #00d4ff))' : 'var(--offline, var(--offline, #ff5252))' }}>
-          {t.rssi ?? device.rssi ?? '--'} dBm
-        </span>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+          {doorOpen ? <span style={{ fontSize: 9, color: 'var(--offline, var(--offline, #ff5252))' }}>🔓 ALERTA</span>
+                    : <span style={{ fontSize: 9, color: 'var(--online, var(--online, #00e676))' }}>🔒 OK</span>}
+          <span style={{ fontFamily: "'DM Mono',monospace", fontSize: 9, color: signalOk ? 'var(--accent2, var(--accent2, #00d4ff))' : 'var(--offline, var(--offline, #ff5252))' }}>
+            {t.rssi ?? device.rssi ?? '--'} dBm
+          </span>
+        </div>
+        {user?.role === 'gerente' && (
+          <button
+            onClick={(e) => { e.stopPropagation(); window.__onEditDevice(device) }}
+            style={{ background: '#111f35', border: '1px solid #1a3050', color: '#fff', fontSize: 10, padding: '4px 8px', borderRadius: 4, cursor: 'pointer' }}>
+            ✏️
+          </button>
+        )}
       </div>
     </div>
   )
@@ -176,6 +186,30 @@ export default function Dashboard() {
   const { devices, telemetry, events } = useStore()
   const isMobile = useIsMobile()
 
+  const [showDeviceForm, setShowDeviceForm] = useState(false)
+  const [editingDevice, setEditingDevice] = useState(null)
+  const [deviceForm, setDeviceForm] = useState({ device_id: '', imei: '', name: '', address: '', group_id: '', lat: '', lng: '', photo_url: '' })
+
+  const { user, fetchDevices } = useStore()
+
+  useEffect(() => {
+    window.__onEditDevice = (d) => {
+      setEditingDevice(d)
+      setDeviceForm({
+        device_id: d.device_id,
+        imei: d.imei || '',
+        name: d.name,
+        address: d.address || '',
+        group_id: d.group_id || '',
+        lat: d.lat || '',
+        lng: d.lng || '',
+        photo_url: d.photo_url || ''
+      })
+      setShowDeviceForm(true)
+    }
+    return () => delete window.__onEditDevice
+  }, [])
+
   const stats = useMemo(() => {
     const online = devices.filter(d => d.status === 'online').length
     const avgSoc = devices.length
@@ -187,7 +221,27 @@ export default function Dashboard() {
       return t.door1 || t.door2 || t.door3 || t.door4
     }).length
     const critEvents = events.filter(e => e.severity === 'critical' && !e.resolved).length
-    return { online, total: devices.length, avgSoc, totalSolar, doorAlerts, critEvents }
+
+    // Report by Zone
+    const zones = {}
+    devices.forEach(d => {
+      const z = d.group_name || 'Sin grupo'
+      if (!zones[z]) zones[z] = { online: 0, total: 0, sumSoc: 0, sumSolar: 0 }
+      zones[z].total++
+      if (d.status === 'online') zones[z].online++
+      zones[z].sumSoc += (telemetry[d.device_id]?.soc ?? d.soc ?? 0)
+      zones[z].sumSolar += (telemetry[d.device_id]?.panel_power ?? 0)
+    })
+
+    const zoneStats = Object.entries(zones).map(([name, s]) => ({
+      name,
+      online: s.online,
+      total: s.total,
+      avgSoc: Math.round(s.sumSoc / s.total),
+      totalSolar: Math.round(s.sumSolar)
+    }))
+
+    return { online, total: devices.length, avgSoc, totalSolar, doorAlerts, critEvents, zoneStats }
   }, [devices, telemetry, events])
 
   return (
@@ -205,6 +259,56 @@ export default function Dashboard() {
 
       <div style={{ flex: 1, overflow: 'auto', padding: isMobile ? '12px' : '16px 24px', display: 'flex', flexDirection: 'column', gap: isMobile ? 10 : 16 }}>
 
+        {/* Device Management CRUD (Gerente only) */}
+        {user?.role === 'gerente' && (
+          <div style={{ display: 'flex', gap: 10, marginBottom: 8 }}>
+            <button
+              onClick={() => { setEditingDevice(null); setDeviceForm({ device_id: '', imei: '', name: '', address: '', group_id: '', lat: '', lng: '', photo_url: '' }); setShowDeviceForm(!showDeviceForm) }}
+              style={{
+                background: 'var(--accent, #1a6fff)', border: 'none', borderRadius: 8, padding: '8px 16px',
+                color: '#fff', fontSize: 12, fontWeight: 700, cursor: 'pointer'
+              }}>
+              {showDeviceForm ? '✕ Cerrar' : '+ Nueva Parada'}
+            </button>
+          </div>
+        )}
+
+        {showDeviceForm && (
+          <div style={{ background: 'var(--bg-card, #0c1829)', border: '1px solid #1a3050', borderRadius: 12, padding: 20, marginBottom: 16 }}>
+            <h3 style={{ marginBottom: 16, fontSize: 14 }}>{editingDevice ? 'Editar Parada' : 'Nueva Parada'}</h3>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 12 }}>
+              <input placeholder="Device ID (ej: GV310-EC-4471)" value={deviceForm.device_id} disabled={!!editingDevice} onChange={e => setDeviceForm({ ...deviceForm, device_id: e.target.value })} style={{ padding: 8, borderRadius: 6, border: '1px solid #1a3050', background: '#111f35', color: '#fff' }} />
+              <input placeholder="IMEI" value={deviceForm.imei} onChange={e => setDeviceForm({ ...deviceForm, imei: e.target.value })} style={{ padding: 8, borderRadius: 6, border: '1px solid #1a3050', background: '#111f35', color: '#fff' }} />
+              <input placeholder="Nombre" value={deviceForm.name} onChange={e => setDeviceForm({ ...deviceForm, name: e.target.value })} style={{ padding: 8, borderRadius: 6, border: '1px solid #1a3050', background: '#111f35', color: '#fff' }} />
+              <input placeholder="Dirección" value={deviceForm.address} onChange={e => setDeviceForm({ ...deviceForm, address: e.target.value })} style={{ padding: 8, borderRadius: 6, border: '1px solid #1a3050', background: '#111f35', color: '#fff' }} />
+              <input placeholder="Latitud" type="number" step="any" value={deviceForm.lat} onChange={e => setDeviceForm({ ...deviceForm, lat: e.target.value })} style={{ padding: 8, borderRadius: 6, border: '1px solid #1a3050', background: '#111f35', color: '#fff' }} />
+              <input placeholder="Longitud" type="number" step="any" value={deviceForm.lng} onChange={e => setDeviceForm({ ...deviceForm, lng: e.target.value })} style={{ padding: 8, borderRadius: 6, border: '1px solid #1a3050', background: '#111f35', color: '#fff' }} />
+              <input placeholder="Foto URL" value={deviceForm.photo_url} onChange={e => setDeviceForm({ ...deviceForm, photo_url: e.target.value })} style={{ padding: 8, borderRadius: 6, border: '1px solid #1a3050', background: '#111f35', color: '#fff' }} />
+              <select value={deviceForm.group_id} onChange={e => setDeviceForm({ ...deviceForm, group_id: e.target.value })} style={{ padding: 8, borderRadius: 6, border: '1px solid #1a3050', background: '#111f35', color: '#fff' }}>
+                <option value="">Seleccionar Grupo</option>
+                <option value="1">Norte</option>
+                <option value="2">Sur</option>
+                <option value="3">Centro</option>
+              </select>
+            </div>
+            <button
+              onClick={async () => {
+                try {
+                  if (editingDevice) {
+                    await axios.put(`/api/devices/${deviceForm.device_id}`, deviceForm)
+                  } else {
+                    await axios.post('/api/devices', deviceForm)
+                  }
+                  fetchDevices()
+                  setShowDeviceForm(false)
+                } catch (e) { alert(e.response?.data?.error || 'Error saving device') }
+              }}
+              style={{ marginTop: 16, background: 'var(--online, #00e676)', border: 'none', borderRadius: 8, padding: '10px 20px', color: '#000', fontWeight: 800, cursor: 'pointer' }}>
+              {editingDevice ? 'Actualizar' : 'Guardar'}
+            </button>
+          </div>
+        )}
+
         {/* KPIs — 2 columnas en móvil, 5 en desktop */}
         <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(5, 1fr)', gap: isMobile ? 8 : 12 }}>
           <StatCard label="En línea" value={stats.online} unit={`/ ${stats.total}`} color="#00e676" icon="📡" sub="Buffer GV310: 30k pos" />
@@ -214,6 +318,34 @@ export default function Dashboard() {
           {/* En móvil el 5to KPI ocupa las 2 columnas */}
           <div style={isMobile ? { gridColumn: '1 / -1' } : {}}>
             <StatCard label="Puertas" value={stats.doorAlerts} unit="" color={stats.doorAlerts > 0 ? 'var(--warning, var(--warning, #ffd740))' : 'var(--online, var(--online, #00e676))'} icon="🚪" sub="Sensor WMS301 / BLE 5.2" />
+          </div>
+        </div>
+
+        {/* Reporte por Secciones (Zonas) */}
+        <div style={{ background: 'var(--bg-card, #0c1829)', border: '1px solid #1a3050', borderRadius: 12, padding: 16 }}>
+          <div style={{ fontFamily: "'DM Mono',monospace", fontSize: 9, color: 'var(--text-muted, #3d5a80)', letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: 12 }}>
+            Reporte por Secciones / Zonas
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)', gap: 12 }}>
+            {stats.zoneStats.map(z => (
+              <div key={z.name} style={{ background: 'var(--bg-input, #111f35)', borderRadius: 10, padding: 12, border: '1px solid #1a3050' }}>
+                <div style={{ fontWeight: 800, fontSize: 14, color: 'var(--accent2, #00d4ff)', marginBottom: 8, textTransform: 'uppercase' }}>{z.name}</div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+                  <div>
+                    <div style={{ fontSize: 9, color: 'var(--text-muted, #3d5a80)' }}>Estado</div>
+                    <div style={{ fontSize: 12 }}>{z.online} / {z.total} online</div>
+                  </div>
+                  <div>
+                    <div style={{ fontSize: 9, color: 'var(--text-muted, #3d5a80)' }}>SOC Prom.</div>
+                    <div style={{ fontSize: 12, color: z.avgSoc > 50 ? '#00e676' : '#ffd740' }}>{z.avgSoc}%</div>
+                  </div>
+                  <div>
+                    <div style={{ fontSize: 9, color: 'var(--text-muted, #3d5a80)' }}>Gen. Solar</div>
+                    <div style={{ fontSize: 12, color: '#ffd740' }}>{z.totalSolar}W</div>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
 
@@ -233,8 +365,8 @@ export default function Dashboard() {
           </div>
         ) : (
           <div style={{ background: 'var(--bg-card, var(--bg-card, #0c1829))', border: '1px solid #1a3050', borderRadius: 12, overflow: 'hidden', flex: 1 }}>
-            <div style={{ display: 'grid', gridTemplateColumns: '1.6fr 65px 90px 70px 90px 90px 70px 80px', padding: '10px 16px', borderBottom: '1px solid #1a3050', background: 'var(--bg-card, var(--bg-card, #0c1829))' }}>
-              {['Parada', 'Estado', 'SOC', 'Voltaje', 'Carga / Descarga', 'Solar', 'Temp.', 'Puertas/RSSI'].map(h => (
+            <div style={{ display: 'grid', gridTemplateColumns: '1.6fr 65px 90px 70px 90px 90px 70px 120px', padding: '10px 16px', borderBottom: '1px solid #1a3050', background: 'var(--bg-card, var(--bg-card, #0c1829))' }}>
+              {['Parada', 'Estado', 'SOC', 'Voltaje', 'Carga / Descarga', 'Solar', 'Temp.', 'Puertas/RSSI/Acción'].map(h => (
                 <div key={h} style={{ fontFamily: "'DM Mono',monospace", fontSize: 9, letterSpacing: 1, color: 'var(--text-muted, var(--text-muted, #3d5a80))', textTransform: 'uppercase' }}>{h}</div>
               ))}
             </div>

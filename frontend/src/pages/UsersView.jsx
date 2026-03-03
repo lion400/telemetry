@@ -86,9 +86,9 @@ function AssignModal({ user, devices, onClose, onSaved }) {
       <div
         onClick={e => e.stopPropagation()}
         style={{
-          width: '100%', maxWidth: isMobile ? '100%' : 620, maxHeight: isMobile ? '92vh' : '88vh', margin: '0', borderRadius: isMobile ? '16px 16px 0 0' : 16,
+          width: '100%', maxWidth: isMobile ? '100%' : 620, maxHeight: isMobile ? '92vh' : '88vh', margin: '0',
           background: 'var(--bg-sidebar, var(--bg-sidebar, #0a1628))', border: '1px solid #1a3050',
-          borderRadius: 16, display: 'flex', flexDirection: 'column',
+          borderRadius: isMobile ? '16px 16px 0 0' : 16, display: 'flex', flexDirection: 'column',
           boxShadow: '0 24px 80px rgba(0,0,0,0.6)', overflow: 'hidden',
         }}
       >
@@ -368,7 +368,7 @@ function EditUserModal({ user, allProfileFields, activeFields, onClose, onSaved 
     }} onClick={e => e.target === e.currentTarget && onClose()}>
       <div style={{
         background: 'var(--bg-card, #0c1829)', border: '1px solid var(--border, #1a3050)',
-        borderRadius: 14, width: '100%', maxWidth: isMobile ? '100%' : 480,
+        width: '100%', maxWidth: isMobile ? '100%' : 480,
         margin: isMobile ? '0' : 'auto',
         borderRadius: isMobile ? '16px 16px 0 0' : 14,
         boxShadow: '0 20px 60px rgba(0,0,0,0.6)',
@@ -627,16 +627,39 @@ export default function UsersView() {
           </div>
         </div>
         {me?.role === 'gerente' && (
-          <button onClick={() => setShowForm(s => !s)} style={{
-            background: showForm ? 'var(--bg-input, var(--bg-input, #111f35))' : 'var(--nav-active-bg, rgba(26,111,255,0.15))',
+          <div style={{ display: 'flex', gap: 8 }}>
+            <button
+              onClick={() => window.print()}
+              style={{
+                background: 'var(--bg-input, #111f35)', border: '1px solid #1a3050',
+                borderRadius: 8, padding: '8px 16px', cursor: 'pointer',
+                color: '#fff', fontSize: 13, fontWeight: 600
+              }}>
+              🖨 Imprimir Lista
+            </button>
+            <button onClick={() => setShowForm(s => !s)} style={{
+              background: showForm ? 'var(--bg-input, var(--bg-input, #111f35))' : 'var(--nav-active-bg, rgba(26,111,255,0.15))',
             border: `1px solid ${showForm ? 'var(--border, var(--border, #1a3050))' : 'var(--accent-border, rgba(26,111,255,0.4))'}`,
             borderRadius: 8, padding: '8px 18px', cursor: 'pointer',
-            color: showForm ? 'var(--text-secondary, var(--text-secondary, #6b8ab0))' : 'var(--accent, var(--accent, #5a9fff))', fontSize: 13, fontWeight: 600,
-          }}>
-            {showForm ? '✕ Cancelar' : '+ Nuevo usuario'}
-          </button>
+              color: showForm ? 'var(--text-secondary, var(--text-secondary, #6b8ab0))' : 'var(--accent, var(--accent, #5a9fff))', fontSize: 13, fontWeight: 600,
+            }}>
+              {showForm ? '✕ Cancelar' : '+ Nuevo usuario'}
+            </button>
+          </div>
         )}
       </div>
+
+      <style>{`
+        @media print {
+          header, nav, .print-hide, button, select { display: none !important; }
+          main { margin: 0 !important; padding: 0 !important; width: 100% !important; overflow: visible !important; }
+          .bitacora { display: none !important; }
+          table { width: 100% !important; border: 1px solid #000 !important; }
+          th, td { border: 1px solid #000 !important; color: #000 !important; }
+          body { background: #fff !important; color: #000 !important; }
+          .bg-card { background: #fff !important; border: none !important; }
+        }
+      `}</style>
 
       <div style={{ flex: 1, overflow: 'auto', padding: isMobile ? '10px 12px' : '16px 24px', display: 'flex', flexDirection: 'column', gap: 14 }}>
 

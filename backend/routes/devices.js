@@ -30,6 +30,22 @@ router.get('/', async (req, res) => {
   }
 });
 
+// ── Crear parada (gerente only) ───────────────────────────────────────────────────
+router.post('/', verifyToken, requireRole('gerente'), async (req, res) => {
+  const { device_id, imei, name, address, group_id, lat, lng, photo_url } = req.body;
+  if (!device_id || !name) return res.status(400).json({ error: 'ID y Nombre requeridos' });
+  try {
+    const result = await db.run(
+      'INSERT INTO devices (device_id, imei, name, address, group_id, lat, lng, photo_url) VALUES (?,?,?,?,?,?,?,?)',
+      [device_id, imei, name, address, group_id, lat, lng, photo_url]
+    );
+    if (req.app.locals.backup) req.app.locals.backup();
+    res.json({ id: result.lastID });
+  } catch (e) {
+    res.status(400).json({ error: 'El device_id ya existe' });
+  }
+});
+
 // ── Detalle de parada ─────────────────────────────────────────────────────────
 router.get('/:id', async (req, res) => {
   const device = await db.get(`
@@ -41,13 +57,14 @@ router.get('/:id', async (req, res) => {
   res.json(device);
 });
 
-// ── Actualizar parada ─────────────────────────────────────────────────────────
-router.put('/:id', async (req, res) => {
-  const { name, address, group_id, photo_url } = req.body;
+// ── Actualizar parada (gerente only) ──────────────────────────────────────────
+router.put('/:id', verifyToken, requireRole('gerente'), async (req, res) => {
+  const { name, address, group_id, photo_url, lat, lng, imei } = req.body;
   await db.run(
-    'UPDATE devices SET name=?, address=?, group_id=?, photo_url=? WHERE device_id=?',
-    [name, address, group_id, photo_url, req.params.id]
+    'UPDATE devices SET name=?, address=?, group_id=?, photo_url=?, lat=?, lng=?, imei=? WHERE device_id=?',
+    [name, address, group_id, photo_url, lat, lng, imei, req.params.id]
   );
+  if (req.app.locals.backup) req.app.locals.backup();
   res.json({ ok: true });
 });
 

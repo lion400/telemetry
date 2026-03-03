@@ -8,7 +8,7 @@ export default function MapView() {
   const markersRef = useRef({})
   const geocercaLayersRef = useRef([])
   const navigate = useNavigate()
-  const { devices, telemetry, geocercas, setSelectedDevice } = useStore()
+  const { devices, telemetry, geocercas, setSelectedDevice, activeZones, toggleZone, onlyShowSelected, setOnlyShowSelected } = useStore()
   const [sidebarOpen, setSidebarOpen] = useState(true)
   const [expandedGroups, setExpandedGroups] = useState({})
   const [selectedDevices, setSelectedDevices] = useState(new Set())
@@ -25,6 +25,11 @@ export default function MapView() {
     })
     return g
   }, [devices, filter])
+
+  const allGroups = useMemo(() => {
+    const s = new Set(devices.map(d => d.group_name || 'Sin grupo'))
+    return Array.from(s).sort()
+  }, [devices])
 
   useEffect(() => {
     if (!mapRef.current || mapInstanceRef.current) return
@@ -66,7 +71,25 @@ export default function MapView() {
     const map = mapInstanceRef.current
     if (!L || !map) return
 
+    // Clear existing markers that are no longer needed
+    Object.keys(markersRef.current).forEach(id => {
+      const device = devices.find(d => d.device_id === id)
+      const group = device?.group_name || 'Sin grupo'
+      const shouldShow = (!onlyShowSelected || selectedDevices.has(id)) &&
+                         (activeZones.length === 0 || activeZones.includes(group))
+      if (!shouldShow && markersRef.current[id]) {
+        markersRef.current[id].remove()
+        delete markersRef.current[id]
+      }
+    })
+
     devices.forEach(device => {
+      const group = device.group_name || 'Sin grupo'
+      const shouldShow = (!onlyShowSelected || selectedDevices.has(device.device_id)) &&
+                         (activeZones.length === 0 || activeZones.includes(group))
+
+      if (!shouldShow) return
+
       const t = telemetry[device.device_id] || {}
       const lat = t.lat ?? device.lat ?? device.current_lat
       const lng = t.lng ?? device.lng ?? device.current_lng
@@ -128,11 +151,18 @@ export default function MapView() {
               <div><span style="color:var(--text-muted,#3d5a80)">Temp</span><br><strong style="color:var(--warning,#ffd740)">${(t.temperature||0).toFixed(1)}°C</strong></div>
               <div><span style="color:var(--text-muted,#3d5a80)">Señal</span><br><strong style="color:var(--online,#00e676)">${t.rssi||'--'} dBm</strong></div>
             </div>
-            <button onclick="window.__navigateToDevice('${device.device_id}')" style="
-              width:100%;margin-top:12px;padding:6px 12px;
-              background:var(--accent, #1a6fff);border:none;border-radius:6px;
-              color:#fff;cursor:pointer;font-size:12px;font-family:'Syne',sans-serif;font-weight:600;
-            ">Ver detalle →</button>
+            <div style="display:flex;gap:4px;margin-top:12px;">
+              <button onclick="window.__navigateToDevice('${device.device_id}')" style="
+                flex:1;padding:6px 8px;
+                background:var(--accent, #1a6fff);border:none;border-radius:6px;
+                color:#fff;cursor:pointer;font-size:11px;font-family:'Syne',sans-serif;font-weight:600;
+              ">Detalle →</button>
+              <a href="https://www.google.com/maps?q=${lat},${lng}" target="_blank" style="
+                flex:1;padding:6px 8px;text-decoration:none;text-align:center;
+                background:var(--bg-input, #111f35);border:1px solid var(--border, #1a3050);border-radius:6px;
+                color:var(--text-primary, #e8f0fe);cursor:pointer;font-size:11px;font-family:'Syne',sans-serif;font-weight:600;
+              ">Google Maps</a>
+            </div>
           </div>
         `, {
           className: 'dark-popup',
@@ -148,7 +178,7 @@ export default function MapView() {
       }
     })
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [devices, telemetry, selectedDevices, mapInstanceRef.current])
+  }, [devices, telemetry, selectedDevices, mapInstanceRef.current, activeZones, onlyShowSelected])
 
   // Geocercas
   useEffect(() => {
@@ -211,16 +241,45 @@ export default function MapView() {
         transition: 'all 0.2s ease', overflow: 'hidden',
       }}>
         <div style={{ padding: '12px 12px 8px', borderBottom: '1px solid var(--border, #1a3050)', flexShrink: 0 }}>
-          <div style={{ fontFamily: "'Syne',sans-serif", fontSize: 13, fontWeight: 700, marginBottom: 8 }}>Paradas</div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+            <div style={{ fontFamily: "'Syne',sans-serif", fontSize: 13, fontWeight: 700 }}>Paradas</div>
+            <div
+              onClick={() => setOnlyShowSelected(!onlyShowSelected)}
+              style={{
+                fontSize: 9, padding: '2px 6px', borderRadius: 4, cursor: 'pointer',
+                background: onlyShowSelected ? 'var(--accent, #1a6fff)' : 'var(--bg-input, #111f35)',
+                color: onlyShowSelected ? '#fff' : 'var(--text-muted, #3d5a80)',
+                border: '1px solid var(--border, #1a3050)'
+              }}>
+              SOLO SELEC.
+            </div>
+          </div>
           <input
             type="text" placeholder="Buscar parada..."
             value={filter} onChange={e => setFilter(e.target.value)}
             style={{
               width: '100%', background: 'var(--bg-input, #111f35)', border: '1px solid var(--border, #1a3050)',
               borderRadius: 6, padding: '6px 10px', color: 'var(--text-primary, #e8f0fe)', fontSize: 12,
-              outline: 'none',
+              outline: 'none', marginBottom: 8
             }}
           />
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
+            {allGroups.map(g => (
+              <div
+                key={g}
+                onClick={() => toggleZone(g)}
+                style={{
+                  fontSize: 8, padding: '2px 6px', borderRadius: 4, cursor: 'pointer',
+                  background: activeZones.includes(g) ? 'var(--accent-dim, rgba(26,111,255,0.2))' : 'transparent',
+                  color: activeZones.includes(g) ? 'var(--accent, #1a6fff)' : 'var(--text-muted, #3d5a80)',
+                  border: `1px solid ${activeZones.includes(g) ? 'var(--accent-border, #1a3050)' : 'var(--border, #1a3050)'}`,
+                  textTransform: 'uppercase'
+                }}
+              >
+                {g}
+              </div>
+            ))}
+          </div>
         </div>
         <div style={{ flex: 1, overflow: 'auto', padding: '8px 0' }}>
           {Object.entries(grouped).map(([group, devs]) => (
