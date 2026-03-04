@@ -36,6 +36,14 @@
   ],
   "access_log": [
     {
+      "id": 37,
+      "user_id": 3,
+      "action": "logout",
+      "ip": "157.100.110.114",
+      "location": "Guayaquil, Ecuador",
+      "created_at": "2026-03-04 05:00:45"
+    },
+    {
       "id": 36,
       "user_id": 3,
       "action": "login",
@@ -5563,5 +5571,5 @@
       "created_at": "2026-03-01 19:50:04"
     }
   ],
-  "exported_at": "2026-03-04T04:58:17.194Z"
+  "exported_at": "2026-03-04T05:00:45.594Z"
 }
