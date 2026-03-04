@@ -8,7 +8,7 @@
       "role": "gerente",
       "active": 1,
       "created_at": "2026-03-01 19:50:04",
-      "last_login": "2026-03-04 04:54:31",
+      "last_login": "2026-03-04 05:01:03",
       "profile": "{}"
     },
     {
@@ -35,6 +35,14 @@
     }
   ],
   "access_log": [
+    {
+      "id": 38,
+      "user_id": 1,
+      "action": "login",
+      "ip": "157.100.110.114",
+      "location": "Guayaquil, Ecuador",
+      "created_at": "2026-03-04 05:01:03"
+    },
     {
       "id": 37,
       "user_id": 3,
@@ -5571,5 +5579,5 @@
       "created_at": "2026-03-01 19:50:04"
     }
   ],
-  "exported_at": "2026-03-04T05:00:45.594Z"
+  "exported_at": "2026-03-04T05:01:04.108Z"
 }
