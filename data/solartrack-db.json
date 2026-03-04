@@ -264,12 +264,12 @@
       "message": "Dispositivo sin respuesta — sin reportes hace +15 min. Posible daño estructural por colisión",
       "severity": "critical",
       "address": null,
-      "resolved": 0,
-      "status": "pending",
+      "resolved": 1,
+      "status": "resolved",
       "attended_at": null,
       "attended_by": null,
-      "resolved_at": null,
-      "resolved_by": null,
+      "resolved_at": "2026-03-04 04:13:03",
+      "resolved_by": "admin",
       "ts": "2026-03-04 03:33:04"
     },
     {
@@ -5480,5 +5480,5 @@
       "created_at": "2026-03-01 19:50:04"
     }
   ],
-  "exported_at": "2026-03-04T04:13:02.278Z"
+  "exported_at": "2026-03-04T04:13:04.289Z"
 }
