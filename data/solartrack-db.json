@@ -8,7 +8,7 @@
       "role": "gerente",
       "active": 1,
       "created_at": "2026-03-01 19:50:04",
-      "last_login": "2026-03-05 16:30:54",
+      "last_login": "2026-03-05 16:39:31",
       "profile": "{}"
     },
     {
@@ -46,6 +46,14 @@
     }
   ],
   "access_log": [
+    {
+      "id": 41,
+      "user_id": 1,
+      "action": "login",
+      "ip": "157.100.105.110",
+      "location": "Guayaquil, Ecuador",
+      "created_at": "2026-03-05 16:39:31"
+    },
     {
       "id": 40,
       "user_id": 1,
@@ -368,6 +376,111 @@
     }
   ],
   "events": [
+    {
+      "id": 348,
+      "device_id": "GV310-EC-4474",
+      "type": "intrusion",
+      "message": "Intrusión gabinete: puerta 2 abierta",
+      "severity": "critical",
+      "address": null,
+      "resolved": 0,
+      "status": "pending",
+      "attended_at": null,
+      "attended_by": null,
+      "resolved_at": null,
+      "resolved_by": null,
+      "ts": "2026-03-05 16:39:24"
+    },
+    {
+      "id": 346,
+      "device_id": "GV310-EC-4473",
+      "type": "disconnect_battery",
+      "message": "Dispositivo sin respuesta — sin reportes hace +15 min. Posible daño estructural por colisión",
+      "severity": "critical",
+      "address": null,
+      "resolved": 0,
+      "status": "pending",
+      "attended_at": null,
+      "attended_by": null,
+      "resolved_at": null,
+      "resolved_by": null,
+      "ts": "2026-03-05 16:31:54"
+    },
+    {
+      "id": 347,
+      "device_id": "GV310-EC-4475",
+      "type": "disconnect_battery",
+      "message": "Dispositivo sin respuesta — sin reportes hace +15 min. Posible daño estructural por colisión",
+      "severity": "critical",
+      "address": null,
+      "resolved": 0,
+      "status": "pending",
+      "attended_at": null,
+      "attended_by": null,
+      "resolved_at": null,
+      "resolved_by": null,
+      "ts": "2026-03-05 16:31:54"
+    },
+    {
+      "id": 344,
+      "device_id": "GV310-EC-4473",
+      "type": "weak_signal",
+      "message": "Señal crítica — posible daño físico en antena GV310LAU",
+      "severity": "critical",
+      "address": null,
+      "resolved": 0,
+      "status": "pending",
+      "attended_at": null,
+      "attended_by": null,
+      "resolved_at": null,
+      "resolved_by": null,
+      "ts": "2026-03-05 16:31:39"
+    },
+    {
+      "id": 345,
+      "device_id": "GV310-EC-4475",
+      "type": "weak_signal",
+      "message": "Señal crítica — posible daño físico en antena GV310LAU",
+      "severity": "critical",
+      "address": null,
+      "resolved": 0,
+      "status": "pending",
+      "attended_at": null,
+      "attended_by": null,
+      "resolved_at": null,
+      "resolved_by": null,
+      "ts": "2026-03-05 16:31:39"
+    },
+    {
+      "id": 342,
+      "device_id": "GV310-EC-4473",
+      "type": "shock",
+      "message": "Impacto severo detectado — posible colisión de vehículo contra parada",
+      "severity": "critical",
+      "address": null,
+      "resolved": 0,
+      "status": "pending",
+      "attended_at": null,
+      "attended_by": null,
+      "resolved_at": null,
+      "resolved_by": null,
+      "ts": "2026-03-05 16:31:09"
+    },
+    {
+      "id": 343,
+      "device_id": "GV310-EC-4475",
+      "type": "shock",
+      "message": "Impacto severo detectado — posible colisión de vehículo contra parada",
+      "severity": "critical",
+      "address": null,
+      "resolved": 0,
+      "status": "pending",
+      "attended_at": null,
+      "attended_by": null,
+      "resolved_at": null,
+      "resolved_by": null,
+      "ts": "2026-03-05 16:31:09"
+    },
     {
       "id": 340,
       "device_id": "GV310-EC-4473",
@@ -5496,7 +5609,7 @@
       "lng": -78.9988,
       "photo_url": null,
       "active": 1,
-      "last_seen": "2026-03-05 16:30:54",
+      "last_seen": "2026-03-05 16:39:24",
       "created_at": "2026-03-01 19:50:04"
     },
     {
@@ -5510,7 +5623,7 @@
       "lng": -79.0045,
       "photo_url": null,
       "active": 1,
-      "last_seen": "2026-03-05 16:30:54",
+      "last_seen": "2026-03-05 16:39:24",
       "created_at": "2026-03-01 19:50:04"
     },
     {
@@ -5524,7 +5637,7 @@
       "lng": -79.0012,
       "photo_url": null,
       "active": 1,
-      "last_seen": "2026-03-05 16:30:54",
+      "last_seen": "2026-03-05 16:11:54",
       "created_at": "2026-03-01 19:50:04"
     },
     {
@@ -5538,7 +5651,7 @@
       "lng": -79.0089,
       "photo_url": null,
       "active": 1,
-      "last_seen": "2026-03-05 16:30:41",
+      "last_seen": "2026-03-05 16:39:24",
       "created_at": "2026-03-01 19:50:04"
     },
     {
@@ -5552,7 +5665,7 @@
       "lng": -79.0001,
       "photo_url": null,
       "active": 1,
-      "last_seen": "2026-03-05 16:30:41",
+      "last_seen": "2026-03-05 16:11:54",
       "created_at": "2026-03-01 19:50:04"
     },
     {
@@ -5566,7 +5679,7 @@
       "lng": -79.0163,
       "photo_url": null,
       "active": 1,
-      "last_seen": "2026-03-05 16:30:41",
+      "last_seen": "2026-03-05 16:39:24",
       "created_at": "2026-03-01 19:50:04"
     },
     {
@@ -5580,7 +5693,7 @@
       "lng": -78.9893,
       "photo_url": null,
       "active": 1,
-      "last_seen": "2026-03-05 16:30:41",
+      "last_seen": "2026-03-05 16:39:24",
       "created_at": "2026-03-01 19:50:04"
     },
     {
@@ -5594,7 +5707,7 @@
       "lng": -79.0328,
       "photo_url": null,
       "active": 1,
-      "last_seen": "2026-03-05 16:30:41",
+      "last_seen": "2026-03-05 16:39:25",
       "created_at": "2026-03-01 19:50:04"
     }
   ],
@@ -5696,5 +5809,5 @@
       "created_at": "2026-03-01 19:50:04"
     }
   ],
-  "exported_at": "2026-03-05T16:30:54.591Z"
+  "exported_at": "2026-03-05T16:39:31.984Z"
 }
