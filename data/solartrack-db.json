@@ -8,7 +8,7 @@
       "role": "gerente",
       "active": 1,
       "created_at": "2026-03-01 19:50:04",
-      "last_login": "2026-03-03 14:02:26",
+      "last_login": "2026-03-05 16:30:54",
       "profile": "{}"
     },
     {
@@ -42,10 +42,18 @@
       "active": 1,
       "created_at": "2026-03-04 22:56:04",
       "last_login": null,
-      "profile": "{\"nombres\":\"Cristian\",\"apellidos\":\"Durán\",\"direccion\":\"Cdla. 2 de mayo\",\"edad\":\"44\"}"
+      "profile": "{}"
     }
   ],
   "access_log": [
+    {
+      "id": 40,
+      "user_id": 1,
+      "action": "login",
+      "ip": "190.63.255.153",
+      "location": "Guayaquil, Ecuador",
+      "created_at": "2026-03-05 16:30:54"
+    },
     {
       "id": 39,
       "user_id": 4,
@@ -5488,7 +5496,7 @@
       "lng": -78.9988,
       "photo_url": null,
       "active": 1,
-      "last_seen": "2026-03-04 22:56:03",
+      "last_seen": "2026-03-05 16:30:54",
       "created_at": "2026-03-01 19:50:04"
     },
     {
@@ -5502,7 +5510,7 @@
       "lng": -79.0045,
       "photo_url": null,
       "active": 1,
-      "last_seen": "2026-03-04 22:56:04",
+      "last_seen": "2026-03-05 16:30:54",
       "created_at": "2026-03-01 19:50:04"
     },
     {
@@ -5516,7 +5524,7 @@
       "lng": -79.0012,
       "photo_url": null,
       "active": 1,
-      "last_seen": "2026-03-04 22:34:48",
+      "last_seen": "2026-03-05 16:30:54",
       "created_at": "2026-03-01 19:50:04"
     },
     {
@@ -5530,7 +5538,7 @@
       "lng": -79.0089,
       "photo_url": null,
       "active": 1,
-      "last_seen": "2026-03-04 22:56:04",
+      "last_seen": "2026-03-05 16:30:41",
       "created_at": "2026-03-01 19:50:04"
     },
     {
@@ -5544,7 +5552,7 @@
       "lng": -79.0001,
       "photo_url": null,
       "active": 1,
-      "last_seen": "2026-03-04 22:34:48",
+      "last_seen": "2026-03-05 16:30:41",
       "created_at": "2026-03-01 19:50:04"
     },
     {
@@ -5558,7 +5566,7 @@
       "lng": -79.0163,
       "photo_url": null,
       "active": 1,
-      "last_seen": "2026-03-04 22:56:04",
+      "last_seen": "2026-03-05 16:30:41",
       "created_at": "2026-03-01 19:50:04"
     },
     {
@@ -5572,7 +5580,7 @@
       "lng": -78.9893,
       "photo_url": null,
       "active": 1,
-      "last_seen": "2026-03-04 22:56:04",
+      "last_seen": "2026-03-05 16:30:41",
       "created_at": "2026-03-01 19:50:04"
     },
     {
@@ -5586,7 +5594,7 @@
       "lng": -79.0328,
       "photo_url": null,
       "active": 1,
-      "last_seen": "2026-03-04 22:55:48",
+      "last_seen": "2026-03-05 16:30:41",
       "created_at": "2026-03-01 19:50:04"
     }
   ],
@@ -5688,5 +5696,5 @@
       "created_at": "2026-03-01 19:50:04"
     }
   ],
-  "exported_at": "2026-03-04T22:56:04.716Z"
+  "exported_at": "2026-03-05T16:30:54.591Z"
 }
