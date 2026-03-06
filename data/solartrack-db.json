@@ -8,7 +8,7 @@
       "role": "gerente",
       "active": 1,
       "created_at": "2026-03-01 19:50:04",
-      "last_login": "2026-03-06 17:35:04",
+      "last_login": "2026-03-03 14:02:26",
       "profile": "{}"
     },
     {
@@ -46,6 +46,14 @@
     }
   ],
   "access_log": [
+    {
+      "id": 44,
+      "user_id": 1,
+      "action": "logout",
+      "ip": "45.189.57.129",
+      "location": "La Troncal, Ecuador",
+      "created_at": "2026-03-06 21:14:13"
+    },
     {
       "id": 43,
       "user_id": 1,
@@ -392,6 +400,201 @@
     }
   ],
   "events": [
+    {
+      "id": 363,
+      "device_id": "GV310-EC-4476",
+      "type": "shock",
+      "message": "Golpe/choque detectado (acelerómetro GV310LAU)",
+      "severity": "warning",
+      "address": null,
+      "resolved": 0,
+      "status": "pending",
+      "attended_at": null,
+      "attended_by": null,
+      "resolved_at": null,
+      "resolved_by": null,
+      "ts": "2026-03-06 21:10:29"
+    },
+    {
+      "id": 362,
+      "device_id": "GV310-EC-4477",
+      "type": "intrusion",
+      "message": "Intrusión gabinete: puerta 2 abierta",
+      "severity": "critical",
+      "address": null,
+      "resolved": 0,
+      "status": "pending",
+      "attended_at": null,
+      "attended_by": null,
+      "resolved_at": null,
+      "resolved_by": null,
+      "ts": "2026-03-06 21:09:14"
+    },
+    {
+      "id": 361,
+      "device_id": "GV310-EC-4474",
+      "type": "shock",
+      "message": "Golpe/choque detectado (acelerómetro GV310LAU)",
+      "severity": "warning",
+      "address": null,
+      "resolved": 0,
+      "status": "pending",
+      "attended_at": null,
+      "attended_by": null,
+      "resolved_at": null,
+      "resolved_by": null,
+      "ts": "2026-03-06 21:08:44"
+    },
+    {
+      "id": 360,
+      "device_id": "GV310-EC-4478",
+      "type": "shock",
+      "message": "Golpe/choque detectado (acelerómetro GV310LAU)",
+      "severity": "warning",
+      "address": null,
+      "resolved": 0,
+      "status": "pending",
+      "attended_at": null,
+      "attended_by": null,
+      "resolved_at": null,
+      "resolved_by": null,
+      "ts": "2026-03-06 21:08:14"
+    },
+    {
+      "id": 359,
+      "device_id": "GV310-EC-4477",
+      "type": "shock",
+      "message": "Golpe/choque detectado (acelerómetro GV310LAU)",
+      "severity": "warning",
+      "address": null,
+      "resolved": 0,
+      "status": "pending",
+      "attended_at": null,
+      "attended_by": null,
+      "resolved_at": null,
+      "resolved_by": null,
+      "ts": "2026-03-06 21:02:59"
+    },
+    {
+      "id": 358,
+      "device_id": "GV310-EC-4476",
+      "type": "shock",
+      "message": "Golpe/choque detectado (acelerómetro GV310LAU)",
+      "severity": "warning",
+      "address": null,
+      "resolved": 0,
+      "status": "pending",
+      "attended_at": null,
+      "attended_by": null,
+      "resolved_at": null,
+      "resolved_by": null,
+      "ts": "2026-03-06 19:59:44"
+    },
+    {
+      "id": 356,
+      "device_id": "GV310-EC-4473",
+      "type": "disconnect_battery",
+      "message": "Dispositivo sin respuesta — sin reportes hace +15 min. Posible daño estructural por colisión",
+      "severity": "critical",
+      "address": null,
+      "resolved": 0,
+      "status": "pending",
+      "attended_at": null,
+      "attended_by": null,
+      "resolved_at": null,
+      "resolved_by": null,
+      "ts": "2026-03-06 19:50:13"
+    },
+    {
+      "id": 357,
+      "device_id": "GV310-EC-4475",
+      "type": "disconnect_battery",
+      "message": "Dispositivo sin respuesta — sin reportes hace +15 min. Posible daño estructural por colisión",
+      "severity": "critical",
+      "address": null,
+      "resolved": 0,
+      "status": "pending",
+      "attended_at": null,
+      "attended_by": null,
+      "resolved_at": null,
+      "resolved_by": null,
+      "ts": "2026-03-06 19:50:13"
+    },
+    {
+      "id": 354,
+      "device_id": "GV310-EC-4473",
+      "type": "weak_signal",
+      "message": "Señal crítica — posible daño físico en antena GV310LAU",
+      "severity": "critical",
+      "address": null,
+      "resolved": 0,
+      "status": "pending",
+      "attended_at": null,
+      "attended_by": null,
+      "resolved_at": null,
+      "resolved_by": null,
+      "ts": "2026-03-06 19:49:58"
+    },
+    {
+      "id": 355,
+      "device_id": "GV310-EC-4475",
+      "type": "weak_signal",
+      "message": "Señal crítica — posible daño físico en antena GV310LAU",
+      "severity": "critical",
+      "address": null,
+      "resolved": 0,
+      "status": "pending",
+      "attended_at": null,
+      "attended_by": null,
+      "resolved_at": null,
+      "resolved_by": null,
+      "ts": "2026-03-06 19:49:58"
+    },
+    {
+      "id": 352,
+      "device_id": "GV310-EC-4473",
+      "type": "shock",
+      "message": "Impacto severo detectado — posible colisión de vehículo contra parada",
+      "severity": "critical",
+      "address": null,
+      "resolved": 0,
+      "status": "pending",
+      "attended_at": null,
+      "attended_by": null,
+      "resolved_at": null,
+      "resolved_by": null,
+      "ts": "2026-03-06 19:49:28"
+    },
+    {
+      "id": 353,
+      "device_id": "GV310-EC-4475",
+      "type": "shock",
+      "message": "Impacto severo detectado — posible colisión de vehículo contra parada",
+      "severity": "critical",
+      "address": null,
+      "resolved": 0,
+      "status": "pending",
+      "attended_at": null,
+      "attended_by": null,
+      "resolved_at": null,
+      "resolved_by": null,
+      "ts": "2026-03-06 19:49:28"
+    },
+    {
+      "id": 351,
+      "device_id": "GV310-EC-4477",
+      "type": "shock",
+      "message": "Golpe/choque detectado (acelerómetro GV310LAU)",
+      "severity": "warning",
+      "address": null,
+      "resolved": 0,
+      "status": "pending",
+      "attended_at": null,
+      "attended_by": null,
+      "resolved_at": null,
+      "resolved_by": null,
+      "ts": "2026-03-06 19:49:13"
+    },
     {
       "id": 350,
       "device_id": "GV310-EC-4475",
@@ -5655,7 +5858,7 @@
       "lng": -78.9988,
       "photo_url": null,
       "active": 1,
-      "last_seen": "2026-03-06 17:35:02",
+      "last_seen": "2026-03-06 21:13:59",
       "created_at": "2026-03-01 19:50:04"
     },
     {
@@ -5669,7 +5872,7 @@
       "lng": -79.0045,
       "photo_url": null,
       "active": 1,
-      "last_seen": "2026-03-06 17:35:03",
+      "last_seen": "2026-03-06 21:13:59",
       "created_at": "2026-03-01 19:50:04"
     },
     {
@@ -5683,7 +5886,7 @@
       "lng": -79.0012,
       "photo_url": null,
       "active": 1,
-      "last_seen": "2026-03-06 17:35:03",
+      "last_seen": "2026-03-06 19:30:13",
       "created_at": "2026-03-01 19:50:04"
     },
     {
@@ -5697,7 +5900,7 @@
       "lng": -79.0089,
       "photo_url": null,
       "active": 1,
-      "last_seen": "2026-03-06 17:35:04",
+      "last_seen": "2026-03-06 21:13:59",
       "created_at": "2026-03-01 19:50:04"
     },
     {
@@ -5711,7 +5914,7 @@
       "lng": -79.0001,
       "photo_url": null,
       "active": 1,
-      "last_seen": "2026-03-06 17:35:04",
+      "last_seen": "2026-03-06 19:30:13",
       "created_at": "2026-03-01 19:50:04"
     },
     {
@@ -5725,7 +5928,7 @@
       "lng": -79.0163,
       "photo_url": null,
       "active": 1,
-      "last_seen": "2026-03-06 17:35:04",
+      "last_seen": "2026-03-06 21:13:59",
       "created_at": "2026-03-01 19:50:04"
     },
     {
@@ -5739,7 +5942,7 @@
       "lng": -78.9893,
       "photo_url": null,
       "active": 1,
-      "last_seen": "2026-03-06 17:35:04",
+      "last_seen": "2026-03-06 21:13:59",
       "created_at": "2026-03-01 19:50:04"
     },
     {
@@ -5753,7 +5956,7 @@
       "lng": -79.0328,
       "photo_url": null,
       "active": 1,
-      "last_seen": "2026-03-06 17:34:47",
+      "last_seen": "2026-03-06 21:13:59",
       "created_at": "2026-03-01 19:50:04"
     }
   ],
@@ -5855,5 +6058,5 @@
       "created_at": "2026-03-01 19:50:04"
     }
   ],
-  "exported_at": "2026-03-06T17:35:04.481Z"
+  "exported_at": "2026-03-06T21:14:13.320Z"
 }
