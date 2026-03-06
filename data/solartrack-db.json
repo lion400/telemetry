@@ -8,7 +8,7 @@
       "role": "gerente",
       "active": 1,
       "created_at": "2026-03-01 19:50:04",
-      "last_login": "2026-03-06 14:21:17",
+      "last_login": "2026-03-06 17:35:04",
       "profile": "{}"
     },
     {
@@ -46,6 +46,14 @@
     }
   ],
   "access_log": [
+    {
+      "id": 43,
+      "user_id": 1,
+      "action": "login",
+      "ip": "45.189.57.129",
+      "location": "La Troncal, Ecuador",
+      "created_at": "2026-03-06 17:35:04"
+    },
     {
       "id": 42,
       "user_id": 1,
@@ -384,6 +392,36 @@
     }
   ],
   "events": [
+    {
+      "id": 350,
+      "device_id": "GV310-EC-4475",
+      "type": "shock",
+      "message": "Impacto severo detectado — posible colisión de vehículo contra parada",
+      "severity": "critical",
+      "address": null,
+      "resolved": 0,
+      "status": "pending",
+      "attended_at": null,
+      "attended_by": null,
+      "resolved_at": null,
+      "resolved_by": null,
+      "ts": "2026-03-06 17:35:03"
+    },
+    {
+      "id": 349,
+      "device_id": "GV310-EC-4473",
+      "type": "shock",
+      "message": "Impacto severo detectado — posible colisión de vehículo contra parada",
+      "severity": "critical",
+      "address": null,
+      "resolved": 0,
+      "status": "pending",
+      "attended_at": null,
+      "attended_by": null,
+      "resolved_at": null,
+      "resolved_by": null,
+      "ts": "2026-03-06 17:35:02"
+    },
     {
       "id": 348,
       "device_id": "GV310-EC-4474",
@@ -5617,7 +5655,7 @@
       "lng": -78.9988,
       "photo_url": null,
       "active": 1,
-      "last_seen": "2026-03-06 14:21:16",
+      "last_seen": "2026-03-06 17:35:02",
       "created_at": "2026-03-01 19:50:04"
     },
     {
@@ -5631,7 +5669,7 @@
       "lng": -79.0045,
       "photo_url": null,
       "active": 1,
-      "last_seen": "2026-03-06 14:21:17",
+      "last_seen": "2026-03-06 17:35:03",
       "created_at": "2026-03-01 19:50:04"
     },
     {
@@ -5645,7 +5683,7 @@
       "lng": -79.0012,
       "photo_url": null,
       "active": 1,
-      "last_seen": "2026-03-06 14:21:17",
+      "last_seen": "2026-03-06 17:35:03",
       "created_at": "2026-03-01 19:50:04"
     },
     {
@@ -5659,7 +5697,7 @@
       "lng": -79.0089,
       "photo_url": null,
       "active": 1,
-      "last_seen": "2026-03-06 14:21:17",
+      "last_seen": "2026-03-06 17:35:04",
       "created_at": "2026-03-01 19:50:04"
     },
     {
@@ -5673,7 +5711,7 @@
       "lng": -79.0001,
       "photo_url": null,
       "active": 1,
-      "last_seen": "2026-03-06 14:21:17",
+      "last_seen": "2026-03-06 17:35:04",
       "created_at": "2026-03-01 19:50:04"
     },
     {
@@ -5687,7 +5725,7 @@
       "lng": -79.0163,
       "photo_url": null,
       "active": 1,
-      "last_seen": "2026-03-06 14:21:03",
+      "last_seen": "2026-03-06 17:35:04",
       "created_at": "2026-03-01 19:50:04"
     },
     {
@@ -5701,7 +5739,7 @@
       "lng": -78.9893,
       "photo_url": null,
       "active": 1,
-      "last_seen": "2026-03-06 14:21:03",
+      "last_seen": "2026-03-06 17:35:04",
       "created_at": "2026-03-01 19:50:04"
     },
     {
@@ -5715,7 +5753,7 @@
       "lng": -79.0328,
       "photo_url": null,
       "active": 1,
-      "last_seen": "2026-03-06 14:21:03",
+      "last_seen": "2026-03-06 17:34:47",
       "created_at": "2026-03-01 19:50:04"
     }
   ],
@@ -5817,5 +5855,5 @@
       "created_at": "2026-03-01 19:50:04"
     }
   ],
-  "exported_at": "2026-03-06T14:21:18.003Z"
+  "exported_at": "2026-03-06T17:35:04.481Z"
 }
