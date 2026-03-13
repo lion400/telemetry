@@ -1,0 +1,14 @@
+[
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.emov.solartrack",
+      "sha256_cert_fingerprints": [
+        "37:AD:35:DB:4B:58:D1:40:05:08:BB:BC:8B:4D:3D:65:B6:C9:F9:08:25:E9:40:44:FD:8E:7B:82:49:6E:4C:2A"
+      ]
+    }
+  }
+]
