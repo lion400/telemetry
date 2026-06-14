@@ -47,6 +47,14 @@
   ],
   "access_log": [
     {
+      "id": 63,
+      "user_id": 1,
+      "action": "logout",
+      "ip": "45.239.160.43",
+      "location": "Milagro, Ecuador",
+      "created_at": "2026-06-14 01:46:20"
+    },
+    {
       "id": 62,
       "user_id": 1,
       "action": "login",
@@ -10036,5 +10044,5 @@
       "created_at": "2026-03-13 07:17:38"
     }
   ],
-  "exported_at": "2026-06-14T01:46:12.779Z"
+  "exported_at": "2026-06-14T01:46:20.979Z"
 }
